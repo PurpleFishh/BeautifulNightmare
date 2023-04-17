@@ -1,11 +1,11 @@
 package casm.Map;
 
-import casm.ECS.Components.ColliderComponent;
+import casm.ECS.Components.Collision.ColliderComponent;
+import casm.ECS.Components.Collision.ColliderType;
 import casm.ECS.Scene;
 import casm.Entities.Tile;
 import casm.SpriteUtils.Assets;
 import casm.SpriteUtils.AssetsCollection;
-import netscape.javascript.JSObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -44,9 +44,10 @@ public class Map {
                 if (Objects.equals(layerName, "collision")) {
                     for (int i = 0; i < rows; i++) {
                         for (int j = 0; j < cols; j++) {
-                            if(data.get(i * cols + j).toString().equals("1")) {
+                            int colliderType = Integer.parseInt(data.get(i * cols + j).toString());
+                            if(colliderType != 0) {
                                 Tile tile = (Tile) scene.getLayeringObjects().get(0).get(i * cols + j);
-                                tile.addComponent(new ColliderComponent("tile", tile.getTileWidth(), tileHeight));
+                                tile.addComponent(new ColliderComponent(ColliderType.values()[colliderType - 1], tile.getTileWidth(), tileHeight));
                             }
                         }
                     }

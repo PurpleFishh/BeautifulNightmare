@@ -1,9 +1,6 @@
 package casm.SpriteUtils.Animation;
 
-import casm.ECS.Components.ColliderComponent;
-import casm.Entities.Tile;
 import casm.SpriteUtils.Assets;
-import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.ImageLoader;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,8 +14,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Vector;
 
 public class AnimationsExtract {
 

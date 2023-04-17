@@ -1,13 +1,10 @@
 package casm.ECS.Components;
 
 import casm.ECS.Component;
-import casm.Entities.Tile;
-import casm.Game;
-import casm.Map.Map;
+import casm.ECS.Components.Collision.MovementMediator;
+import casm.Utils.Mediator;
 import casm.Utils.Setting;
 import casm.Utils.Vector2D;
-
-import java.util.List;
 
 public class PositionComponent extends Component {
 
@@ -15,6 +12,7 @@ public class PositionComponent extends Component {
     double scale = 1, speed = 1;
     private int height, width;
     boolean gravity = false;
+    private Mediator mediator;
 
     public PositionComponent() {
         this.position = new Vector2D();
@@ -60,78 +58,23 @@ public class PositionComponent extends Component {
     @Override
     public void init() {
         velocity = new Vector2D();
+        mediator = new MovementMediator();
     }
 
     @Override
     public void update() {
-        velocity = getPotentialVelocitiy();
+        velocity = getPotentialVelocity();
         Vector2D potentialPosition = getPotentialPosition();
-        if (gameObject.getComponent(DyncamicColliderComponent.class) != null) {
-            //System.out.println(velocity.x);
-            collisionSolver(potentialPosition);
-        } else
-            position = potentialPosition;
-    }
-
-    private void collisionSolver(Vector2D potentialPosition) {
-        DyncamicColliderComponent dynamicColl = gameObject.getComponent(DyncamicColliderComponent.class);
-
-        Vector2D xPot = new Vector2D(potentialPosition.x, position.y);
-        Vector2D yPot = new Vector2D(position.x, potentialPosition.y);
-
-        int width = gameObject.getComponent(ColliderComponent.class).rectWidth;
-        int height = gameObject.getComponent(ColliderComponent.class).rectHeight;
-
-        boolean collisionX = dynamicColl.checkCollision(xPot, width, height,
-                Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
-        boolean collisionY = dynamicColl.checkCollision(yPot, width, height,
-                Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
-
-//            if (!collisionY) {
-//                position.y = yPot.y;
-//            }
-
-
-        if (!collisionY) {
-
-            yPot.y += 1;
-            collisionY = dynamicColl.checkCollision(yPot, width, height,
-                    Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
-            if (!collisionY) {
-                yPot.y += 1;
-                collisionY = dynamicColl.checkCollision(yPot, width, height,
-                        Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
-                if (collisionY)
-                    position.y = yPot.y - 1;
-                else
-                    position.y = yPot.y - 2;
-            } else
-                position.y = yPot.y - 1;
-
-        }
-        dynamicColl.setOnGround(dynamicColl.getCollisionCorrnersFlags()[2] || dynamicColl.getCollisionCorrnersFlags()[3]);
-
-        if (!collisionX) {
-
-            xPot.x += 1;
-            collisionX = dynamicColl.checkCollision(xPot, width, height,
-                    Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
-            if (!collisionX) {
-                xPot.x += 1;
-                collisionX = dynamicColl.checkCollision(xPot, width, height,
-                        Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
-                if (collisionX)
-                    position.x = xPot.x - 1;
-                else
-                    position.x = xPot.x - 2;
-            } else
-                position.x = xPot.x - 1;
-
-        }
+//        if (gameObject.getComponent(DyncamicColliderComponent.class) != null) {
+//            //System.out.println(velocity.x);
+//            collisionSolver(potentialPosition);
+//        } else
+//            position = potentialPosition;
+        mediator.notify(this);
     }
 
 
-    Vector2D getPotentialVelocitiy() {
+    public Vector2D getPotentialVelocity() {
         Vector2D potVelocity = (Vector2D) velocity.clone();
         double new_velocity_x = potVelocity.x + (Setting.DELTA_TIME / 1000) * sign.x;
         double new_velocity_y = potVelocity.y + (Setting.DELTA_TIME / 1000) * sign.y;
@@ -162,7 +105,7 @@ public class PositionComponent extends Component {
         return potVelocity;
     }
 
-    private Vector2D getPotentialPosition() {
+    public Vector2D getPotentialPosition() {
         Vector2D potPosition = (Vector2D) position.clone();
         potPosition.x += velocity.x * Setting.DELTA_TIME * speed;
         potPosition.y += velocity.y * Setting.DELTA_TIME * speed;

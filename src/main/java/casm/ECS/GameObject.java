@@ -32,6 +32,14 @@ public class GameObject {
         }
         return null;
     }
+    public <T extends Component> boolean hasComponent(Class<T> componentClass)
+    {
+        for (Component c : components) {
+            if(componentClass.isAssignableFrom(c.getClass()))
+                return true;
+        }
+        return false;
+    }
 
     public <T extends Component> void removeComponent(Class<T> componentClass) {
         components.removeIf(component -> componentClass.isAssignableFrom(component.getClass()));

@@ -38,10 +38,10 @@ public class Renderer {
         g.drawImage(image, (int) (positionOnCamera.x + x_offset), (int) (positionOnCamera.y + y_offset), (int) width, (int) height, null);
     }
 
-    public static void drawRect(Vector2D position, double width, double height) {
+    public static void drawRect(Vector2D position, double width, double height, Color color) {
         Graphics g = Game.getGraphics();
 
-        g.setColor(Color.RED);
+        g.setColor(color);
         Vector2D positionOnCamera = (Vector2D) position.clone();
         if (Camera.hasTargget()) {
             if (Camera.getInstance().equalsToTarget(position)) {

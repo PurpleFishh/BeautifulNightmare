@@ -1,6 +1,7 @@
 package casm.ECS.Components;
 
 import casm.ECS.Component;
+import casm.ECS.Components.Collision.DyncamicColliderComponent;
 import casm.Game;
 
 import java.awt.event.KeyEvent;

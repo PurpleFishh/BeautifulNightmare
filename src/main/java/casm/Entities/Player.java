@@ -1,12 +1,12 @@
 package casm.Entities;
 
 import casm.ECS.Components.*;
+import casm.ECS.Components.Collision.ColliderComponent;
+import casm.ECS.Components.Collision.ColliderType;
+import casm.ECS.Components.Collision.DyncamicColliderComponent;
 import casm.ECS.GameObject;
 import casm.SpriteUtils.Animation.AnimationState;
 import casm.SpriteUtils.Animation.AnimationsExtract;
-import casm.SpriteUtils.Assets;
-import casm.SpriteUtils.AssetsCollection;
-import casm.SpriteUtils.Sprite;
 import casm.Utils.Camera;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class Player extends GameObject {
         this.addComponent(new PositionComponent(playerSpawnPosX, playerSpawnPosy, playerWidth, playerHeight, 1, 1, true));
         this.addComponent(new SpriteComponent());
         this.addComponent(new KeyboardControllerComponent());
-        this.addComponent(new ColliderComponent("player",playerWidth - 2, playerHeight - 2));
+        this.addComponent(new ColliderComponent(ColliderType.PLAYER,playerWidth - 2, playerHeight - 2));
         this.addComponent(new DyncamicColliderComponent());
         this.addComponent(Camera.getInstance());
 

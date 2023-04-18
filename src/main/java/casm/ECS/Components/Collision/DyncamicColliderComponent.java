@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DyncamicColliderComponent extends Component {
 
-    private boolean onGround = false;
+    private boolean onGround = false, onLeader = false;
     /**
      *
      */
@@ -25,7 +25,7 @@ public class DyncamicColliderComponent extends Component {
         collisionCorners = new ColliderType[6];
     }
 
-    public boolean checkCollision(Vector2D position, int width, int height, List<GameObject> testEntities, int testWidth, int testHeight) {
+    public void checkCollision(Vector2D position, int width, int height, List<GameObject> testEntities, int testWidth, int testHeight) {
         collisionCorners[0] = IsSolid(position.x, position.y, testEntities, testWidth, testHeight);
         collisionCorners[1] = IsSolid(position.x + width, position.y, testEntities, testWidth, testHeight);
         collisionCorners[2] = IsSolid(position.x, position.y + height, testEntities, testWidth, testHeight);
@@ -33,8 +33,6 @@ public class DyncamicColliderComponent extends Component {
         /// Because the player is taller than a tile and if you jump the collider could be between the coroners
         collisionCorners[4] = IsSolid(position.x, position.y + (double) height / 2, testEntities, testWidth, testHeight);
         collisionCorners[5] = IsSolid(position.x + width, position.y + (double) height / 2, testEntities, testWidth, testHeight);
-        return (collisionCorners[0] != null || collisionCorners[1] != null || collisionCorners[2] != null || collisionCorners[3] != null ||
-                collisionCorners[4] != null || collisionCorners[5] != null);
     }
 
     private static ColliderType IsSolid(double x, double y, List<GameObject> testEntities, int testWidth, int testHeight) {
@@ -59,5 +57,13 @@ public class DyncamicColliderComponent extends Component {
 
     public ColliderType[] getCollisionCorrnersFlags() {
         return collisionCorners;
+    }
+    public boolean isOnLeader()
+    {
+        return onLeader;
+    }
+
+    public void setOnLeader(boolean onLeader) {
+        this.onLeader = onLeader;
     }
 }

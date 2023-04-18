@@ -56,6 +56,10 @@ public class Player extends GameObject {
         stateMachine.addState("run", "jump", "startJump");
         stateMachine.addState("jump", "idle", "stopJump_StartIdle");
         stateMachine.addState("jump", "run", "stopJump_StartRun");
+
+        stateMachine.addState("run", "climb", "startClimb");
+        stateMachine.addState("idle", "climb", "startClimb");
+        stateMachine.addState("climb", "idle", "stopClimb");
         this.addComponent(stateMachine);
     }
 

@@ -2,7 +2,7 @@
   "sprite_image": "player_spritesheer.png",
   "frames_width": "128",
   "frames_height": "64",
-  "rows": "8",
+  "rows": "9",
   "animations": [
     {
         "name": "idle",
@@ -49,6 +49,16 @@
       "frame_height": "44",
       "speed" : "4",
       "loop" : false
+    },
+    {
+      "name": "climb",
+      "columns": "3",
+      "x_start": "46",
+      "y_start": "20",
+      "frame_width": "32",
+      "frame_height": "44",
+      "speed" : "1",
+      "loop" : true
     }
   ]
 }

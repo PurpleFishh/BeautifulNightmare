@@ -1,6 +1,7 @@
 package casm.ECS.Components;
 
 import casm.ECS.Component;
+import casm.ECS.Components.Collision.DyncamicColliderComponent;
 import casm.ECS.Components.Collision.MovementMediator;
 import casm.Utils.Mediator;
 import casm.Utils.Setting;
@@ -11,7 +12,7 @@ public class PositionComponent extends Component {
     public Vector2D position, velocity = new Vector2D(), sign = new Vector2D();
     double scale = 1, speed = 1;
     private int height, width;
-    boolean gravity = false;
+    boolean gravity = false, isJumping = false, isClimbing = false;
     private Mediator mediator;
 
     public PositionComponent() {
@@ -64,13 +65,9 @@ public class PositionComponent extends Component {
     @Override
     public void update() {
         velocity = getPotentialVelocity();
-        Vector2D potentialPosition = getPotentialPosition();
-//        if (gameObject.getComponent(DyncamicColliderComponent.class) != null) {
-//            //System.out.println(velocity.x);
-//            collisionSolver(potentialPosition);
-//        } else
-//            position = potentialPosition;
         mediator.notify(this);
+//        if(gameObject.hasComponent(DyncamicColliderComponent.class))
+//            System.out.println(position);
     }
 
 
@@ -88,8 +85,10 @@ public class PositionComponent extends Component {
         if (gravity) {
 
             // Daca ajunge la inaltimea maxima a sariturii aplicam inapoi gravitatiea
-            if (sign.y == -1 && Math.abs(new_velocity_y) >= Setting.MAX_JUMP)
+            if (sign.y == -1 && Math.abs(new_velocity_y) >= Setting.MAX_JUMP) {
                 sign.y = 1;
+                System.out.println("Max Jump");
+            }
             // Daca e nevoie de gravidatie, nu o lasam sa treaca de maximul acesteia
             if (sign.y == 1 && new_velocity_y >= Setting.GRAVITY)
                 new_velocity_y = potVelocity.y;

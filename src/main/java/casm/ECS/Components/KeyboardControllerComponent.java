@@ -9,7 +9,7 @@ import java.awt.event.KeyListener;
 
 public class KeyboardControllerComponent extends Component implements KeyListener {
 
-    private boolean right = false, left = false, up, down;
+    private boolean right = false, left = false, wKey = false, spaceKey = false;
     private PositionComponent positionComponent;
     private SpriteComponent spriteComponent;
     private AnimationStateMachine animationStateMachine;
@@ -32,25 +32,25 @@ public class KeyboardControllerComponent extends Component implements KeyListene
 
     @Override
     public void update() {
-        if (gameObject.getComponent(DyncamicColliderComponent.class) != null)
-            if (!gameObject.getComponent(DyncamicColliderComponent.class).isOnGround()) {
+        if (gameObject.hasComponent(DyncamicColliderComponent.class)) {
+            if (!gameObject.getComponent(DyncamicColliderComponent.class).isOnGround() && !gameObject.getComponent(DyncamicColliderComponent.class).isOnLeader()) {
                 animationStateMachine.trigger("startJump");
             } else if (right || left)
                 animationStateMachine.trigger("stopJump_StartRun");
             else
                 animationStateMachine.trigger("stopJump_StartIdle");
+        }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            if (gameObject.getComponent(DyncamicColliderComponent.class) != null)
-                if (gameObject.getComponent(DyncamicColliderComponent.class).isOnGround()) {
-                    positionComponent.sign.y = -1;
-                    //animationStateMachine.trigger("startJump");
-                }
-        }
 
+        }
+        if (e.getKeyCode() == KeyEvent.VK_W) {
+
+
+        }
         if (e.getKeyCode() == KeyEvent.VK_A) {
             if (!right)
                 positionComponent.sign.x = -1;
@@ -69,6 +69,10 @@ public class KeyboardControllerComponent extends Component implements KeyListene
 
     @Override
     public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_W) {
+            positionComponent.sign.y = 0;
+            animationStateMachine.trigger("stopClimb");
+        }
         if (e.getKeyCode() == KeyEvent.VK_A) {
             if (right) {
                 if (!(positionComponent.velocity.x > 0)) {
@@ -98,5 +102,13 @@ public class KeyboardControllerComponent extends Component implements KeyListene
             right = false;
 
         }
+    }
+
+    public boolean isWKeyPressed() {
+        return wKey;
+    }
+
+    public boolean isSpaceKeyPressed() {
+        return spaceKey;
     }
 }

@@ -10,6 +10,7 @@ public class Setting {
     public static final int SCREEN_HEIGHT = 600;
 
     public static final double MAX_SPEED = 0.1;
+    public static final double MAX_CLIMBING_SPEED = 0.15;
     public static final double MAX_JUMP = 0.3;
     public static final double GRAVITY = 0.2;
 }

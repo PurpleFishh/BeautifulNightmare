@@ -12,7 +12,7 @@ public class PositionComponent extends Component {
     public Vector2D position, velocity = new Vector2D(), sign = new Vector2D();
     double scale = 1, speed = 1;
     private int height, width;
-    boolean gravity = false, isJumping = false, isClimbing = false;
+    private boolean gravity = false, isJumping = false, isClimbing = false;
     private Mediator mediator;
 
     public PositionComponent() {
@@ -85,9 +85,15 @@ public class PositionComponent extends Component {
         if (gravity) {
 
             // Daca ajunge la inaltimea maxima a sariturii aplicam inapoi gravitatiea
-            if (sign.y == -1 && Math.abs(new_velocity_y) >= Setting.MAX_JUMP) {
+            if (isJumping && sign.y == -1 && Math.abs(new_velocity_y) >= Setting.MAX_JUMP) {
                 sign.y = 1;
+                isJumping = false;
                 System.out.println("Max Jump");
+            }
+            if (isClimbing && sign.y == -1 && Math.abs(new_velocity_y) >= Setting.MAX_CLIMBING_SPEED) {
+                System.out.println(potVelocity + " " + new_velocity_y);
+                //potVelocity.y = new_velocity_y;
+                new_velocity_y = potVelocity.y;
             }
             // Daca e nevoie de gravidatie, nu o lasam sa treaca de maximul acesteia
             if (sign.y == 1 && new_velocity_y >= Setting.GRAVITY)
@@ -109,5 +115,21 @@ public class PositionComponent extends Component {
         potPosition.x += velocity.x * Setting.DELTA_TIME * speed;
         potPosition.y += velocity.y * Setting.DELTA_TIME * speed;
         return potPosition;
+    }
+
+    public boolean isJumping() {
+        return isJumping;
+    }
+
+    public void setJumping(boolean jumping) {
+        isJumping = jumping;
+    }
+
+    public boolean isClimbing() {
+        return isClimbing;
+    }
+
+    public void setClimbing(boolean climbing) {
+        isClimbing = climbing;
     }
 }

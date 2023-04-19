@@ -2,6 +2,7 @@ package casm.ECS.Components.Collision;
 
 import casm.ECS.Component;
 import casm.ECS.Components.AnimationStateMachine;
+import casm.ECS.Components.KeyState;
 import casm.ECS.Components.KeyboardControllerComponent;
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.GameObject;
@@ -13,12 +14,14 @@ import casm.Utils.Vector2D;
 public class MovementMediator implements Mediator {
     @Override
     public void notify(Component component) {
-        if (component.gameObject.hasComponent(KeyboardControllerComponent.class))
+        if (component instanceof KeyboardControllerComponent)
             keysMovementManager((KeyboardControllerComponent) component);
-        if (component.gameObject.hasComponent(DyncamicColliderComponent.class))
-            collisionManager((PositionComponent) component);
-        else
-            positionUpdate((PositionComponent) component);
+        if (component instanceof PositionComponent) {
+            if (component.gameObject.hasComponent(DyncamicColliderComponent.class))
+                collisionManager((PositionComponent) component);
+            else
+                positionUpdate((PositionComponent) component);
+        }
     }
 
     private void collisionManager(PositionComponent positionComponent) {
@@ -32,16 +35,6 @@ public class MovementMediator implements Mediator {
         int width = gameObject.getComponent(ColliderComponent.class).getRectWidth();
         int height = gameObject.getComponent(ColliderComponent.class).getRectHeight();
 
-        /// Check for Y movement
-        dynamicColl.checkCollision(yPot, width, height,
-                Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
-
-        boolean yLeader = hasCollisionOfType(dynamicColl.getCollisionCorrnersFlags(), ColliderType.LEADER);
-        boolean collisionY = hasCollisionOfType(dynamicColl.getCollisionCorrnersFlags(), ColliderType.MAP_TILE);
-        if (collisionY)
-            moveToTileEdgeY(positionComponent);
-        else
-            positionComponent.position.y = yPot.y;
 //        if (!collisionY) {
 //
 //            yPot.y += 1;
@@ -89,7 +82,35 @@ public class MovementMediator implements Mediator {
 //            } else
 //                positionComponent.position.x = xPot.x - 1;
 //        }
-        dynamicColl.setOnLeader(yLeader || hasCollisionOfType(dynamicColl.getCollisionCorrnersFlags(), ColliderType.LEADER));
+        boolean xLeaderMiddle = dynamicColl.getCollisionCorrnersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCorrnersFlags()[5] == ColliderType.LEADER;
+        boolean xLeaderBottom = dynamicColl.getCollisionCorrnersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCorrnersFlags()[3] == ColliderType.LEADER;
+
+        /// Check for Y movement
+        dynamicColl.checkCollision(yPot, width, height,
+                Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
+
+        boolean collisionY = hasCollisionOfType(dynamicColl.getCollisionCorrnersFlags(), ColliderType.MAP_TILE);
+        boolean yLeaderMiddle = dynamicColl.getCollisionCorrnersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCorrnersFlags()[5] == ColliderType.LEADER;
+        boolean yLeaderBottom = dynamicColl.getCollisionCorrnersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCorrnersFlags()[3] == ColliderType.LEADER;
+        if (collisionY)
+            moveToTileEdgeY(positionComponent);
+        else {
+            if (positionComponent.isClimbing() && !(xLeaderBottom || yLeaderBottom))
+            {
+                positionComponent.sign.y = 0;
+                positionComponent.velocity.y = 0;
+                positionComponent.setClimbing(false);
+                gameObject.getComponent(AnimationStateMachine.class).trigger("stopClimb");
+            } else if (!(positionComponent.isClimbing() && !(yLeaderMiddle || xLeaderMiddle) && (xLeaderBottom || yLeaderBottom))) {
+                positionComponent.position.y = yPot.y;
+                //moveToTileEdgeY(positionComponent);
+                //positionComponent.sign.y = 0;
+               // positionComponent.velocity.y = 0;
+                //positionComponent.setClimbing(false);
+                //gameObject.getComponent(AnimationStateMachine.class).trigger("stopClimb");
+            }
+        }
+        dynamicColl.setOnLeader(yLeaderMiddle || xLeaderMiddle);
     }
 
     private void positionUpdate(PositionComponent positionComponent) {
@@ -108,7 +129,7 @@ public class MovementMediator implements Mediator {
 
     public void moveToTileEdgeY(PositionComponent positionComponent) {
         if (positionComponent.sign.y < 0) {
-            positionComponent.position.y = (int) (positionComponent.position.y / Map.getTileHeight()) * Map.getTileHeight();
+            positionComponent.position.y = (int) (positionComponent.position.y / Map.getTileHeight()) * Map.getTileHeight() + 1;
         } else {
             int height = positionComponent.gameObject.getComponent(ColliderComponent.class).getRectHeight();
             positionComponent.position.y = ((int) ((positionComponent.position.y + height) / Map.getTileHeight()) + 1)
@@ -127,23 +148,35 @@ public class MovementMediator implements Mediator {
         GameObject gameObject = component.gameObject;
         PositionComponent positionComponent = gameObject.getComponent(PositionComponent.class);
 
-        if (component.isSpaceKeyPressed())
+        if (component.getSpaceKeyState() == KeyState.PRESSED)
             if (gameObject.hasComponent(DyncamicColliderComponent.class))
                 if (gameObject.getComponent(DyncamicColliderComponent.class).isOnGround()) {
                     positionComponent.sign.y = -1;
                     positionComponent.velocity.y = 0;
                     //animationStateMachine.trigger("startJump");
+                    positionComponent.setJumping(true);
                 }
-        if (component.isWKeyPressed())
+        if (component.getWKeyState() == KeyState.PRESSED) {
             if (gameObject.hasComponent(DyncamicColliderComponent.class))
                 if (gameObject.getComponent(DyncamicColliderComponent.class).isOnLeader()) {
-                    if (positionComponent.sign.y > 0)
-                        positionComponent.velocity.y = 0;
+                    //if (positionComponent.sign.y > 0)
+                    positionComponent.velocity.y = 0;
                     positionComponent.sign.y = -1;
+                    positionComponent.setClimbing(true);
                     gameObject.getComponent(AnimationStateMachine.class).trigger("startClimb");
-                    //TODO: Vezi can PostionComponent la posVelocity incurca urcatul pe scara cu saritul
-                    //TODO: verifica doar pe colturile de sus daca are coliziune cu scara
-                    //TODO: desparte cumva ce face playerul ce activitate ca sa nu mai fie problema intre sarit urcat si chestii
+                    //TODO: Problema cand se urca pe scara viteza nu e constanta, se diminueaza deodta...
                 }
+        }
+        if (component.getWKeyState() == KeyState.RELEASED) {
+            if(positionComponent.isClimbing()) {
+                System.out.println("A jauns");
+                positionComponent.sign.y = 0;
+                positionComponent.velocity.y = 0;
+                positionComponent.setClimbing(false);
+                gameObject.getComponent(AnimationStateMachine.class).trigger("stopClimb");
+                component.resetWKeyState();
+            }
+        }
+
     }
 }

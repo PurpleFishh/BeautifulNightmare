@@ -16,10 +16,6 @@ public class DyncamicColliderComponent extends Component {
      */
     private ColliderType[] collisionCorners;
 
-    // TODO: Sa adaug la fiecare collider un tag care semnifica tipul colliderului ca ENUM
-    // TODO: Facuta remediera collisiunlor ca un Mediator primind DynColl si PosComp si el sa vada ce fel de coliziune e cu cine ce tre sa faca si cum se rezolva si ii da inapoi lui PosComp noua pozitie si actualizeaza Flagurile
-    // TODO: collsionCorners va contine tipul collisiuni sau ref la Collider
-
     @Override
     public void init() {
         collisionCorners = new ColliderType[6];

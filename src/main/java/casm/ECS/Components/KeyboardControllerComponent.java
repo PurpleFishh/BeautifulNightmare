@@ -12,7 +12,7 @@ import java.awt.event.KeyListener;
 public class KeyboardControllerComponent extends Component implements KeyListener {
 
     private boolean right = false, left = false;
-    private KeyState wKey = KeyState.NOT_USED, spaceKey = KeyState.NOT_USED;
+    private KeyState wKey = KeyState.NOT_USED, spaceKey = KeyState.NOT_USED, fKey = KeyState.NOT_USED;
     private PositionComponent positionComponent;
     private SpriteComponent spriteComponent;
     private AnimationStateMachine animationStateMachine;
@@ -27,7 +27,7 @@ public class KeyboardControllerComponent extends Component implements KeyListene
         positionComponent = gameObject.getComponent(PositionComponent.class);
         spriteComponent = gameObject.getComponent(SpriteComponent.class);
         animationStateMachine = gameObject.getComponent(AnimationStateMachine.class);
-        mediator = new MovementMediator();
+        mediator = MovementMediator.getInstance(gameObject);
     }
 
     @Override
@@ -49,12 +49,16 @@ public class KeyboardControllerComponent extends Component implements KeyListene
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE || spaceKey == KeyState.PRESSED) {
             spaceKey = KeyState.PRESSED;
             mediator.notify(this);
         }
         if (e.getKeyCode() == KeyEvent.VK_W) {
             wKey = KeyState.PRESSED;
+            mediator.notify(this);
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F) {
+            fKey = KeyState.PRESSED;
             mediator.notify(this);
         }
         if (e.getKeyCode() == KeyEvent.VK_A) {
@@ -79,6 +83,10 @@ public class KeyboardControllerComponent extends Component implements KeyListene
             spaceKey = KeyState.RELEASED;
         if (e.getKeyCode() == KeyEvent.VK_W) {
             wKey = KeyState.RELEASED;
+            mediator.notify(this);
+        }
+        if (e.getKeyCode() == KeyEvent.VK_F) {
+            fKey = KeyState.RELEASED;
             mediator.notify(this);
         }
         if (e.getKeyCode() == KeyEvent.VK_A) {
@@ -126,5 +134,13 @@ public class KeyboardControllerComponent extends Component implements KeyListene
 
     public void resetSpaceKeyState() {
         spaceKey = KeyState.NOT_USED;
+    }
+
+    public KeyState getFKeyState() {
+        return fKey;
+    }
+
+    public void resetFKeyState() {
+        fKey = KeyState.NOT_USED;
     }
 }

@@ -32,7 +32,14 @@
       "name": "none"
     },
     {
-      "name": "none"
+      "name": "attack",
+      "columns": "7",
+      "x_start": "22",
+      "y_start": "8",
+      "frame_width": "88",
+      "frame_height": "56",
+      "speed" : "2",
+      "loop" : false
     },
     {
       "name": "none"

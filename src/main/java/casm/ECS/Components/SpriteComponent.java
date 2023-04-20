@@ -4,6 +4,7 @@ import casm.ECS.Component;
 import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
 import casm.Utils.Renderer;
+import casm.Utils.Vector2D;
 
 public class SpriteComponent extends Component {
 
@@ -38,7 +39,17 @@ public class SpriteComponent extends Component {
 
     @Override
     public void draw() {
-        Renderer.drawImage(sprite.getTexture(), positionComp.position, sprite.getWidth(), sprite.getHeight(), flipped_vertically, flipped_horizontally);
+        /// To center the sprite in the entity "hit-box" so if the sprite is bigger, it will be centered
+        if(positionComp.getHeight() < sprite.getHeight() || positionComp.getWidth() < sprite.getWidth())
+        {
+            Vector2D offset = new Vector2D((double) (sprite.getWidth() - positionComp.getWidth()) / 2,
+                    sprite.getHeight() - positionComp.getHeight());
+            offset = ((Vector2D) positionComp.position.clone()).sub(offset);
+            Renderer.drawImage(sprite.getTexture(), offset, sprite.getWidth(), sprite.getHeight(),
+                    flipped_vertically, flipped_horizontally);
+        }else
+            Renderer.drawImage(sprite.getTexture(), positionComp.position, sprite.getWidth(), sprite.getHeight(),
+                    flipped_vertically, flipped_horizontally);
     }
 
     public void flipVertically() {

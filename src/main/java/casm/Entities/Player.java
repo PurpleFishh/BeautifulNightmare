@@ -35,6 +35,7 @@ public class Player extends GameObject {
         this.addComponent(new KeyboardControllerComponent());
         this.addComponent(new ColliderComponent(ColliderType.PLAYER,playerWidth - 2, playerHeight - 2));
         this.addComponent(new DyncamicColliderComponent());
+        this.addComponent(new AttackComponent());
         this.addComponent(Camera.getInstance());
 
         this.init();
@@ -60,6 +61,10 @@ public class Player extends GameObject {
         stateMachine.addState("run", "climb", "startClimb");
         stateMachine.addState("idle", "climb", "startClimb");
         stateMachine.addState("climb", "idle", "stopClimb");
+
+        stateMachine.addState("run", "attack", "startAttack");
+        stateMachine.addState("idle", "attack", "startAttack");
+        stateMachine.addState("attack", "idle", "stopAttack");
         this.addComponent(stateMachine);
     }
 

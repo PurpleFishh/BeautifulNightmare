@@ -31,44 +31,66 @@ public class Vector2D {
         this.y = (double) (scr_h / 2 + h / 2);
     }
 
-    public void add(Vector2D vec) {
+    public Vector2D add(Vector2D vec) {
         x += vec.x;
         y += vec.y;
+        return this;
     }
 
-    public void sub(Vector2D vec) {
+    public Vector2D sub(Vector2D vec) {
         x -= vec.x;
         y -= vec.y;
+        return this;
     }
 
-    public void mul(Vector2D vec) {
+    public Vector2D mul(Vector2D vec) {
         x *= vec.x;
         y *= vec.y;
+        return this;
     }
 
-    public void div(Vector2D vec) {
+    public Vector2D div(Vector2D vec) {
         x /= vec.x;
         y /= vec.y;
+        return this;
     }
 
-    public void add(double val) {
+    public Vector2D add(double val) {
         x += val;
         y += val;
+        return this;
     }
 
-    public void sub(double val) {
+    public Vector2D sub(double val) {
         x -= val;
         y -= val;
+        return this;
     }
 
-    public void mul(double val) {
+    public Vector2D mul(double val) {
         x *= val;
         y *= val;
+        return this;
     }
 
-    public void div(double val) {
+    public Vector2D div(double val) {
         x /= val;
         y /= val;
+        return this;
+    }
+
+    public Vector2D set(double x, double y)
+    {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+    public Vector2D set(Vector2D vector)
+    {
+        this.x = vector.x;
+        this.y = vector.y;
+
+        return this;
     }
 
     public double length() {

@@ -59,7 +59,7 @@ public class PositionComponent extends Component {
     @Override
     public void init() {
         velocity = new Vector2D();
-        mediator = new MovementMediator();
+        mediator = MovementMediator.getInstance(gameObject);
     }
 
     @Override
@@ -88,16 +88,14 @@ public class PositionComponent extends Component {
             if (isJumping && sign.y == -1 && Math.abs(new_velocity_y) >= Setting.MAX_JUMP) {
                 sign.y = 1;
                 isJumping = false;
-                System.out.println("Max Jump");
             }
-            if (isClimbing && sign.y == -1 && Math.abs(new_velocity_y) >= Setting.MAX_CLIMBING_SPEED) {
-                System.out.println(potVelocity + " " + new_velocity_y);
-                //potVelocity.y = new_velocity_y;
+            // Daca ajunge la viteza maxima de catarat il limitam
+            if (isClimbing && sign.y == -1 && Math.abs(new_velocity_y) >= Setting.MAX_CLIMBING_SPEED)
                 new_velocity_y = potVelocity.y;
-            }
             // Daca e nevoie de gravidatie, nu o lasam sa treaca de maximul acesteia
             if (sign.y == 1 && new_velocity_y >= Setting.GRAVITY)
                 new_velocity_y = potVelocity.y;
+            // Aplicam gravitatia
             if (sign.y == 0 && new_velocity_y < Setting.GRAVITY)
                 new_velocity_y = potVelocity.y + (Setting.DELTA_TIME / 1000) * Setting.GRAVITY;
             potVelocity.y = new_velocity_y;
@@ -112,6 +110,12 @@ public class PositionComponent extends Component {
 
     public Vector2D getPotentialPosition() {
         Vector2D potPosition = (Vector2D) position.clone();
+        potPosition.x += velocity.x * Setting.DELTA_TIME * speed;
+        potPosition.y += velocity.y * Setting.DELTA_TIME * speed;
+        return potPosition;
+    }
+    public Vector2D getPotentialPosition(Vector2D updateVector) {
+        Vector2D potPosition = (Vector2D) updateVector.clone();
         potPosition.x += velocity.x * Setting.DELTA_TIME * speed;
         potPosition.y += velocity.y * Setting.DELTA_TIME * speed;
         return potPosition;
@@ -131,5 +135,13 @@ public class PositionComponent extends Component {
 
     public void setClimbing(boolean climbing) {
         isClimbing = climbing;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 }

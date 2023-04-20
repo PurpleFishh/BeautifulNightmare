@@ -51,24 +51,21 @@ public class Game implements Runnable
         InitGame();
         changeScene(0);
 
-        /*long oldTime = System.nanoTime();
-        long curentTime;
-
-        final int framesPerSecond   = 60;
-        final double timeFrame      = 1000000000 / framesPerSecond;
-
-        while (runState)
-        {
-            curentTime = System.nanoTime();
-
-            if((curentTime - oldTime) > timeFrame)
-            {
-                //currentScene.eventHandler();
-                currentScene.update();
-                currentScene.draw();
-                oldTime = curentTime;
-            }
-        }*/
+//        long oldTime = System.nanoTime();
+//        long curentTime;
+//
+//        while (runState)
+//        {
+//            curentTime = System.nanoTime();
+//
+//            if((curentTime - oldTime) > Setting.FRAME_TIME)
+//            {
+//                //currentScene.eventHandler();
+//                currentScene.update();
+//                currentScene.draw();
+//                oldTime = curentTime;
+//            }
+//        }
         long previousTime = System.nanoTime();
 
         double deltaU = 0;
@@ -79,7 +76,6 @@ public class Game implements Runnable
             deltaU += (currentTime - previousTime) / Setting.UPDATE_TIME;
             deltaF += (currentTime - previousTime) / Setting.FRAME_TIME;
             previousTime = currentTime;
-
             if (deltaU >= 1) {
                 currentScene.update();
                 deltaU--;

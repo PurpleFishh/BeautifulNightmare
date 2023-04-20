@@ -35,7 +35,7 @@ public class Renderer {
             width = -width;
         }
 
-        g.drawImage(image, (int) (positionOnCamera.x + x_offset), (int) (positionOnCamera.y + y_offset), (int) width, (int) height, null);
+        g.drawImage(image, (int)Math.floor(positionOnCamera.x + x_offset), (int) Math.floor(positionOnCamera.y + y_offset), (int) width, (int) height, null);
     }
 
     public static void drawRect(Vector2D position, double width, double height, Color color) {

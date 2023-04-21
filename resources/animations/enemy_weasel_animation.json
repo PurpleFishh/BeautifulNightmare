@@ -1,0 +1,55 @@
+{
+  "sprite_image": "enemy_weasel_spritesheet.png",
+  "frames_width": "100",
+  "frames_height": "88",
+  "rows": "6",
+  "animations": [
+    {
+      "name": "idle",
+      "columns": "5",
+      "x_start": "30",
+      "y_start": "31",
+      "frame_width": "63",
+      "frame_height": "57",
+      "speed" : "1",
+      "loop" : true,
+      "frame_time": [10, 1, 1, 1, 1, 1, 1, 1]
+    },
+    {
+      "name": "run",
+      "columns": "8",
+      "x_start": "18",
+      "y_start": "29",
+      "frame_width": "81",
+      "frame_height": "59",
+      "speed" : "2",
+      "loop" : true
+    },
+    {
+      "name": "none"
+    },
+    {
+      "name": "none"
+    },
+    {
+      "name": "damage",
+      "columns": "3",
+      "x_start": "28",
+      "y_start": "30",
+      "frame_width": "66",
+      "frame_height": "57",
+      "speed" : "1",
+      "loop" : false
+    },
+    {
+      "name": "dead",
+      "columns": "9",
+      "x_start": "15",
+      "y_start": "32",
+      "frame_width": "64",
+      "frame_height": "56",
+      "speed" : "1",
+      "loop" : false
+    }
+  ]
+}

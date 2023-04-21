@@ -1,14 +1,20 @@
 package casm.Scenes;
 
-import casm.ECS.Components.PositionComponent;
-import casm.ECS.Components.SpriteComponent;
 import casm.ECS.GameObject;
-import casm.ECS.Scene;
+import casm.Entities.Enemies.Enemy;
 import casm.Entities.Player;
+import casm.Entities.Enemies.WeaselFisherman;
 import casm.Map.Map;
 import casm.SpriteUtils.AssetsCollection;
+import casm.Utils.Vector2D;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class LeveleScene extends Scene {
+
+    private Player player;
+    private Set<Enemy> enemies = new HashSet<>();
 
     public LeveleScene() {
 
@@ -16,33 +22,53 @@ public class LeveleScene extends Scene {
 
     public enum layers {
         BACKGROUND,
-        PLAYER,
+        ENTITY,
         FOREGROUND
     }
 
     private void levelConstruct() {
         AssetsCollection.addSpritesheet("player_single_frame.png", 16, 22);
-
-        Player player = new Player();
-        addGameObjectToScene(player);
-        addGameOjectToLayer(player, layers.PLAYER.ordinal());
-
         Map.loadMap(this, "level1.tmj", "tiles2.png");
-        GameObject obj = new GameObject("my Obj2");
-        obj.addComponent(new PositionComponent(112, 67,
-                AssetsCollection.getSpritesheet("tiles2.png").getSprite(1).getWidth(),
-                AssetsCollection.getSpritesheet("tiles2.png").getSprite(1).getHeight()));
-        //obj.getComponent(PositionComponent.class).sign.y = 1;
-//        obj.getComponent(PositionComponent.class).sign.x = 1;
-        obj.addComponent(new SpriteComponent(AssetsCollection.getSpritesheet("tiles2.png").getSprite(1)));
-        obj.init();
-        addGameObjectToScene(obj);
-        addGameOjectToLayer(obj, layers.FOREGROUND.ordinal());
+
+        player = new Player(Map.getPlayerSpawnPosition());
+        addGameObjectToScene(player);
+        addGameObjectToLayer(player, layers.ENTITY.ordinal());
+        Map.getEnemiesSpawnPosition().forEach(position -> {
+            WeaselFisherman enemy = new WeaselFisherman(position);
+            addGameObjectToScene(enemy);
+            addGameObjectToLayer(enemy, layers.ENTITY.ordinal());
+            enemies.add(enemy);
+        });
+    }
+    public void removeEntity(GameObject entity)
+    {
+        if(player == entity)
+            player = null;
+        enemies.remove(entity);
+        removeGameObject(entity);
+    }
+    @Override
+    public void checkForDeaths(){
+        for(int i = 0; i < gameObjects.size(); ++i)
+            if(!gameObjects.get(i).isAlive()) {
+                if(player == gameObjects.get(i))
+                    player = null;
+                enemies.remove(gameObjects.get(i));
+            }
+        super.checkForDeaths();
     }
 
     @Override
     public void init() {
         levelConstruct();
         gameObjects.forEach(GameObject::init);
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Set<Enemy> getEnemies() {
+        return enemies;
     }
 }

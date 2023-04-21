@@ -1,21 +1,16 @@
 package casm.ECS.Components.Collision;
 
 import casm.ECS.Component;
-import casm.ECS.Components.AnimationStateMachine;
-import casm.ECS.Components.KeyState;
-import casm.ECS.Components.KeyboardControllerComponent;
-import casm.ECS.Components.PositionComponent;
+import casm.ECS.Components.*;
 import casm.ECS.GameObject;
 import casm.Game;
 import casm.Map.Map;
-import casm.Utils.Camera;
 import casm.Utils.Mediator;
 import casm.Utils.Vector2D;
 
-import javax.print.attribute.standard.Media;
-
 public class MovementMediator implements Mediator {
 
+    //TODO: Mediatorul SingleTone inca nu merge cu mi-as dori, mai exact el ar fi trebuit sa fie cate un mediator pentru fiecare GameObject, nu sa se intializeze cate unul pentru fiecare Componenta a unui obiect
     private static GameObject gameObject = null;
     private static MovementMediator instance = null;
 
@@ -44,7 +39,7 @@ public class MovementMediator implements Mediator {
     private void collisionManager(PositionComponent positionComponent) {
         GameObject gameObject = positionComponent.gameObject;
         DyncamicColliderComponent dynamicColl = gameObject.getComponent(DyncamicColliderComponent.class);
-        Rectangle playerCollider = positionComponent.gameObject.getComponent(ColliderComponent.class).getCollider(ColliderType.PLAYER);
+        Rectangle playerCollider = gameObject.getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY);
 
         Vector2D potentialPosition = positionComponent.getPotentialPosition();
         Vector2D potentialPositionColl = positionComponent.getPotentialPosition(playerCollider.getPosition());
@@ -94,17 +89,30 @@ public class MovementMediator implements Mediator {
 
     public void moveToTileEdgeX(PositionComponent positionComponent, Rectangle collider) {
         if (positionComponent.sign.x > 0) {
+            double oldPosition = positionComponent.position.x;
             positionComponent.position.x = ((int) (collider.getX() / Map.getTileWidth()) + 1) * Map.getTileWidth()
-                    - collider.getWidth() - collider.getOffset().x - 1;
+                    - collider.getWidth() - collider.getOffset().x - 1 + oldPosition;
+            positionComponent.position.x += oldPosition - positionComponent.position.x;
+            //TODO: Trebuie reparat BugFix-ul asta: il folosim deoare ce AiBehaviour vedem daca avem collziune pe o parte si daca da mergem in cealata parte, dar asa noi il lipim fix langa tile fara coliziune(ceea ce vrem pentru player)
+            if(positionComponent.gameObject.getName().equals("enemy")) {
+                positionComponent.position.x += 1;
+            }
         }
         if (positionComponent.sign.x < 0) {
+            double oldPosition = positionComponent.position.x;
             positionComponent.position.x = (int) (collider.getX() / Map.getTileWidth()) * Map.getTileWidth() - collider.getOffset().x;
+            positionComponent.position.x += oldPosition - positionComponent.position.x;
+            if(positionComponent.gameObject.getName().equals("enemy"))
+                positionComponent.position.x -= 1;
         }
     }
 
     public void moveToTileEdgeY(PositionComponent positionComponent, Rectangle collider) {
         if (positionComponent.sign.y < 0) {
-            positionComponent.position.y = (int) (collider.getY() / Map.getTileHeight()) * Map.getTileHeight() + 1 - collider.y;
+            positionComponent.position.y = (int) (collider.getY() / Map.getTileHeight()) * Map.getTileHeight() + 1 - collider.getOffset().y;
+
+            positionComponent.sign.y = 0;
+            positionComponent.velocity.y = 0;
         } else {
             positionComponent.position.y = ((int) ((collider.getY() + collider.getHeight()) / Map.getTileHeight()) + 1)
                     * Map.getTileHeight() - collider.getHeight() - 1 - collider.getOffset().y;
@@ -138,7 +146,6 @@ public class MovementMediator implements Mediator {
                         positionComponent.setClimbing(true);
                         gameObject.getComponent(AnimationStateMachine.class).trigger("startClimb");
                         component.resetWKeyState();
-                        //TODO: Fa mediatorul SingelTone per GameObject, sa nu fie un mediator nou in fiecare entitate}
                     }
                 }
         }
@@ -152,12 +159,16 @@ public class MovementMediator implements Mediator {
             }
         }
         if (component.getFKeyState() == KeyState.PRESSED) {
-            gameObject.getComponent(AnimationStateMachine.class).trigger("startAttack");
+            if (gameObject.hasComponent(AttackComponent.class)) {
+                gameObject.getComponent(AttackComponent.class).attack();
+            }
         }
-        if (component.getFKeyState() == KeyState.RELEASED) {
-            gameObject.getComponent(AnimationStateMachine.class).trigger("stopAttack");
-            component.resetFKeyState();
-        }
+//        if (component.getFKeyState() == KeyState.RELEASED) {
+//            if (gameObject.hasComponent(AttackComponent.class)) {
+//                gameObject.getComponent(AnimationStateMachine.class).trigger("stopAttack");
+//                component.resetFKeyState();
+//            }
+//        }
 
     }
 }

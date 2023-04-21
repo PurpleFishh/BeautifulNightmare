@@ -144,4 +144,17 @@ public class PositionComponent extends Component {
     public int getWidth() {
         return width;
     }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+    public void setDimensions(int width, int height)
+    {
+        this.width = width;
+        this.height = height;
+    }
 }

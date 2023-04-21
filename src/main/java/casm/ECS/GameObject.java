@@ -32,10 +32,10 @@ public class GameObject {
         }
         return null;
     }
-    public <T extends Component> boolean hasComponent(Class<T> componentClass)
-    {
+
+    public <T extends Component> boolean hasComponent(Class<T> componentClass) {
         for (Component c : components) {
-            if(componentClass.isAssignableFrom(c.getClass()))
+            if (componentClass.isAssignableFrom(c.getClass()))
                 return true;
         }
         return false;
@@ -50,6 +50,10 @@ public class GameObject {
         component.gameObject = this;
     }
 
+    public void kill() {
+        alive = false;
+    }
+
     public void destroy() {
         components.forEach(Component::destroy);
         components.clear();
@@ -61,23 +65,28 @@ public class GameObject {
     }
 
     public void update() {
+        // if (alive)
         components.forEach(Component::update);
     }
 
     public void draw() {
+        // if (alive)
         components.forEach(Component::draw);
     }
 
     public void eventHandler() {
+        //  if (alive)
         components.forEach(Component::eventHandler);
     }
 
     public String getName() {
         return name;
     }
+
     public int getId() {
         return id;
     }
+
     public boolean isAlive() {
         return alive;
     }

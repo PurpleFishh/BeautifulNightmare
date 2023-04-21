@@ -67,6 +67,7 @@ public class KeyboardControllerComponent extends Component implements KeyListene
             left = true;
             spriteComponent.setFlippedVertically(true);
             animationStateMachine.trigger("startRun");
+            gameObject.getComponent(AttackComponent.class).setFlipColliderHorizontally(true);
         }
         if (e.getKeyCode() == KeyEvent.VK_D) {
             if (!left) {
@@ -74,6 +75,8 @@ public class KeyboardControllerComponent extends Component implements KeyListene
             }
             right = true;
             animationStateMachine.trigger("startRun");
+            spriteComponent.setFlippedVertically(false);
+            gameObject.getComponent(AttackComponent.class).setFlipColliderHorizontally(false);
         }
     }
 
@@ -101,8 +104,6 @@ public class KeyboardControllerComponent extends Component implements KeyListene
             }
             positionComponent.sign.x = 0;
             left = false;
-            spriteComponent.setFlippedVertically(false);
-
         }
         if (e.getKeyCode() == KeyEvent.VK_D) {
             if (left) {

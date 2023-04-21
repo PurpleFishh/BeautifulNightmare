@@ -7,7 +7,7 @@ import java.util.Set;
 public enum ColliderType {
     MAP_TILE,
     LEADER,
-    PLAYER,
+    ENTITY,
     ATTACKING_BOX;
 
     public Set<ColliderType> getMapTypeColliders()
@@ -25,7 +25,7 @@ public enum ColliderType {
             case MAP_TILE -> {
                 return Color.RED;
             }
-            case PLAYER -> {
+            case ENTITY -> {
                 return Color.CYAN;
             }
             case LEADER -> {

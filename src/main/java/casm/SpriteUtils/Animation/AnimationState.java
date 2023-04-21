@@ -12,7 +12,7 @@ public class AnimationState {
     private List<Frame> animationFrames = new ArrayList<>();
     private double time = 0.0, speed = 1;
     private int currentSprite = 0;
-    private boolean doseLoop = false;
+    private boolean doseLoop = false, endedPlaying = false;
 
     public AnimationState(String name) {
         this.name = name;
@@ -56,14 +56,20 @@ public class AnimationState {
         this.doseLoop = doseLoop;
     }
 
-    public void update() {
+    public void update(AnimationEndNotify notifier) {
         if (currentSprite < animationFrames.size()) {
             time -= speed / Setting.DELTA_TIME;
             if (time <= 0) {
-                if (!(currentSprite == animationFrames.size() - 1 && !doseLoop))
+                if (currentSprite == animationFrames.size() - 1) {
+                    endedPlaying = true;
+                    if (notifier != null)
+                        notifier.animationEndNotify();
+                }
+                if (!(currentSprite == animationFrames.size() - 1 && !doseLoop)) {
                     currentSprite = (currentSprite + 1) % animationFrames.size();
+                    endedPlaying = false;
+                }
                 time = animationFrames.get(currentSprite).getFrameTime();
-
             }
         }
     }
@@ -76,6 +82,7 @@ public class AnimationState {
 
     public void resetToFirstFrame() {
         currentSprite = 0;
+        endedPlaying = false;
         time = animationFrames.get(currentSprite).getFrameTime();
     }
 
@@ -89,5 +96,9 @@ public class AnimationState {
 
     public boolean getDoseLoop() {
         return doseLoop;
+    }
+
+    public boolean isEndedPlaying() {
+        return endedPlaying;
     }
 }

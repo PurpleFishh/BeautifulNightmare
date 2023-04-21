@@ -8,43 +8,37 @@ import casm.ECS.GameObject;
 import casm.SpriteUtils.Animation.AnimationState;
 import casm.SpriteUtils.Animation.AnimationsExtract;
 import casm.Utils.Camera;
+import casm.Utils.Vector2D;
 
 import java.util.List;
 
-public class Player extends GameObject {
+public class Player extends Entity {
 
     private int playerWidth, playerHeight;
-    private final int playerSpawnPosX = 200, playerSpawnPosy = 30;
 
-    public Player() {
-        super("player");
-        playerInit();
-    }
-    public Player(String name) {
-        super(name);
+    public Player(Vector2D spawnPosition) {
+        super("player", spawnPosition, 0, 0, ColliderType.ENTITY, 0, 0);
         playerInit();
     }
 
-    private void playerInit()
-    {
+    public Player(String name, Vector2D spawnPosition) {
+        super(name, spawnPosition, 0, 0, ColliderType.ENTITY, 0, 0);
+        playerInit();
+
+    }
+    private void playerInit() {
         generateAnimationStateMachine();
-        //Sprite playerSprite = AssetsCollection.getSpritesheet("player_single_frame.png").getSprite(0);
-        //Sprite playerSprite = AnimationsExtract.animationsList.get(1).getSprite(3);
-        this.addComponent(new PositionComponent(playerSpawnPosX, playerSpawnPosy, playerWidth, playerHeight, 1, 1, true));
-        this.addComponent(new SpriteComponent());
+        updateDimensions(playerWidth, playerHeight);
         this.addComponent(new KeyboardControllerComponent());
-        this.addComponent(new ColliderComponent(ColliderType.PLAYER,playerWidth - 2, playerHeight - 2));
-        this.addComponent(new DyncamicColliderComponent());
-        this.addComponent(new AttackComponent());
         this.addComponent(Camera.getInstance());
+        this.setDamage(15);
 
         this.init();
     }
 
-    private void generateAnimationStateMachine()
-    {
+    private void generateAnimationStateMachine() {
         AnimationStateMachine stateMachine = new AnimationStateMachine();
-        List<AnimationState> animationStates =  AnimationsExtract.extractAnimations("player_animation.json");
+        List<AnimationState> animationStates = AnimationsExtract.extractAnimations("player_animation.json");
 
         animationStates.forEach(stateMachine::addState);
         stateMachine.setDefaultState(animationStates.get(0).getName());

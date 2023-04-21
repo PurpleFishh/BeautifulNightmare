@@ -48,9 +48,11 @@ public class ColliderComponent extends Component {
         //Renderer.drawRect(collider.getPosition(), collider.getWidth(), collider.getHeight(), type.getRenderColor());
     }
 
-    public void addCollider (ColliderType type, int xOffset, int yOffset, int rectWidth, int rectHeight)
+    public Rectangle addCollider (ColliderType type, int xOffset, int yOffset, int rectWidth, int rectHeight)
     {
-        componentColliders.put(type, new Rectangle(positionComponent.position.x, positionComponent.position.y, rectWidth, rectHeight, xOffset, yOffset));
+        Rectangle collider = new Rectangle(positionComponent.position.x, positionComponent.position.y, rectWidth, rectHeight, xOffset, yOffset);
+        componentColliders.put(type, collider);
+        return collider;
     }
 
     public int getRectWidth(ColliderType type) {
@@ -71,5 +73,13 @@ public class ColliderComponent extends Component {
     public Vector2D getPosition(ColliderType type)
     {
         return componentColliders.get(type).getPosition();
+    }
+    public void updateCollider(ColliderType type, Rectangle collider){
+        componentColliders.replace(type, collider);
+    }
+    public void updateColliderDimensions(ColliderType type, int width, int height)
+    {
+        componentColliders.get(type).width = width;
+        componentColliders.get(type).height = height;
     }
 }

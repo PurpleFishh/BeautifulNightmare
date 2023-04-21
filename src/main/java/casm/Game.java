@@ -1,11 +1,9 @@
 package casm;
 
-import casm.ECS.Scene;
+import casm.Scenes.Scene;
 import casm.GameWindow.GameWindow;
 import casm.Scenes.LeveleScene;
-import casm.Utils.Camera;
 import casm.Utils.Setting;
-import casm.Utils.Vector2D;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -83,6 +81,7 @@ public class Game implements Runnable
 
             if (deltaF >= 1) {
                 currentScene.draw();
+                currentScene.checkForDeaths();
                 deltaF--;
             }
         }

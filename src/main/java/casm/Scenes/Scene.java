@@ -1,7 +1,7 @@
-package casm.ECS;
+package casm.Scenes;
 
+import casm.ECS.GameObject;
 import casm.Game;
-import casm.Utils.Renderer;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -32,17 +32,24 @@ public abstract class Scene {
         }
     }
 
-    public void addGameOjectToLayer(GameObject obj, int layer) {
+    public void addGameObjectToLayer(GameObject obj, int layer) {
         if (!layeringObjects.containsKey(layer)) {
             layeringObjects.put(layer, new ArrayList<>());
-            if(layerCounter < layer)
+            if (layerCounter < layer)
                 layerCounter = layer;
         }
         layeringObjects.get(layer).add(obj);
     }
 
+    public void removeGameObject(GameObject gameObject) {
+        gameObjects.remove(gameObject);
+        layeringObjects.values().forEach(it -> it.remove(gameObject));
+    }
+
     public void update() {
-        gameObjects.forEach(GameObject::update);
+        gameObjects.forEach(it -> {
+            if (it.isAlive()) it.update();
+        });
     }
 
     public void draw() {
@@ -51,7 +58,7 @@ public abstract class Scene {
         g.clearRect(0, 0, Game.getWindow().GetWndWidth(), Game.getWindow().GetWndHeight());
 
         for (int i = 0; i <= layerCounter; i++) {
-            if(layeringObjects.containsKey(i))
+            if (layeringObjects.containsKey(i))
                 layeringObjects.get(i).forEach(GameObject::draw);
         }
 
@@ -68,7 +75,19 @@ public abstract class Scene {
     public List<GameObject> getGameObjects() {
         return gameObjects;
     }
+
     public HashMap<Integer, List<GameObject>> getLayeringObjects() {
         return layeringObjects;
+    }
+
+    public void checkForDeaths()
+    {
+        for(int i = 0; i < gameObjects.size(); ++i) {
+            GameObject gameObject = gameObjects.get(i);
+            if (!gameObject.isAlive()) {
+                removeGameObject(gameObject);
+                gameObject.destroy();
+            }
+        }
     }
 }

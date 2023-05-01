@@ -5,25 +5,25 @@
   "rows": "9",
   "animations": [
     {
-        "name": "idle",
-        "columns": "8",
-        "x_start": "48",
-        "y_start": "20",
-        "frame_width": "32",
-        "frame_height": "44",
-        "speed" : "1",
-        "loop" : true,
-        "frame_time": [30, 1, 1, 1, 1, 1, 1, 1]
+      "name": "idle",
+      "columns": "8",
+      "x_start": "48",
+      "y_start": "20",
+      "frame_width": "32",
+      "frame_height": "44",
+      "speed" : "1",
+      "loop" : true,
+      "frame_time": [30, 1, 1, 1, 1, 1, 1, 1]
     },
     {
-        "name": "run",
-        "columns": "8",
-        "x_start": "48",
-        "y_start": "14",
-        "frame_width": "34",
-        "frame_height": "50",
-        "speed" : "2",
-        "loop" : true
+      "name": "run",
+      "columns": "8",
+      "x_start": "48",
+      "y_start": "14",
+      "frame_width": "34",
+      "frame_height": "50",
+      "speed" : "2",
+      "loop" : true
     },
     {
       "name": "none"
@@ -45,7 +45,15 @@
       "name": "none"
     },
     {
-      "name": "none"
+      "name": "dead",
+      "columns": "5",
+      "x_start": "46",
+      "y_start": "20",
+      "frame_width": "50",
+      "frame_height": "44",
+      "speed" : "1",
+      "loop" : false,
+      "frame_time": [1, 1, 1, 1, 50]
     },
     {
       "name": "jump",

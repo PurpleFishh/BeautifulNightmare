@@ -5,25 +5,48 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class AssetsCollection {
+    private static AssetsCollection instance = null;
+    private AssetsCollection(){}
+    public static AssetsCollection getInstance()
+    {
+        if(instance == null)
+            instance = new AssetsCollection();
+        return instance;
+    }
 
-    public static HashMap<String, Assets> sprites = new HashMap<>();
-    public static Sprite blankSprite = new Sprite();
+    public HashMap<String, Assets> sprites = new HashMap<>();
+    public Sprite blankSprite = new Sprite();
 
-    public static void addSpritesheet(String sheetPath, int tileWidth, int tileHeight) {
+    public Assets addSpriteSheet(String sheetPath, int tileWidth, int tileHeight) {
         try {
             if (!sprites.containsKey(sheetPath)) {
-                BufferedImage sprite_sheet = ImageLoader.LoadImage(sheetPath);
-                sprites.put(sheetPath, new Assets(ImageLoader.LoadImage(sheetPath), tileWidth, tileHeight, sprite_sheet.getWidth(), sprite_sheet.getHeight()));
+                BufferedImage sprite_sheet = ImageLoader.getInstance().LoadImage(sheetPath);
+                Assets asset =  new Assets(ImageLoader.getInstance().LoadImage(sheetPath), tileWidth, tileHeight, sprite_sheet.getWidth(), sprite_sheet.getHeight());
+                sprites.put(sheetPath, asset);
+                return asset;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+    public Assets addSprite(String sheetPath) {
+        try {
+            if (!sprites.containsKey(sheetPath)) {
+                BufferedImage sprite_sheet = ImageLoader.getInstance().LoadImage(sheetPath);
+                Assets asset = new Assets(ImageLoader.getInstance().LoadImage(sheetPath), sprite_sheet.getWidth(), sprite_sheet.getHeight(), sprite_sheet.getWidth(), sprite_sheet.getHeight());
+                sprites.put(sheetPath, asset);
+                return asset;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static Assets getSpritesheet(String sheetPath)
+    public Assets getSpriteSheet(String sheetPath)
     {
-        if(!sprites.containsKey(sheetPath))
-            assert false : "There is no Spritesheet imported from: " + sheetPath;
+        assert sprites.containsKey(sheetPath) : "There is no Spritesheet imported from: " + sheetPath;
         return sprites.get(sheetPath);
     }
 }

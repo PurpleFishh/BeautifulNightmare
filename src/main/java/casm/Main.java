@@ -1,10 +1,12 @@
 package casm;
 
+import casm.Utils.Settings.Setting;
+
 public class Main
 {
     public static void main(String[] args)
     {
-        Game game = new Game("Beautiful Nightmare", 800, 600);
+        Game game = new Game("Beautiful Nightmare", Setting.SCREEN_WIDTH, Setting.SCREEN_HEIGHT);
         game.StartGame();
     }
 }

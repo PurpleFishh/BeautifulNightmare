@@ -1,0 +1,28 @@
+{
+  "sprite_image": "new_level_door.png",
+  "frames_width": "51",
+  "frames_height": "56",
+  "rows": "2",
+  "animations": [
+    {
+      "name": "closed",
+      "columns": "1",
+      "x_start": "0",
+      "y_start": "0",
+      "frame_width": "51",
+      "frame_height": "56",
+      "speed" : "1",
+      "loop" : false
+    },
+    {
+      "name": "opened",
+      "columns": "1",
+      "x_start": "0",
+      "y_start": "0",
+      "frame_width": "51",
+      "frame_height": "56",
+      "speed" : "1",
+      "loop" : false
+    }
+  ]
+}

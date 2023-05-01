@@ -3,7 +3,7 @@ package casm;
 import casm.Scenes.Scene;
 import casm.GameWindow.GameWindow;
 import casm.Scenes.LeveleScene;
-import casm.Utils.Setting;
+import casm.Utils.Settings.Setting;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -28,7 +28,7 @@ public class Game implements Runnable
 
     private void InitGame()
     {
-        wnd = new GameWindow("Beaitofil Nightmare", 800, 600);
+        //wnd = new GameWindow("Beaitofil Nightmare", 800, 600);
         wnd.BuildGameWindow();
 
         bs = Game.getWindow().GetCanvas().getBufferStrategy();

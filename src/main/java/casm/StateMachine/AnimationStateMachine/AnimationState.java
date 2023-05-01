@@ -1,12 +1,15 @@
-package casm.SpriteUtils.Animation;
+package casm.StateMachine.AnimationStateMachine;
 
+import casm.SpriteUtils.Animation.Frame;
 import casm.SpriteUtils.Sprite;
-import casm.Utils.Setting;
+import casm.StateMachine.AfterStateEndsNotify;
+import casm.StateMachine.State;
+import casm.Utils.Settings.Setting;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnimationState {
+public class AnimationState implements State {
 
     private String name;
     private List<Frame> animationFrames = new ArrayList<>();
@@ -56,14 +59,14 @@ public class AnimationState {
         this.doseLoop = doseLoop;
     }
 
-    public void update(AnimationEndNotify notifier) {
+    public void update(AfterStateEndsNotify notifier) {
         if (currentSprite < animationFrames.size()) {
             time -= speed / Setting.DELTA_TIME;
             if (time <= 0) {
                 if (currentSprite == animationFrames.size() - 1) {
                     endedPlaying = true;
                     if (notifier != null)
-                        notifier.animationEndNotify();
+                        notifier.afterStateEndsNotify();
                 }
                 if (!(currentSprite == animationFrames.size() - 1 && !doseLoop)) {
                     currentSprite = (currentSprite + 1) % animationFrames.size();

@@ -2,6 +2,7 @@ package casm.SpriteUtils.Animation;
 
 import casm.SpriteUtils.Assets;
 import casm.SpriteUtils.ImageLoader;
+import casm.StateMachine.AnimationStateMachine.AnimationState;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -16,8 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnimationsExtract {
+    private static AnimationsExtract instance = null;
 
-    public static List<AnimationState> extractAnimations(String path) {
+    private AnimationsExtract(){}
+    public static AnimationsExtract getInstance()
+    {
+        if(instance == null)
+            instance = new AnimationsExtract();
+        return instance;
+    }
+
+    public List<AnimationState> extractAnimations(String path) {
         List<AnimationState> animationsList = new ArrayList<>();
         try {
             JSONObject json = (JSONObject) new JSONParser().parse(new FileReader(Paths.get("").toAbsolutePath() + "\\resources\\animations\\" + path));
@@ -40,7 +50,7 @@ public class AnimationsExtract {
                     int frameHeight = Integer.parseInt(animationInfo.get("frame_height").toString());
                     double speed = Double.parseDouble(animationInfo.get("speed").toString());
 
-                    BufferedImage sprite_sheet = ImageLoader.LoadImage("animations\\" + sprite_name).getSubimage(0, i * framesHeight, cols * framesWidth, framesHeight);
+                    BufferedImage sprite_sheet = ImageLoader.getInstance().LoadImage("animations\\" + sprite_name).getSubimage(0, i * framesHeight, cols * framesWidth, framesHeight);
                     Assets animationAssets = new Assets(sprite_sheet, xStartPoint, yStartPoint, frameWidth, frameHeight, framesWidth, framesHeight, cols * framesWidth, framesHeight);
 
                     AnimationState state = new AnimationState(name);

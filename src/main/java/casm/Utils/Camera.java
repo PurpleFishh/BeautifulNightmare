@@ -2,8 +2,8 @@ package casm.Utils;
 
 import casm.ECS.Component;
 import casm.ECS.Components.PositionComponent;
-import casm.ECS.GameObject;
 import casm.Map.Map;
+import casm.Utils.Settings.Setting;
 
 public class Camera extends Component {
 

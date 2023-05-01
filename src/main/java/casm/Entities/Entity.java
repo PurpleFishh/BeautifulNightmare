@@ -1,6 +1,6 @@
 package casm.Entities;
 
-import casm.ECS.Components.AnimationStateMachine;
+import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.ECS.Components.AttackComponent;
 import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
@@ -8,16 +8,10 @@ import casm.ECS.Components.Collision.DyncamicColliderComponent;
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
 import casm.ECS.GameObject;
-import casm.Game;
-import casm.Scenes.LeveleScene;
-import casm.SpriteUtils.Animation.AnimationEndNotify;
-import casm.SpriteUtils.Animation.AnimationState;
-import casm.SpriteUtils.Animation.AnimationsExtract;
+import casm.StateMachine.AfterStateEndsNotify;
 import casm.Utils.Vector2D;
 
-import java.util.List;
-
-public class Entity extends GameObject implements AnimationEndNotify {
+public class Entity extends GameObject implements AfterStateEndsNotify {
 
     private int entityWidth, entityHeight;
     private Vector2D entitySpawnPosition;
@@ -64,6 +58,7 @@ public class Entity extends GameObject implements AnimationEndNotify {
 
     private void death()
     {
+        this.getComponent(PositionComponent.class).setCanMove(false);
         this.getComponent(AnimationStateMachine.class).trigger("Dead", this);
     }
 
@@ -96,8 +91,9 @@ public class Entity extends GameObject implements AnimationEndNotify {
     }
 
     @Override
-    public void animationEndNotify() {
+    public void afterStateEndsNotify() {
         //((LeveleScene)Game.getCurrentScene()).removeEntity(this);
+        //TODO: Fa cu un timer sa se despauneze in timp nu instant dupa animatie
         this.kill();
     }
 }

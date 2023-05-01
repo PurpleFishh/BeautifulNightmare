@@ -1,17 +1,9 @@
 package casm.Entities.Enemies;
 
 import casm.ECS.Components.*;
-import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
-import casm.ECS.Components.Collision.DyncamicColliderComponent;
-import casm.ECS.GameObject;
 import casm.Entities.Entity;
-import casm.SpriteUtils.Animation.AnimationState;
-import casm.SpriteUtils.Animation.AnimationsExtract;
-import casm.Utils.Camera;
 import casm.Utils.Vector2D;
-
-import java.util.List;
 
 public class Enemy  extends Entity {
 

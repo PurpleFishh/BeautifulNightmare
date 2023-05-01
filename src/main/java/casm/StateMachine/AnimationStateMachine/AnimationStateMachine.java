@@ -1,44 +1,23 @@
-package casm.ECS.Components;
+package casm.StateMachine.AnimationStateMachine;
 
 import casm.ECS.Component;
-import casm.SpriteUtils.Animation.AnimationEndNotify;
-import casm.SpriteUtils.Animation.AnimationState;
-import casm.SpriteUtils.Sprite;
+import casm.ECS.Components.SpriteComponent;
+import casm.StateMachine.AfterStateEndsNotify;
+import casm.StateMachine.StateMachine;
+import casm.StateMachine.StateTrigger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class AnimationStateMachine extends Component {
-
-    private class StateTrigger {
-        public String state, trigger;
-
-        public StateTrigger(String state, String trigger) {
-            this.state = state;
-            this.trigger = trigger;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            StateTrigger that = (StateTrigger) o;
-            return Objects.equals(state, that.state) && Objects.equals(trigger, that.trigger);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(state, trigger);
-        }
-    }
+public class AnimationStateMachine extends Component implements StateMachine {
 
     public HashMap<StateTrigger, String> stateTransfers = new HashMap<>();
     private List<AnimationState> states = new ArrayList<>();
     private AnimationState currentState = null, playAfter = null;
     private String defaultStateTitle = "";
-    private AnimationEndNotify afterAnimationNotifier = null;
+    private AfterStateEndsNotify afterAnimationNotifier = null;
 
     public void setDefaultState(String animationTitle) {
         for (AnimationState state : states) {
@@ -77,7 +56,7 @@ public class AnimationStateMachine extends Component {
         }
     }
 
-    public void trigger(String trigger, AnimationEndNotify notifier) {
+    public void trigger(String trigger, AfterStateEndsNotify notifier) {
         for (StateTrigger state : stateTransfers.keySet()) {
             if (state.state.equals(currentState.getName()) && state.trigger.equals(trigger)) {
                 if (stateTransfers.get(state) != null) {

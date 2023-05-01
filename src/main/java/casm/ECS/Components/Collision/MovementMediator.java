@@ -5,6 +5,9 @@ import casm.ECS.Components.*;
 import casm.ECS.GameObject;
 import casm.Game;
 import casm.Map.Map;
+import casm.Scenes.LeveleScene;
+import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
+import casm.Utils.FlipEntityMediator;
 import casm.Utils.Mediator;
 import casm.Utils.Vector2D;
 
@@ -52,22 +55,24 @@ public class MovementMediator implements Mediator {
 
         dynamicColl.checkCollision(xColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
                 Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
-        boolean collisionX = hasCollisionOfType(dynamicColl.getCollisionCorrnersFlags(), ColliderType.MAP_TILE);
+
+
+        boolean collisionX = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.MAP_TILE);
         if (collisionX) {
             moveToTileEdgeX(positionComponent, playerCollider);
         } else
             positionComponent.position.x = xPlayerPotential.x;
 
-        boolean xLeaderMiddle = dynamicColl.getCollisionCorrnersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCorrnersFlags()[5] == ColliderType.LEADER;
-        boolean xLeaderBottom = dynamicColl.getCollisionCorrnersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCorrnersFlags()[3] == ColliderType.LEADER;
+        boolean xLeaderMiddle = dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LEADER;
+        boolean xLeaderBottom = dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LEADER;
 
         /// Check for Y movement
         dynamicColl.checkCollision(yColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
                 Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
 
-        boolean collisionY = hasCollisionOfType(dynamicColl.getCollisionCorrnersFlags(), ColliderType.MAP_TILE);
-        boolean yLeaderMiddle = dynamicColl.getCollisionCorrnersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCorrnersFlags()[5] == ColliderType.LEADER;
-        boolean yLeaderBottom = dynamicColl.getCollisionCorrnersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCorrnersFlags()[3] == ColliderType.LEADER;
+        boolean collisionY = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.MAP_TILE);
+        boolean yLeaderMiddle = dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LEADER;
+        boolean yLeaderBottom = dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LEADER;
         if (collisionY)
             moveToTileEdgeY(positionComponent, playerCollider);
         else {
@@ -79,8 +84,18 @@ public class MovementMediator implements Mediator {
             } else if (!(positionComponent.isClimbing() && !(yLeaderMiddle || xLeaderMiddle) && (xLeaderBottom || yLeaderBottom)))
                 positionComponent.position.y = yPlayerPotential.y;
         }
-        dynamicColl.setOnGround(dynamicColl.getCollisionCorrnersFlags()[2] == ColliderType.MAP_TILE || dynamicColl.getCollisionCorrnersFlags()[3] == ColliderType.MAP_TILE);
+        dynamicColl.setOnGround(dynamicColl.getCollisionCornersFlags()[2] == ColliderType.MAP_TILE || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.MAP_TILE);
         dynamicColl.setOnLeader(yLeaderMiddle || xLeaderMiddle);
+
+        verifyIfGameWon(playerCollider);
+    }
+
+    private void verifyIfGameWon(Rectangle playerCollider) {
+        if (playerCollider.intersects(((LeveleScene) Game.getCurrentScene()).getWinDoor().
+                getComponent(ColliderComponent.class).getCollider(ColliderType.WIN_DOOR)))
+            if (((LeveleScene) Game.getCurrentScene()).isWon()) {
+                System.out.println("Ai castigat");
+            }
     }
 
     private void positionUpdate(PositionComponent positionComponent) {
@@ -94,7 +109,7 @@ public class MovementMediator implements Mediator {
                     - collider.getWidth() - collider.getOffset().x - 1 + oldPosition;
             positionComponent.position.x += oldPosition - positionComponent.position.x;
             //TODO: Trebuie reparat BugFix-ul asta: il folosim deoare ce AiBehaviour vedem daca avem collziune pe o parte si daca da mergem in cealata parte, dar asa noi il lipim fix langa tile fara coliziune(ceea ce vrem pentru player)
-            if(positionComponent.gameObject.getName().equals("enemy")) {
+            if (positionComponent.gameObject.getName().equals("enemy")) {
                 positionComponent.position.x += 1;
             }
         }
@@ -102,17 +117,20 @@ public class MovementMediator implements Mediator {
             double oldPosition = positionComponent.position.x;
             positionComponent.position.x = (int) (collider.getX() / Map.getTileWidth()) * Map.getTileWidth() - collider.getOffset().x;
             positionComponent.position.x += oldPosition - positionComponent.position.x;
-            if(positionComponent.gameObject.getName().equals("enemy"))
+            if (positionComponent.gameObject.getName().equals("enemy"))
                 positionComponent.position.x -= 1;
         }
     }
 
     public void moveToTileEdgeY(PositionComponent positionComponent, Rectangle collider) {
-        if (positionComponent.sign.y < 0) {
-            positionComponent.position.y = (int) (collider.getY() / Map.getTileHeight()) * Map.getTileHeight() + 1 - collider.getOffset().y;
+        if (positionComponent.velocity.y < 0) {
+            if (!positionComponent.isClimbing()) {
+                positionComponent.position.y = (int) (collider.getY() / Map.getTileHeight()) * Map.getTileHeight() + 1 - collider.getOffset().y;
 
-            positionComponent.sign.y = 0;
-            positionComponent.velocity.y = 0;
+                positionComponent.sign.y = 0;
+                positionComponent.velocity.y = 0;
+                positionComponent.setJumping(false);
+            }
         } else {
             positionComponent.position.y = ((int) ((collider.getY() + collider.getHeight()) / Map.getTileHeight()) + 1)
                     * Map.getTileHeight() - collider.getHeight() - 1 - collider.getOffset().y;
@@ -149,6 +167,24 @@ public class MovementMediator implements Mediator {
                     }
                 }
         }
+        if (component.getAKeyState() == KeyState.PRESSED) {
+            if (!component.right)
+                positionComponent.sign.x = -1;
+            component.left = true;
+            //if(gameObject.getComponent(DyncamicColliderComponent.class).isOnGround())
+            gameObject.getComponent(AnimationStateMachine.class).trigger("startRun");
+            FlipEntityMediator.getInstance().flipVertically(gameObject, true);
+        }
+        if (component.getDKeyState() == KeyState.PRESSED) {
+            if (!component.left) {
+                positionComponent.sign.x = 1;
+            }
+            component.right = true;
+            //if(gameObject.getComponent(DyncamicColliderComponent.class).isOnGround())
+            gameObject.getComponent(AnimationStateMachine.class).trigger("startRun");
+            FlipEntityMediator.getInstance().flipVertically(gameObject, false);
+        }
+
         if (component.getWKeyState() == KeyState.RELEASED) {
             if (positionComponent.isClimbing()) {
                 positionComponent.sign.y = 0;
@@ -157,6 +193,32 @@ public class MovementMediator implements Mediator {
                 gameObject.getComponent(AnimationStateMachine.class).trigger("stopClimb");
                 component.resetWKeyState();
             }
+        }
+        if (component.getAKeyState() == KeyState.RELEASED) {
+            if (component.right) {
+                if (!(positionComponent.velocity.x > 0)) {
+                    positionComponent.velocity.x *= -1;
+                }
+            } else {
+                positionComponent.velocity.x = 0;
+                gameObject.getComponent(AnimationStateMachine.class).trigger("stopRun");
+            }
+            positionComponent.sign.x = 0;
+            component.left = false;
+            component.resetAKeyState();
+        }
+        if (component.getDKeyState() == KeyState.RELEASED) {
+            if (component.left) {
+                if (!(positionComponent.velocity.x < 0)) {
+                    positionComponent.velocity.x *= -1;
+                }
+            } else {
+                positionComponent.velocity.x = 0;
+                gameObject.getComponent(AnimationStateMachine.class).trigger("stopRun");
+            }
+            positionComponent.sign.x = 0;
+            component.right = false;
+            component.resetDKeyState();
         }
         if (component.getFKeyState() == KeyState.PRESSED) {
             if (gameObject.hasComponent(AttackComponent.class)) {

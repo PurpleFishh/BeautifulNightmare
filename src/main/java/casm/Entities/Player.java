@@ -1,13 +1,13 @@
 package casm.Entities;
 
 import casm.ECS.Components.*;
-import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
-import casm.ECS.Components.Collision.DyncamicColliderComponent;
-import casm.ECS.GameObject;
-import casm.SpriteUtils.Animation.AnimationState;
+import casm.StateMachine.AnimationStateMachine.AnimationState;
 import casm.SpriteUtils.Animation.AnimationsExtract;
+import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Camera;
+import casm.Utils.Settings.EntitiesSettings;
+import casm.Utils.Settings.Setting;
 import casm.Utils.Vector2D;
 
 import java.util.List;
@@ -29,6 +29,8 @@ public class Player extends Entity {
     private void playerInit() {
         generateAnimationStateMachine();
         updateDimensions(playerWidth, playerHeight);
+        this.getComponent(PositionComponent.class).setMaxSpeed(EntitiesSettings.PlayerInfo.PLAYER_MAX_SPEED);
+        this.getComponent(AttackComponent.class).setAttackDelay(4L);
         this.addComponent(new KeyboardControllerComponent());
         this.addComponent(Camera.getInstance());
         this.setDamage(15);
@@ -38,7 +40,7 @@ public class Player extends Entity {
 
     private void generateAnimationStateMachine() {
         AnimationStateMachine stateMachine = new AnimationStateMachine();
-        List<AnimationState> animationStates = AnimationsExtract.extractAnimations("player_animation.json");
+        List<AnimationState> animationStates = AnimationsExtract.getInstance().extractAnimations("player_animation.json");
 
         animationStates.forEach(stateMachine::addState);
         stateMachine.setDefaultState(animationStates.get(0).getName());
@@ -59,6 +61,9 @@ public class Player extends Entity {
         stateMachine.addState("run", "attack", "startAttack");
         stateMachine.addState("idle", "attack", "startAttack");
         stateMachine.addState("attack", "idle", "stopAttack");
+
+        stateMachine.addState("idle", "dead", "Dead");
+        stateMachine.addState("run", "dead", "Dead");
         this.addComponent(stateMachine);
     }
 

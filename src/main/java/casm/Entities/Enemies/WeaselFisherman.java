@@ -1,9 +1,12 @@
 package casm.Entities.Enemies;
 
-import casm.ECS.Components.AnimationStateMachine;
-import casm.Entities.Enemies.Enemy;
-import casm.SpriteUtils.Animation.AnimationState;
+import casm.ECS.Components.AttackComponent;
+import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
+import casm.ECS.Components.PositionComponent;
+import casm.StateMachine.AnimationStateMachine.AnimationState;
 import casm.SpriteUtils.Animation.AnimationsExtract;
+import casm.Utils.Settings.EntitiesSettings;
+import casm.Utils.Settings.Setting;
 import casm.Utils.Vector2D;
 
 import java.util.List;
@@ -24,6 +27,8 @@ public class WeaselFisherman extends Enemy {
     public void initiate()
     {
         generateAnimationStateMachine();
+        this.getComponent(PositionComponent.class).setMaxSpeed(EntitiesSettings.WeaselInfo.WEASEL_MAX_SPEED);
+        this.getComponent(AttackComponent.class).setAttackDelay(8L);
         updateDimensions(enemyWidth, enemyHeight);
         this.setDamage(10);
         this.setLife(55);
@@ -32,7 +37,7 @@ public class WeaselFisherman extends Enemy {
     }
     private void generateAnimationStateMachine() {
         AnimationStateMachine stateMachine = new AnimationStateMachine();
-        List<AnimationState> animationStates = AnimationsExtract.extractAnimations("enemy_weasel_animation.json");
+        List<AnimationState> animationStates = AnimationsExtract.getInstance().extractAnimations("enemy_weasel_animation.json");
 
         animationStates.forEach(stateMachine::addState);
         stateMachine.setDefaultState(animationStates.get(0).getName());
@@ -41,11 +46,19 @@ public class WeaselFisherman extends Enemy {
 
         stateMachine.addState("idle", "run", "startRun");
         stateMachine.addState("run", "idle", "stopRun");
+
         stateMachine.addState("idle", "damage", "Damage");
         stateMachine.addState("run", "damage", "Damage");
         stateMachine.addState("damage", "idle", "endDamage");
+
+        stateMachine.addState("idle", "attack", "startAttack");
+        stateMachine.addState("run", "attack", "startAttack");
+        stateMachine.addState("attack", "idle", "stopAttack");
+
         stateMachine.addState("idle", "dead", "Dead");
         stateMachine.addState("run", "dead", "Dead");
+        stateMachine.addState("attack", "dead", "Dead");
+        stateMachine.addState("damage", "dead", "Dead");
 
 
         this.addComponent(stateMachine);

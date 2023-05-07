@@ -3,12 +3,15 @@ package casm.ECS.Components.Collision;
 import casm.ECS.Component;
 import casm.ECS.Components.*;
 import casm.ECS.GameObject;
+import casm.Entities.Entity;
 import casm.Game;
 import casm.Map.Map;
 import casm.Scenes.LeveleScene;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.FlipEntityMediator;
 import casm.Utils.Mediator;
+import casm.Utils.Settings.EntitiesSettings;
+import casm.Utils.Settings.Setting;
 import casm.Utils.Vector2D;
 
 public class MovementMediator implements Mediator {
@@ -16,6 +19,7 @@ public class MovementMediator implements Mediator {
     //TODO: Mediatorul SingleTone inca nu merge cu mi-as dori, mai exact el ar fi trebuit sa fie cate un mediator pentru fiecare GameObject, nu sa se intializeze cate unul pentru fiecare Componenta a unui obiect
     private static GameObject gameObject = null;
     private static MovementMediator instance = null;
+    private double lavaDamageDelay = 0;
 
     public static MovementMediator getInstance(GameObject gameObject) {
         if (MovementMediator.gameObject == null)
@@ -63,16 +67,24 @@ public class MovementMediator implements Mediator {
         } else
             positionComponent.position.x = xPlayerPotential.x;
 
-        boolean xLeaderMiddle = dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LEADER;
-        boolean xLeaderBottom = dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LEADER;
+        boolean xLeaderMiddle = dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LEADER ||
+                dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LAVA || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LAVA;
+        boolean xLeaderBottom = dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LEADER ||
+                dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LAVA || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LAVA;
+        boolean xLavaCollision = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
 
         /// Check for Y movement
         dynamicColl.checkCollision(yColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
                 Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
 
         boolean collisionY = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.MAP_TILE);
-        boolean yLeaderMiddle = dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LEADER;
-        boolean yLeaderBottom = dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LEADER;
+
+        boolean yLeaderMiddle = dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LEADER ||
+                dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LAVA || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LAVA;
+        boolean yLeaderBottom = dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LEADER ||
+                dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LAVA || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LAVA;
+        boolean yLavaCollision = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
+
         if (collisionY)
             moveToTileEdgeY(positionComponent, playerCollider);
         else {
@@ -85,8 +97,16 @@ public class MovementMediator implements Mediator {
                 positionComponent.position.y = yPlayerPotential.y;
         }
         dynamicColl.setOnGround(dynamicColl.getCollisionCornersFlags()[2] == ColliderType.MAP_TILE || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.MAP_TILE);
+
         dynamicColl.setOnLeader(yLeaderMiddle || xLeaderMiddle);
 
+        //TODO: Fa interactiunea cu lava mai smechera
+        if(lavaDamageDelay <= 0) {
+            if (xLavaCollision || yLavaCollision)
+                ((Entity) gameObject).damage(EntitiesSettings.LAVA_DAMAGE);
+            lavaDamageDelay = 1;
+        }else
+            lavaDamageDelay -= 1 / Setting.DELTA_TIME;
         verifyIfGameWon(playerCollider);
     }
 

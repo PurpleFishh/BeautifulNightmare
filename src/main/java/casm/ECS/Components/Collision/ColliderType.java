@@ -13,9 +13,13 @@ public enum ColliderType {
      */
     MAP_TILE,
     /**
-     * Used for leaders for the ability to climb on them
+     * Used for leaders for the ability to climb on them(same mechanism for water)
      */
     LEADER,
+    /**
+     * Used for lava, it will give the entity damage, and it can swim in it like in water
+     */
+    LAVA,
     /**
      * Used for entities that will be used for managing collisions
      */
@@ -69,6 +73,9 @@ public enum ColliderType {
             }
             case WIN_DOOR -> {
                 return Color.MAGENTA;
+            }
+            case LAVA -> {
+                return Color.YELLOW;
             }
             default -> {
                 return Color.BLACK;

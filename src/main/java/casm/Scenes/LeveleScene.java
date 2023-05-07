@@ -41,18 +41,11 @@ public class LeveleScene extends Scene {
 
         player = (Player) createEntity(EntityType.PLAYER, Map.getPlayerSpawnPosition());
 
-//        Map.getEnemiesSpawnPosition().forEach(position -> {
-//            WeaselFisherman enemy = (WeaselFisherman) createEntity(EntityType.WEASEL_FISHERMAN, position);
-//            enemies.add(enemy);
-//        });
-        AtomicBoolean first = new AtomicBoolean(false);
         Map.getEnemiesSpawnPosition().forEach(position -> {
-            if (!first.get()) {
-                WeaselFisherman enemy = (WeaselFisherman) createEntity(EntityType.WEASEL_FISHERMAN, position);
-                enemies.add(enemy);
-                first.set(true);
-            }
+            WeaselFisherman enemy = (WeaselFisherman) createEntity(EntityType.WEASEL_FISHERMAN, position);
+            enemies.add(enemy);
         });
+
         SpawnDoor spawnDoor = new SpawnDoor("Spawn Door", Map.getSpawnDoor());
         addGameObjectToScene(spawnDoor);
         addGameObjectToLayer(spawnDoor, layers.BACKGROUND.ordinal());

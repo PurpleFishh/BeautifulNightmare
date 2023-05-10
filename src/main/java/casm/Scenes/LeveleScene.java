@@ -1,21 +1,28 @@
 package casm.Scenes;
 
+import casm.ECS.Components.KeyboardListener;
+import casm.ECS.Components.MouseListener;
 import casm.ECS.GameObject;
-import casm.Entities.*;
-import casm.Entities.Enemies.Enemy;
-import casm.Entities.Enemies.WeaselFisherman;
+import casm.Objects.Entities.Enemies.Enemy;
+import casm.Objects.Entities.Enemies.WeaselFisherman;
 import casm.Factory.EntityFactory.EntityFactory;
 import casm.Factory.EntityFactory.EntityType;
 import casm.Factory.Factory;
 import casm.Factory.FactoryTypes;
 import casm.Map.Map;
+import casm.Objects.Entities.Entity;
+import casm.Objects.Entities.Player;
+import casm.Objects.Entities.SpawnDoor;
+import casm.Objects.Entities.WinDoor;
 import casm.SpriteUtils.AssetsCollection;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Vector2D;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LeveleScene extends Scene {
 
@@ -36,15 +43,24 @@ public class LeveleScene extends Scene {
     }
 
     private void levelConstruct() {
+
+        long time = System.nanoTime();
         AssetsCollection.getInstance().addSpriteSheet("player_single_frame.png", 16, 22);
         Map.loadMap(this, "level1.tmj", "tiles2.png");
 
-        player = (Player) createEntity(EntityType.PLAYER, Map.getPlayerSpawnPosition());
 
+        player = (Player) createEntity(EntityType.PLAYER, Map.getPlayerSpawnPosition());
         Map.getEnemiesSpawnPosition().forEach(position -> {
+            // Runnable runnableEnemy = () -> {
             WeaselFisherman enemy = (WeaselFisherman) createEntity(EntityType.WEASEL_FISHERMAN, position);
+            //    synchronized (this) {
             enemies.add(enemy);
+            //         System.out.println("Gata inammic");
+            //     }
+            //  };
+            //  new Thread(runnableEnemy).start();
         });
+
 
         SpawnDoor spawnDoor = new SpawnDoor("Spawn Door", Map.getSpawnDoor());
         addGameObjectToScene(spawnDoor);
@@ -52,10 +68,12 @@ public class LeveleScene extends Scene {
         winDoor = new WinDoor("Win Door", Map.getWinDoor());
         addGameObjectToScene(winDoor);
         addGameObjectToLayer(winDoor, layers.BACKGROUND.ordinal());
+
+        System.out.println(System.nanoTime() - time);
     }
 
     private Entity createEntity(FactoryTypes type, Vector2D spawnPosition) {
-        Entity entity = factory.create(type, spawnPosition);
+        Entity entity = (Entity) factory.create(type, spawnPosition);
         addGameObjectToScene(entity);
         addGameObjectToLayer(entity, layers.ENTITY.ordinal());
         return entity;
@@ -64,7 +82,8 @@ public class LeveleScene extends Scene {
     public void removeEntity(GameObject entity) {
         if (player == entity)
             player = null;
-        enemies.remove(entity);
+        else
+            enemies.remove((Enemy) entity);
         removeGameObject(entity);
     }
 
@@ -74,7 +93,8 @@ public class LeveleScene extends Scene {
             if (!gameObjects.get(i).isAlive()) {
                 if (player == gameObjects.get(i))
                     player = null;
-                enemies.remove(gameObjects.get(i));
+                else
+                    enemies.remove((Enemy) gameObjects.get(i));
             }
         super.checkForDeaths();
         checkForLevelDone();
@@ -84,16 +104,19 @@ public class LeveleScene extends Scene {
     public void init() {
         levelConstruct();
         gameObjects.forEach(GameObject::init);
+        isRunning = true;
     }
 
     private void checkForLevelDone() {
-        if (enemies.isEmpty()) {
-            if (!won) {
-                System.out.println("WIN!");
-                won = true;
-                winDoor.getComponent(AnimationStateMachine.class).trigger("open");
+        if (isRunning)
+            if (enemies.isEmpty()) {
+                if (!won) {
+                    System.out.println("WIN!");
+                    won = true;
+                    if (winDoor != null)
+                        winDoor.getComponent(AnimationStateMachine.class).trigger("open");
+                }
             }
-        }
     }
 
     public Player getPlayer() {
@@ -110,5 +133,15 @@ public class LeveleScene extends Scene {
 
     public WinDoor getWinDoor() {
         return winDoor;
+    }
+
+    @Override
+    public void destroy() {
+        Thread th = new Thread(() -> {
+            KeyboardListener.getInstance().unsubscribeAll();
+            MouseListener.getInstance().unsubscribeAll();
+            super.destroy();
+        });
+        th.start();
     }
 }

@@ -11,16 +11,16 @@ import java.util.List;
 
 public abstract class Scene {
 
-    private boolean isRunning = false;
+    protected boolean isRunning = false;
     protected List<GameObject> gameObjects = new ArrayList<>();
     protected HashMap<Integer, List<GameObject>> layeringObjects = new HashMap<>();
     public int layerCounter = 0;
 
     public abstract void init();
 
-    public void start() {
-        gameObjects.forEach(GameObject::update);
-        isRunning = true;
+    public void destroy() {
+        gameObjects.forEach(GameObject::destroy);
+        isRunning = false;
     }
 
     public void addGameObjectToScene(GameObject obj) {
@@ -46,8 +46,9 @@ public abstract class Scene {
         layeringObjects.values().forEach(it -> it.remove(gameObject));
     }
 
-    public void update() {
-        gameObjects.forEach(it -> {
+    public synchronized void update() {
+        List<GameObject> copy = new ArrayList<>(gameObjects);
+        copy.forEach(it -> {
             if (it.isAlive()) it.update();
         });
     }
@@ -89,5 +90,9 @@ public abstract class Scene {
                 gameObject.destroy();
             }
         }
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 }

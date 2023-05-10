@@ -3,7 +3,7 @@ package casm.ECS.Components.Collision;
 import casm.ECS.Component;
 import casm.ECS.Components.*;
 import casm.ECS.GameObject;
-import casm.Entities.Entity;
+import casm.Objects.Entities.Entity;
 import casm.Game;
 import casm.Map.Map;
 import casm.Scenes.LeveleScene;
@@ -67,11 +67,11 @@ public class MovementMediator implements Mediator {
         } else
             positionComponent.position.x = xPlayerPotential.x;
 
-        boolean xLeaderMiddle = dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LEADER ||
-                dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LAVA || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LAVA;
-        boolean xLeaderBottom = dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LEADER ||
-                dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LAVA || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LAVA;
-        boolean xLavaCollision = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
+        boolean xLeaderMiddle = hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LEADER) ||
+                hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
+        boolean xLeaderBottom = hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.LEADER) ||
+                hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
+        boolean xLavaCollision = hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
 
         /// Check for Y movement
         dynamicColl.checkCollision(yColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
@@ -79,11 +79,11 @@ public class MovementMediator implements Mediator {
 
         boolean collisionY = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.MAP_TILE);
 
-        boolean yLeaderMiddle = dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LEADER ||
-                dynamicColl.getCollisionCornersFlags()[4] == ColliderType.LAVA || dynamicColl.getCollisionCornersFlags()[5] == ColliderType.LAVA;
-        boolean yLeaderBottom = dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LEADER || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LEADER ||
-                dynamicColl.getCollisionCornersFlags()[2] == ColliderType.LAVA || dynamicColl.getCollisionCornersFlags()[3] == ColliderType.LAVA;
-        boolean yLavaCollision = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
+        boolean yLeaderMiddle = hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LEADER) ||
+                hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
+        boolean yLeaderBottom = hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.LEADER) ||
+                hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
+        boolean yLavaCollision =  hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
 
         if (collisionY)
             moveToTileEdgeY(positionComponent, playerCollider);
@@ -101,11 +101,11 @@ public class MovementMediator implements Mediator {
         dynamicColl.setOnLeader(yLeaderMiddle || xLeaderMiddle);
 
         //TODO: Fa interactiunea cu lava mai smechera
-        if(lavaDamageDelay <= 0) {
+        if (lavaDamageDelay <= 0) {
             if (xLavaCollision || yLavaCollision)
                 ((Entity) gameObject).damage(EntitiesSettings.LAVA_DAMAGE);
             lavaDamageDelay = 1;
-        }else
+        } else
             lavaDamageDelay -= 1 / Setting.DELTA_TIME;
         verifyIfGameWon(playerCollider);
     }
@@ -162,6 +162,14 @@ public class MovementMediator implements Mediator {
             if (flagType == type)
                 return true;
         return false;
+    }
+
+    private boolean hasCollisionOfTypeOnBottom(ColliderType[] collisionCornersFlags, ColliderType type) {
+        return collisionCornersFlags[2] == type || collisionCornersFlags[3] == type;
+    }
+
+    private boolean hasCollisionOfTypeOnMiddle(ColliderType[] collisionCornersFlags, ColliderType type) {
+        return collisionCornersFlags[4] == type || collisionCornersFlags[5] == type;
     }
 
     private void keysMovementManager(KeyboardControllerComponent component) {

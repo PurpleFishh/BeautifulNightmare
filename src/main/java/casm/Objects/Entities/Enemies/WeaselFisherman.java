@@ -1,4 +1,4 @@
-package casm.Entities.Enemies;
+package casm.Objects.Entities.Enemies;
 
 import casm.ECS.Components.AttackComponent;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
@@ -6,7 +6,6 @@ import casm.ECS.Components.PositionComponent;
 import casm.StateMachine.AnimationStateMachine.AnimationState;
 import casm.SpriteUtils.Animation.AnimationsExtract;
 import casm.Utils.Settings.EntitiesSettings;
-import casm.Utils.Settings.Setting;
 import casm.Utils.Vector2D;
 
 import java.util.List;
@@ -33,7 +32,7 @@ public class WeaselFisherman extends Enemy {
         this.setDamage(10);
         this.setLife(55);
 
-        this.init();
+       // this.init();
     }
     private void generateAnimationStateMachine() {
         AnimationStateMachine stateMachine = new AnimationStateMachine();
@@ -53,7 +52,8 @@ public class WeaselFisherman extends Enemy {
 
         stateMachine.addState("idle", "attack", "startAttack");
         stateMachine.addState("run", "attack", "startAttack");
-        stateMachine.addState("attack", "idle", "stopAttack");
+        stateMachine.addState("attack", "idle", "stopAttack_idle");
+        stateMachine.addState("attack", "idle", "stopAttack_run");
 
         stateMachine.addState("idle", "dead", "Dead");
         stateMachine.addState("run", "dead", "Dead");

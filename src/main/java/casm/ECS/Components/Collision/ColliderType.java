@@ -35,7 +35,12 @@ public enum ColliderType {
     /**
      * For the door that will open when the tasks are done and you can go to the next level
      */
-    WIN_DOOR;
+    WIN_DOOR,
+
+    /**
+     * Used for buttons form the menu
+     */
+    BUTTON;
 
     /**
      * Get a set of collider types that are for map tiles
@@ -56,7 +61,7 @@ public enum ColliderType {
      */
     public Color getRenderColor() {
         switch (this) {
-            case MAP_TILE -> {
+            case MAP_TILE, BUTTON -> {
                 return Color.RED;
             }
             case ENTITY -> {

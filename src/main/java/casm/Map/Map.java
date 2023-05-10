@@ -3,7 +3,7 @@ package casm.Map;
 import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
 import casm.Scenes.Scene;
-import casm.Entities.Tile;
+import casm.Objects.Entities.Tile;
 import casm.SpriteUtils.Assets;
 import casm.SpriteUtils.AssetsCollection;
 import casm.Utils.Vector2D;

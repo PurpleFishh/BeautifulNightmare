@@ -17,6 +17,11 @@ public class Sprite {
         width = 0;
         height = 0;
     }
+    public Sprite(BufferedImage texture) {
+        this.texture = texture;
+        this.width = texture.getWidth();
+        this.height = texture.getHeight();
+    }
     public Sprite(BufferedImage texture, int width, int height) {
         this.texture = texture;
         this.width = width;

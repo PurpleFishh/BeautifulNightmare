@@ -1,6 +1,7 @@
 package casm.SpriteUtils.Animation;
 
 import casm.SpriteUtils.Assets;
+import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.ImageLoader;
 import casm.StateMachine.AnimationStateMachine.AnimationState;
 import org.json.simple.JSONArray;
@@ -19,10 +20,11 @@ import java.util.List;
 public class AnimationsExtract {
     private static AnimationsExtract instance = null;
 
-    private AnimationsExtract(){}
-    public static AnimationsExtract getInstance()
-    {
-        if(instance == null)
+    private AnimationsExtract() {
+    }
+
+    public static AnimationsExtract getInstance() {
+        if (instance == null)
             instance = new AnimationsExtract();
         return instance;
     }
@@ -30,6 +32,8 @@ public class AnimationsExtract {
     public List<AnimationState> extractAnimations(String path) {
         List<AnimationState> animationsList = new ArrayList<>();
         try {
+
+
             JSONObject json = (JSONObject) new JSONParser().parse(new FileReader(Paths.get("").toAbsolutePath() + "\\resources\\animations\\" + path));
 
 
@@ -39,10 +43,11 @@ public class AnimationsExtract {
             int rows = Integer.parseInt(json.get("rows").toString());
 
             JSONArray animations = (JSONArray) json.get("animations");
+
             for (int i = 0; i < rows; ++i) {
                 JSONObject animationInfo = (JSONObject) animations.get(i);
                 String name = animationInfo.get("name").toString();
-                if(!name.equals("none")) {
+                if (!name.equals("none")) {
                     int cols = Integer.parseInt(animationInfo.get("columns").toString());
                     int xStartPoint = Integer.parseInt(animationInfo.get("x_start").toString());
                     int yStartPoint = Integer.parseInt(animationInfo.get("y_start").toString());
@@ -50,8 +55,10 @@ public class AnimationsExtract {
                     int frameHeight = Integer.parseInt(animationInfo.get("frame_height").toString());
                     double speed = Double.parseDouble(animationInfo.get("speed").toString());
 
-                    BufferedImage sprite_sheet = ImageLoader.getInstance().LoadImage("animations\\" + sprite_name).getSubimage(0, i * framesHeight, cols * framesWidth, framesHeight);
-                    Assets animationAssets = new Assets(sprite_sheet, xStartPoint, yStartPoint, frameWidth, frameHeight, framesWidth, framesHeight, cols * framesWidth, framesHeight);
+                    BufferedImage sprite_sheet = AssetsCollection.getInstance().addSprite("animations\\" + sprite_name)
+                            .getTexture().getSubimage(0, i * framesHeight, cols * framesWidth, framesHeight);
+                    Assets animationAssets = new Assets(sprite_sheet, xStartPoint, yStartPoint, frameWidth, frameHeight,
+                            framesWidth, framesHeight, cols * framesWidth, framesHeight);
 
                     AnimationState state = new AnimationState(name);
                     if (animationInfo.containsKey("frame_time")) {
@@ -65,6 +72,7 @@ public class AnimationsExtract {
                     animationsList.add(state);
                 }
             }
+
             return animationsList;
         } catch (FileNotFoundException e) {
             e.printStackTrace();

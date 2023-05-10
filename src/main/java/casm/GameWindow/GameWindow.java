@@ -1,5 +1,8 @@
 package casm.GameWindow;
 
+import casm.ECS.Components.KeyboardListener;
+import casm.Game;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -91,6 +94,10 @@ public class GameWindow
             /// fereastra este redimensionata
         canvas.setMaximumSize(new Dimension(wndWidth, wndHeight));
         canvas.setMinimumSize(new Dimension(wndWidth, wndHeight));
+        wndFrame.addKeyListener(KeyboardListener.getInstance());
+        canvas.addKeyListener(KeyboardListener.getInstance());
+        wndFrame.setFocusable(true);
+        wndFrame.requestFocusInWindow();
             /// Avand in vedere ca obiectul de tip canvas, proaspat creat, nu este automat
             /// adaugat in fereastra trebuie apelata metoda add a obiectul wndFrame
         wndFrame.add(canvas);
@@ -123,5 +130,9 @@ public class GameWindow
     }
     public JFrame getWndFrame() {
         return wndFrame;
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
     }
 }

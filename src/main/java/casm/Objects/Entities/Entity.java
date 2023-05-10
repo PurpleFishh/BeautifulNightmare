@@ -1,63 +1,53 @@
-package casm.Entities;
+package casm.Objects.Entities;
 
-import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.ECS.Components.AttackComponent;
 import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
 import casm.ECS.Components.Collision.DyncamicColliderComponent;
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
-import casm.ECS.GameObject;
+import casm.Objects.Object;
 import casm.StateMachine.AfterStateEndsNotify;
+import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Vector2D;
 
-public class Entity extends GameObject implements AfterStateEndsNotify {
+public class Entity extends Object implements AfterStateEndsNotify {
 
-    private int entityWidth, entityHeight;
-    private Vector2D entitySpawnPosition;
     private double life = 100;
     private double damage = 5;
 
     public Entity(String name, Vector2D spawnPosition, int entityWidth, int entityHeight, ColliderType colliderType,
                   int colliderWidth, int colliderHeight) {
-        super(name);
-        this.entityWidth = entityWidth;
-        this.entityHeight = entityHeight;
-        entitySpawnPosition = spawnPosition;
-        entityInit(spawnPosition, entityWidth, entityHeight, colliderType, colliderWidth, colliderHeight);
+        super(name, spawnPosition, entityWidth, entityHeight);
+
+        entityInit(colliderType, colliderWidth, colliderHeight);
     }
 
     public Entity(String name, Vector2D spawnPosition, int entityWidth, int entityHeight, ColliderType colliderType,
                   int colliderWidth, int colliderHeight, double life, double damage) {
-        super(name);
-        this.entityWidth = entityWidth;
-        this.entityHeight = entityHeight;
+        super(name, spawnPosition, entityWidth, entityHeight);
+
         this.damage = damage;
         this.life = life;
-        entitySpawnPosition = spawnPosition;
-        entityInit(spawnPosition, entityWidth, entityHeight, colliderType, colliderWidth, colliderHeight);
+        entityInit(colliderType, colliderWidth, colliderHeight);
     }
 
-    private void entityInit(Vector2D spawnPosition, int entityWidth, int entityHeight, ColliderType colliderType,
-                            int colliderWidth, int colliderHeight) {
-        this.addComponent(new PositionComponent(spawnPosition.x, spawnPosition.y, entityWidth, entityHeight, 1, 1, true));
+    private void entityInit(ColliderType colliderType, int colliderWidth, int colliderHeight) {
+        this.getComponent(PositionComponent.class).setGravity(true);
         this.addComponent(new SpriteComponent());
         this.addComponent(new ColliderComponent(colliderType, colliderWidth, colliderHeight));
         this.addComponent(new DyncamicColliderComponent());
         this.addComponent(new AttackComponent());
 
-        this.init();
+        //this.init();
     }
 
     protected void updateDimensions(int width, int height) {
-        this.entityWidth = width;
-        this.entityHeight = height;
-        this.getComponent(PositionComponent.class).setDimensions(width, height);
+        super.updateDimensions(width, height);
         this.getComponent(ColliderComponent.class).updateColliderDimensions(ColliderType.ENTITY, width - 2, height - 2);
     }
 
-    private void death()
-    {
+    private void death() {
         this.getComponent(PositionComponent.class).setCanMove(false);
         this.getComponent(AnimationStateMachine.class).trigger("Dead", this);
     }
@@ -76,13 +66,13 @@ public class Entity extends GameObject implements AfterStateEndsNotify {
 
     public void setLife(double life) {
         this.life = life;
-        if(life < 0)
+        if (life <= 0)
             death();
     }
 
     public void damage(double damage) {
         this.life -= damage;
-        if(life < 0)
+        if (life < 0)
             death();
     }
 

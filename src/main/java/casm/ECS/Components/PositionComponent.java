@@ -318,4 +318,11 @@ public class PositionComponent extends Component {
     public void setCanMove(boolean canMove) {
         this.canMove = canMove;
     }
+
+    /**
+     * @param gravity set if the entity will be affected by gravity or not
+     */
+    public void setGravity(boolean gravity) {
+        this.gravity = gravity;
+    }
 }

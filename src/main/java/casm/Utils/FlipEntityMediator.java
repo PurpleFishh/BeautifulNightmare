@@ -1,12 +1,14 @@
 package casm.Utils;
 
 import casm.ECS.Components.AttackComponent;
+import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
 import casm.ECS.GameObject;
 
 public class FlipEntityMediator {
 
     private static FlipEntityMediator instance = null;
+
     private FlipEntityMediator() {
     }
 
@@ -16,20 +18,22 @@ public class FlipEntityMediator {
         return instance;
     }
 
-    public void flipVertically(GameObject gameObject, boolean flip)
-    {
-        if(gameObject.hasComponent(SpriteComponent.class))
-            gameObject.getComponent(SpriteComponent.class).setFlippedVertically(flip);
-        if(gameObject.hasComponent(AttackComponent.class))
-            gameObject.getComponent(AttackComponent.class).setFlipColliderVertically(flip);
+    public void flipVertically(GameObject gameObject, boolean flip) {
+        if (gameObject.getComponent(PositionComponent.class).isCanMove()) {
+            if (gameObject.hasComponent(SpriteComponent.class))
+                gameObject.getComponent(SpriteComponent.class).setFlippedVertically(flip);
+            if (gameObject.hasComponent(AttackComponent.class))
+                gameObject.getComponent(AttackComponent.class).setFlipColliderVertically(flip);
+        }
     }
 
-    public void flipHorizontally(GameObject gameObject, boolean flip)
-    {
-        if(gameObject.hasComponent(SpriteComponent.class))
-            gameObject.getComponent(SpriteComponent.class).setFlippedHorizontally(flip);
-        if(gameObject.hasComponent(AttackComponent.class))
-            gameObject.getComponent(AttackComponent.class).setFlipColliderHorizontally(flip);
+    public void flipHorizontally(GameObject gameObject, boolean flip) {
+        if (gameObject.getComponent(PositionComponent.class).isCanMove()) {
+            if (gameObject.hasComponent(SpriteComponent.class))
+                gameObject.getComponent(SpriteComponent.class).setFlippedHorizontally(flip);
+            if (gameObject.hasComponent(AttackComponent.class))
+                gameObject.getComponent(AttackComponent.class).setFlipColliderHorizontally(flip);
+        }
     }
 
 }

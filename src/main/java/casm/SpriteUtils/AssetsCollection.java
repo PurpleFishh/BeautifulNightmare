@@ -14,30 +14,31 @@ public class AssetsCollection {
         return instance;
     }
 
-    public HashMap<String, Assets> sprites = new HashMap<>();
+    public HashMap<String, Assets> sprite_sheets = new HashMap<>();
+    public HashMap<String, Sprite> sprites = new HashMap<>();
     public Sprite blankSprite = new Sprite();
 
     public Assets addSpriteSheet(String sheetPath, int tileWidth, int tileHeight) {
         try {
-            if (!sprites.containsKey(sheetPath)) {
-                BufferedImage sprite_sheet = ImageLoader.getInstance().LoadImage(sheetPath);
-                Assets asset =  new Assets(ImageLoader.getInstance().LoadImage(sheetPath), tileWidth, tileHeight, sprite_sheet.getWidth(), sprite_sheet.getHeight());
-                sprites.put(sheetPath, asset);
+            if (!sprite_sheets.containsKey(sheetPath)) {
+                Assets asset =  new Assets(ImageLoader.getInstance().LoadImage(sheetPath), tileWidth, tileHeight);
+                sprite_sheets.put(sheetPath, asset);
                 return asset;
-            }
+            }else
+                return sprite_sheets.get(sheetPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
-    public Assets addSprite(String sheetPath) {
+    public Sprite addSprite(String sheetPath) {
         try {
             if (!sprites.containsKey(sheetPath)) {
-                BufferedImage sprite_sheet = ImageLoader.getInstance().LoadImage(sheetPath);
-                Assets asset = new Assets(ImageLoader.getInstance().LoadImage(sheetPath), sprite_sheet.getWidth(), sprite_sheet.getHeight(), sprite_sheet.getWidth(), sprite_sheet.getHeight());
-                sprites.put(sheetPath, asset);
-                return asset;
-            }
+                Sprite sprite = new Sprite(ImageLoader.getInstance().LoadImage(sheetPath));
+                sprites.put(sheetPath, sprite);
+                return sprite;
+            }else
+                return sprites.get(sheetPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,6 +46,11 @@ public class AssetsCollection {
     }
 
     public Assets getSpriteSheet(String sheetPath)
+    {
+        assert sprite_sheets.containsKey(sheetPath) : "There is no Spritesheet imported from: " + sheetPath;
+        return sprite_sheets.get(sheetPath);
+    }
+    public Sprite getSprite(String sheetPath)
     {
         assert sprites.containsKey(sheetPath) : "There is no Spritesheet imported from: " + sheetPath;
         return sprites.get(sheetPath);

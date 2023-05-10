@@ -1,5 +1,8 @@
 package casm;
 
+import casm.ECS.Components.KeyboardListener;
+import casm.ECS.Components.MouseListener;
+import casm.Scenes.MainMenuScene;
 import casm.Scenes.Scene;
 import casm.GameWindow.GameWindow;
 import casm.Scenes.LeveleScene;
@@ -11,25 +14,25 @@ import java.awt.image.BufferStrategy;
 /*! \class Game
     \brief Clasa principala a intregului proiect. Implementeaza Game - Loop (Update -> Draw)
 */
-public class Game implements Runnable
-{
+public class Game implements Runnable {
     private static GameWindow wnd;        /*!< Fereastra in care se va desena tabla jocului*/
-    private boolean         runState;   /*!< Flag ce starea firului de executie.*/
-    private Thread          gameThread; /*!< Referinta catre thread-ul de update si draw al ferestrei*/
-    private static BufferStrategy  bs;         /*!< Referinta catre un mecanism cu care se organizeaza memoria complexa pentru un canvas.*/
-    private static Graphics        g;          /*!< Referinta catre un context grafic.*/
-    private static Scene currentScene;
+    private boolean runState;   /*!< Flag ce starea firului de executie.*/
+    private Thread gameThread; /*!< Referinta catre thread-ul de update si draw al ferestrei*/
+    private static BufferStrategy bs;         /*!< Referinta catre un mecanism cu care se organizeaza memoria complexa pentru un canvas.*/
+    private static Graphics g;          /*!< Referinta catre un context grafic.*/
+    private static Scene currentScene, changedScene;
 
-    public Game(String title, int width, int height)
-    {
+    public Game(String title, int width, int height) {
         wnd = new GameWindow(title, width, height);
         runState = false;
     }
 
-    private void InitGame()
-    {
-        //wnd = new GameWindow("Beaitofil Nightmare", 800, 600);
+    private void InitGame() {
         wnd.BuildGameWindow();
+
+        wnd.getCanvas().addMouseMotionListener(MouseListener.getInstance());
+        wnd.getCanvas().addMouseListener(MouseListener.getInstance());
+
 
         bs = Game.getWindow().GetCanvas().getBufferStrategy();
         if (bs == null) {
@@ -44,106 +47,87 @@ public class Game implements Runnable
 
     }
 
-    public void run()
-    {
+    public void run() {
         InitGame();
-        changeScene(0);
+        changeScene(1);
 
-//        long oldTime = System.nanoTime();
-//        long curentTime;
-//
-//        while (runState)
-//        {
-//            curentTime = System.nanoTime();
-//
-//            if((curentTime - oldTime) > Setting.FRAME_TIME)
-//            {
-//                //currentScene.eventHandler();
-//                currentScene.update();
-//                currentScene.draw();
-//                oldTime = curentTime;
-//            }
-//        }
-        long previousTime = System.nanoTime();
-
-        double deltaU = 0;
-        double deltaF = 0;
+        long oldTime = System.nanoTime();
+        long curentTime;
 
         while (runState) {
-            long currentTime = System.nanoTime();
-            deltaU += (currentTime - previousTime) / Setting.UPDATE_TIME;
-            deltaF += (currentTime - previousTime) / Setting.FRAME_TIME;
-            previousTime = currentTime;
-            if (deltaU >= 1) {
-                currentScene.update();
-                deltaU--;
-            }
+            curentTime = System.nanoTime();
 
-            if (deltaF >= 1) {
-                currentScene.draw();
-                currentScene.checkForDeaths();
-                deltaF--;
+            if ((curentTime - oldTime) > Setting.FRAME_TIME) {
+                //currentScene.eventHandler();
+                if (currentScene.isRunning()) {
+                    currentScene.update();
+                    currentScene.draw();
+                    currentScene.checkForDeaths();
+                }
+                oldTime = curentTime;
             }
         }
     }
 
-    public synchronized void StartGame()
-    {
-        if(!runState)
-        {
+    public synchronized void StartGame() {
+        if (!runState) {
             runState = true;
             gameThread = new Thread(this);
             gameThread.start();
-        }
-        else
+        } else
             return;
     }
 
-    public synchronized void StopGame()
-    {
-        if(runState)
-        {
+    public synchronized void StopGame() {
+        if (runState) {
             runState = false;
-            try
-            {
+            try {
                 gameThread.join();
-            }
-            catch(InterruptedException ex)
-            {
+            } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
-        }
-        else
+        } else
             return;
     }
 
-    public static void changeScene(int newScene)
-    {
-        switch (newScene)
-        {
-            case 0:
+    public static void changeScene(int newSceneId) {
+        Scene oldScene = null;
+        switch (newSceneId) {
+            case 0 -> {
+                oldScene = currentScene;
                 currentScene = new LeveleScene();
                 currentScene.init();
-                currentScene.start();
-                break;
-            default:
-                assert false : "Unknown scene :" + newScene;
-                break;
+            }
+            case 1 -> {
+                oldScene = currentScene;
+                currentScene = new MainMenuScene();
+                currentScene.init();
+            }
+            default -> {
+                assert false : "Unknown scene :" + newSceneId;
+            }
+        }
+        if(oldScene != null)
+        {
+            //TODO: Vezi ce naiba se intampla aici
+           oldScene.destroy();
+            //oldScene = null;
         }
     }
-    public static Scene getCurrentScene()
-    {
+
+    public static Scene getCurrentScene() {
         return currentScene;
     }
 
-    public static GameWindow getWindow()
-    {
+    public static GameWindow getWindow() {
         return wnd;
     }
+
     public static BufferStrategy getBufferStrategy() {
         bs = Game.getWindow().GetCanvas().getBufferStrategy();
         return bs;
     }
+
     public static Graphics getGraphics() {
         g = getBufferStrategy().getDrawGraphics();
         return g;

@@ -61,7 +61,7 @@ public class AnimationState implements State {
 
     public void update(AfterStateEndsNotify notifier) {
         if (currentSprite < animationFrames.size()) {
-            time -= speed / Setting.DELTA_TIME;
+            time -= speed / (Setting.DELTA_TIME / 2);
             if (time <= 0) {
                 if (currentSprite == animationFrames.size() - 1) {
                     endedPlaying = true;

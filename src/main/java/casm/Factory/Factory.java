@@ -1,8 +1,9 @@
 package casm.Factory;
 
-import casm.Entities.Entity;
+import casm.Objects.Entities.Entity;
+import casm.Objects.Object;
 import casm.Utils.Vector2D;
 
 public interface Factory {
-    Entity create(FactoryTypes type, Vector2D spawnPosition);
+    Object create(FactoryTypes type, Vector2D spawnPosition);
 }

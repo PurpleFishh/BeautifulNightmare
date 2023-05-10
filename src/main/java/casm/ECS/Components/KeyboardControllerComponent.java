@@ -4,6 +4,7 @@ import casm.ECS.Component;
 import casm.ECS.Components.Collision.DyncamicColliderComponent;
 import casm.ECS.Components.Collision.MovementMediator;
 import casm.Game;
+import casm.Observer.ObserverKeyboard;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.FlipEntityMediator;
 import casm.Utils.Mediator;
@@ -14,7 +15,7 @@ import java.awt.event.KeyListener;
 /**
  * Component used for keyboard controlling which sets the flags for keys and notify the mediator for movement
  */
-public class KeyboardControllerComponent extends Component implements KeyListener {
+public class KeyboardControllerComponent extends Component implements ObserverKeyboard {
     /**
      * <b>right</b> - a flag if the entity is moving to right or not<br>
      * <b>left</b> - a flag if the entity is moving to left or not<br>
@@ -40,7 +41,7 @@ public class KeyboardControllerComponent extends Component implements KeyListene
      * Setting up the key listener
      */
     public KeyboardControllerComponent() {
-        Game.getWindow().getWndFrame().addKeyListener(this);
+
     }
 
     /**
@@ -48,13 +49,24 @@ public class KeyboardControllerComponent extends Component implements KeyListene
      */
     @Override
     public void init() {
+        KeyboardListener.getInstance().subscribe(this);
+
         animationStateMachine = gameObject.getComponent(AnimationStateMachine.class);
         mediator = MovementMediator.getInstance(gameObject);
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
-
+    public void destroy() {
+        Thread th = new Thread(() -> {
+            KeyboardListener.getInstance().unsubscribe(this);
+            super.destroy();
+        });
+        th.start();
+        try {
+            th.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -78,7 +90,7 @@ public class KeyboardControllerComponent extends Component implements KeyListene
      *
      * @param e the event to be processed
      */
-    @Override
+
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE || spaceKey == KeyState.PRESSED) {
             spaceKey = KeyState.PRESSED;
@@ -107,7 +119,7 @@ public class KeyboardControllerComponent extends Component implements KeyListene
      *
      * @param e the event to be processed
      */
-    @Override
+
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE)
             spaceKey = KeyState.RELEASED;
@@ -199,4 +211,11 @@ public class KeyboardControllerComponent extends Component implements KeyListene
         fKey = KeyState.NOT_USED;
     }
 
+    @Override
+    public void notify(KeyEvent event) {
+        if (event.getID() == KeyEvent.KEY_PRESSED)
+            keyPressed(event);
+        if (event.getID() == KeyEvent.KEY_RELEASED)
+            keyReleased(event);
+    }
 }

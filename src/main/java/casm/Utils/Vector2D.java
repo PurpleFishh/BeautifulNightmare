@@ -1,5 +1,7 @@
 package casm.Utils;
 
+import casm.SpriteUtils.Sprite;
+
 import java.util.Objects;
 
 public class Vector2D {
@@ -79,14 +81,13 @@ public class Vector2D {
         return this;
     }
 
-    public Vector2D set(double x, double y)
-    {
+    public Vector2D set(double x, double y) {
         this.x = x;
         this.y = y;
         return this;
     }
-    public Vector2D set(Vector2D vector)
-    {
+
+    public Vector2D set(Vector2D vector) {
         this.x = vector.x;
         this.y = vector.y;
 
@@ -127,5 +128,26 @@ public class Vector2D {
     @Override
     public String toString() {
         return "x = " + x + ", y = " + y;
+    }
+
+    public Vector2D centerVertically(int objectWidth, int width) {
+        x += width / 2. - objectWidth / 2.;
+        return this;
+    }
+
+    public Vector2D centerHorizontally(int objectHeight, int height) {
+        y += height / 2. - objectHeight / 2.;
+        return this;
+    }
+
+    public Vector2D center(int objectWidth, int objectHeight, int width, int height) {
+        centerVertically(objectWidth, width);
+        centerHorizontally(objectHeight, height);
+        return this;
+    }
+    public Vector2D center(Sprite objectSprite, int width, int height) {
+        centerVertically(objectSprite.getWidth(), width);
+        centerHorizontally(objectSprite.getHeight(), height);
+        return this;
     }
 }

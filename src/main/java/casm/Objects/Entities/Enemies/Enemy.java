@@ -1,8 +1,8 @@
-package casm.Entities.Enemies;
+package casm.Objects.Entities.Enemies;
 
 import casm.ECS.Components.*;
 import casm.ECS.Components.Collision.ColliderType;
-import casm.Entities.Entity;
+import casm.Objects.Entities.Entity;
 import casm.Utils.Vector2D;
 
 public class Enemy  extends Entity {
@@ -22,7 +22,7 @@ public class Enemy  extends Entity {
     private void enemyInit() {
         this.addComponent(new AiBehaviour());
 
-        this.init();
+       // this.init();
     }
 
 }

@@ -1,4 +1,4 @@
-package casm.Entities;
+package casm.Objects.Entities;
 
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
@@ -30,7 +30,7 @@ public class Tile extends GameObject {
         tileHeight = texture.getHeight();
         this.addComponent(new PositionComponent(x * tileWidth, y * tileHeight, tileWidth, tileHeight));
         this.addComponent(new SpriteComponent(texture, flipped_vertically, flipped_horizontally));
-        this.init();
+        //this.init();
     }
 
     private void tileMaker(Assets tileSet, int x, int y) {

@@ -37,7 +37,8 @@ public class AiBehaviour extends Component {
 
     @Override
     public void update() {
-        if (aiDetection.intersects(chase)) {
+        boolean inRange = aiDetection.intersects(chase);
+        if (inRange) {
             //TODO: Sa se pozitioneze incat sa fie in area de hit nu sa il urmareasca pana in centru
             // Daca e in coliziune cu hit boxu enemy sa mearga in partea in care e indreptat ca sa poata lovi jucatorul
             Rectangle leftRect = new Rectangle(aiDetection.x, aiDetection.y, aiDetection.getWidth() / 2 - gameObjectHitBox.width / 2, aiDetection.getHeight());
@@ -65,19 +66,35 @@ public class AiBehaviour extends Component {
             }
 
         } else {
+            if (positionComponent.sign.x == 0) {
+                positionComponent.sign.x = 1;
+                FlipEntityMediator.getInstance().flipVertically(gameObject, false);
+            }
             gameObject.getComponent(AnimationStateMachine.class).trigger("startRun");
         }
 
         ColliderType[] collisionFlags = dyncamicColliderComponent.getCollisionCornersFlags();
         if (collisionFlags[0] == ColliderType.MAP_TILE || collisionFlags[4] == ColliderType.MAP_TILE || collisionFlags[2] != ColliderType.MAP_TILE) {
-            positionComponent.sign.x = 1;
+            if (inRange) {
+                positionComponent.sign.x = 0;
+                gameObject.getComponent(AnimationStateMachine.class).trigger("stopRun");
+            }
+            else {
+                positionComponent.sign.x = 1;
+                FlipEntityMediator.getInstance().flipVertically(gameObject, false);
+            }
             positionComponent.velocity.x = 0;
-            FlipEntityMediator.getInstance().flipVertically(gameObject, false);
         }
         if (collisionFlags[1] == ColliderType.MAP_TILE || collisionFlags[5] == ColliderType.MAP_TILE || collisionFlags[3] != ColliderType.MAP_TILE) {
-            positionComponent.sign.x = -1;
+            if (inRange) {
+                positionComponent.sign.x = 0;
+                gameObject.getComponent(AnimationStateMachine.class).trigger("stopRun");
+            }
+            else {
+                positionComponent.sign.x = -1;
+                FlipEntityMediator.getInstance().flipVertically(gameObject, true);
+            }
             positionComponent.velocity.x = 0;
-            FlipEntityMediator.getInstance().flipVertically(gameObject, true);
         }
     }
 }

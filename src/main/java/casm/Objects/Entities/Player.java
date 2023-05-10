@@ -1,4 +1,4 @@
-package casm.Entities;
+package casm.Objects.Entities;
 
 import casm.ECS.Components.*;
 import casm.ECS.Components.Collision.ColliderType;
@@ -7,7 +7,6 @@ import casm.SpriteUtils.Animation.AnimationsExtract;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Camera;
 import casm.Utils.Settings.EntitiesSettings;
-import casm.Utils.Settings.Setting;
 import casm.Utils.Vector2D;
 
 import java.util.List;
@@ -26,16 +25,17 @@ public class Player extends Entity {
         playerInit();
 
     }
+
     private void playerInit() {
         generateAnimationStateMachine();
+
         updateDimensions(playerWidth, playerHeight);
         this.getComponent(PositionComponent.class).setMaxSpeed(EntitiesSettings.PlayerInfo.PLAYER_MAX_SPEED);
         this.getComponent(AttackComponent.class).setAttackDelay(4L);
         this.addComponent(new KeyboardControllerComponent());
         this.addComponent(Camera.getInstance());
         this.setDamage(15);
-
-        this.init();
+        //this.init();
     }
 
     private void generateAnimationStateMachine() {
@@ -60,10 +60,12 @@ public class Player extends Entity {
 
         stateMachine.addState("run", "attack", "startAttack");
         stateMachine.addState("idle", "attack", "startAttack");
-        stateMachine.addState("attack", "idle", "stopAttack");
+        stateMachine.addState("attack", "idle", "stopAttack_idle");
+        stateMachine.addState("attack", "run", "stopAttack_run");
 
         stateMachine.addState("idle", "dead", "Dead");
         stateMachine.addState("run", "dead", "Dead");
+
         this.addComponent(stateMachine);
     }
 

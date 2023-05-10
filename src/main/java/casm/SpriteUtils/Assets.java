@@ -12,6 +12,18 @@ public class Assets {
     private final List<Sprite> assets = new ArrayList<>();
     private int imageWidth, imageHeight;
 
+    public Assets(BufferedImage image, int tileWidth, int tileHeight) {
+        this.imageWidth = image.getWidth();
+        this.imageHeight = image.getHeight();
+        /// Se creaza temporar un obiect SpriteSheet initializat prin intermediul clasei ImageLoader
+        SpriteSheet sheet = new SpriteSheet(image, tileWidth, tileHeight);
+
+        /// Se obtin subimaginile corespunzatoare elementelor necesare.
+        for(int y = 0; y < imageHeight / tileHeight; ++y)
+            for(int x = 0; x < imageWidth / tileWidth; ++x)
+                assets.add(new Sprite(sheet.crop(x, y), tileWidth, tileHeight, new Vector2D(x, y)));
+    }
+
     public Assets(BufferedImage image, int tileWidth, int tileHeight, int imageWidth, int imageHeight) {
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;

@@ -29,6 +29,11 @@ public class SpriteComponent extends Component {
      * If the sprite is flipped horizontally
      */
     private boolean flipped_horizontally = false;
+    /**
+     * width - image render width <br>
+     * height - image render height
+     */
+    private int width = 0, height = 0;
 
     /**
      * Create a {@link SpriteComponent} with a blank sprite
@@ -44,6 +49,19 @@ public class SpriteComponent extends Component {
      */
     public SpriteComponent(Sprite sprite) {
         this.sprite = sprite;
+    }
+
+    /**
+     * Create a {@link SpriteComponent}
+     *
+     * @param sprite the sprite that will be rendered
+     * @param width  render image width
+     * @param height render image height
+     */
+    public SpriteComponent(Sprite sprite, int width, int height) {
+        this.sprite = sprite;
+        this.width = width;
+        this.height = height;
     }
 
 
@@ -79,11 +97,12 @@ public class SpriteComponent extends Component {
             Vector2D offset = new Vector2D((double) (sprite.getWidth() - positionComp.getWidth()) / 2,
                     sprite.getHeight() - positionComp.getHeight());
             offset = ((Vector2D) positionComp.position.clone()).sub(offset);
-            Renderer.getInstance().drawImage(sprite.getTexture(), offset, sprite.getWidth(), sprite.getHeight(),
-                    flipped_vertically, flipped_horizontally);
-        } else
-            Renderer.getInstance().drawImage(sprite.getTexture(), positionComp.position, sprite.getWidth(), sprite.getHeight(),
-                    flipped_vertically, flipped_horizontally);
+            Renderer.getInstance().drawImage(sprite.getTexture(), offset, width == 0 ? sprite.getWidth() : width,
+                    height == 0 ? sprite.getHeight() : height, flipped_vertically, flipped_horizontally);
+        } else {
+            Renderer.getInstance().drawImage(sprite.getTexture(), positionComp.position, width == 0 ? sprite.getWidth() : width,
+                    height == 0 ? sprite.getHeight() : height, flipped_vertically, flipped_horizontally);
+        }
     }
 
     /**

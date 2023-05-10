@@ -4,8 +4,8 @@ import casm.ECS.Component;
 import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
 import casm.ECS.Components.Collision.Rectangle;
-import casm.Entities.Enemies.Enemy;
-import casm.Entities.Player;
+import casm.Objects.Entities.Enemies.Enemy;
+import casm.Objects.Entities.Player;
 import casm.Game;
 import casm.Scenes.LeveleScene;
 import casm.StateMachine.AfterStateEndsNotify;
@@ -18,7 +18,7 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
     private Rectangle attackCollider, playerCollider;
     private boolean isFlippedVertically = false, isFlippedHorizontally = false;
     private boolean isAttacking = false;
-    private double attackDelayDefalut = 10L ,attackDelay = attackDelayDefalut;
+    private double attackDelayDefalut = 10L, attackDelay = attackDelayDefalut;
 
     public AttackComponent() {
 
@@ -39,31 +39,35 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
     }
 
     public void attack() {
-        if(attackDelay <= 0) {
+        if (attackDelay <= 0) {
             isAttacking = true;
             gameObject.getComponent(AnimationStateMachine.class).trigger("startAttack", this);
             if (this.gameObject == ((LeveleScene) Game.getCurrentScene()).getPlayer()) {
                 Player player = (Player) gameObject;
                 for (Enemy enemy : ((LeveleScene) Game.getCurrentScene()).getEnemies()) {
                     if (attackCollider.intersects(enemy.getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY))) {
-                        enemy.damage(player.getDamage());
                         if (enemy.isAlive()) {
-                            enemy.getComponent(AnimationStateMachine.class).trigger("Damage", this);
-                            enemy.getComponent(AnimationStateMachine.class).trigger("endDamage", true);
-                            //enemy.getComponent(PositionComponent.class).setCanMove(false);
+                            enemy.damage(player.getDamage());
+                            if (enemy.isAlive()) {
+                                enemy.getComponent(AnimationStateMachine.class).trigger("Damage", this);
+                                enemy.getComponent(AnimationStateMachine.class).trigger("endDamage", true);
+                                //enemy.getComponent(PositionComponent.class).setCanMove(false);
+                            }
                         }
                     }
                 }
             } else {
                 Player player = ((LeveleScene) Game.getCurrentScene()).getPlayer();
                 if (attackCollider.intersects(player.getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY))) {
-                    player.damage(((Enemy) gameObject).getDamage());
-                    System.out.println(player.getLife());
                     if (player.isAlive()) {
-                        player.getComponent(AnimationStateMachine.class).trigger("Damage");
-                        player.getComponent(AnimationStateMachine.class).trigger("endDamage", true);
+                        player.damage(((Enemy) gameObject).getDamage());
+                        System.out.println(player.getLife());
+                        if (player.isAlive()) {
+                            player.getComponent(AnimationStateMachine.class).trigger("Damage");
+                            player.getComponent(AnimationStateMachine.class).trigger("endDamage", true);
+                        }
+                        System.out.println("Attack");
                     }
-                    System.out.println("Attack");
                 }
             }
             attackDelay = attackDelayDefalut;
@@ -71,7 +75,10 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
     }
 
     public void afterStateEndsNotify() {
-        gameObject.getComponent(AnimationStateMachine.class).trigger("stopAttack");
+        if (gameObject.getComponent(PositionComponent.class).sign.x == 0)
+            gameObject.getComponent(AnimationStateMachine.class).trigger("stopAttack_idle");
+        else
+            gameObject.getComponent(AnimationStateMachine.class).trigger("stopAttack_run");
         //gameObject.getComponent(PositionComponent.class).setCanMove(true);
         isAttacking = false;
     }
@@ -79,9 +86,9 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
     public void setFlipColliderVertically(boolean flip) {
         if (flip != isFlippedVertically) {
             if (flip)
-                attackCollider.getOffset().x -= attackCollider.getWidth() - playerCollider.getWidth() ;
+                attackCollider.getOffset().x -= attackCollider.getWidth() - playerCollider.getWidth();
             else
-                attackCollider.getOffset().x +=  attackCollider.getWidth() - playerCollider.getWidth();
+                attackCollider.getOffset().x += attackCollider.getWidth() - playerCollider.getWidth();
             isFlippedVertically = flip;
         }
     }

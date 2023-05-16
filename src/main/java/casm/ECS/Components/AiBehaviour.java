@@ -8,19 +8,41 @@ import casm.ECS.Components.Collision.Rectangle;
 import casm.Game;
 import casm.Scenes.LeveleScene;
 import casm.StateMachine.AiStateMachine.AiIdleState;
-import casm.StateMachine.AiStateMachine.AiStateMachine;
+import casm.StateMachine.AiStateMachine.GameStateMachine;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.FlipEntityMediator;
 
+/**
+ * Used for entities AI for movement, following target and attacking
+ */
 public class AiBehaviour extends Component {
 
     //TODO: facuta in graba, Inamicii vor avea Ai facut cum trebuie, sa urmareasca jucatorul(cand este aproape) si sa il atace
 
+    /**
+     * Entity position component
+     * @see PositionComponent
+     */
     private PositionComponent positionComponent;
+    /**
+     * Entity dynamic collider component
+     * @see DyncamicColliderComponent
+     */
     private DyncamicColliderComponent dyncamicColliderComponent;
+    /**
+     * aiDetection - if the chase entity is in that collider, it will follow it<br>
+     * chase - the collider of the chase entity<br>
+     * gameObjectHitBox - the hit box of the entity, where it can attack
+     */
     private Rectangle aiDetection, chase, gameObjectHitBox;
-    private AiStateMachine stateMachine;
+    /**
+     * The entity animation state machine
+     */
+    private GameStateMachine stateMachine;
 
+    /**
+     * Getting the references to the components
+     */
     @Override
     public void init() {
         positionComponent = gameObject.getComponent(PositionComponent.class);
@@ -29,12 +51,14 @@ public class AiBehaviour extends Component {
         aiDetection = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.AI_DETECTION, (int) -(200 / 2 - gameObjectHitBox.getHeight() / 2), 0, 200, (int) gameObjectHitBox.height);
         chase = ((LeveleScene) Game.getCurrentScene()).getPlayer().getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY);
 
-        stateMachine = new AiStateMachine(gameObject);
-        stateMachine.addState(new AiIdleState(gameObject, "Idle"));
-
         positionComponent.sign.x = -1;
     }
 
+    /**
+     * If the chase entity is in the view area(aiDetection), it will follow it<br>
+     * If the entity can attack the enemy it will do<br>
+     * If no of the scenarios is archived it will patrol from left to right
+     */
     @Override
     public void update() {
         boolean inRange = aiDetection.intersects(chase);

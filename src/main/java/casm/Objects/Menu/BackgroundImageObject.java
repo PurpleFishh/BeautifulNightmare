@@ -12,9 +12,10 @@ public class BackgroundImageObject extends Object {
         super("image", spawnPosition, width, height);
         initObject(spawnPosition, sprite, width, height);
     }
+
     public BackgroundImageObject(Vector2D spawnPosition, Sprite sprite) {
         super("image", spawnPosition);
-        initObject(spawnPosition, sprite, 0, 0);
+        initObject(spawnPosition, sprite);
     }
 
     public void updateDimensions(int width, int height) {
@@ -23,7 +24,12 @@ public class BackgroundImageObject extends Object {
 
     public void initObject(Vector2D spawnPosition, Sprite sprite, int width, int height) {
         this.addComponent(new SpriteComponent(sprite, width, height));
+        // this.init();
+    }
 
-       // this.init();
+    public void initObject(Vector2D spawnPosition, Sprite sprite) {
+        this.addComponent(new SpriteComponent(sprite, sprite.getWidth(), sprite.getHeight()));
+        super.updateDimensions(sprite.getWidth(), sprite.getHeight());
+        // this.init();
     }
 }

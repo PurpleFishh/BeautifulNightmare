@@ -3,13 +3,13 @@ package casm.StateMachine.AnimationStateMachine;
 import casm.SpriteUtils.Animation.Frame;
 import casm.SpriteUtils.Sprite;
 import casm.StateMachine.AfterStateEndsNotify;
-import casm.StateMachine.State;
+import casm.StateMachine.UpdatableState;
 import casm.Utils.Settings.Setting;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnimationState implements State {
+public class AnimationState implements UpdatableState {
 
     private String name;
     private List<Frame> animationFrames = new ArrayList<>();

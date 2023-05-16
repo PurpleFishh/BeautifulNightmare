@@ -1,26 +1,29 @@
 package casm;
 
-import casm.ECS.Components.KeyboardListener;
 import casm.ECS.Components.MouseListener;
-import casm.Scenes.MainMenuScene;
+import casm.Factory.SceneFactory.SceneFactory;
 import casm.Scenes.Scene;
 import casm.GameWindow.GameWindow;
-import casm.Scenes.LeveleScene;
+import casm.Scenes.SceneType;
 import casm.Utils.Settings.Setting;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.util.Stack;
 
 /*! \class Game
     \brief Clasa principala a intregului proiect. Implementeaza Game - Loop (Update -> Draw)
 */
 public class Game implements Runnable {
     private static GameWindow wnd;        /*!< Fereastra in care se va desena tabla jocului*/
-    private boolean runState;   /*!< Flag ce starea firului de executie.*/
+    private static boolean runState;   /*!< Flag ce starea firului de executie.*/
     private Thread gameThread; /*!< Referinta catre thread-ul de update si draw al ferestrei*/
     private static BufferStrategy bs;         /*!< Referinta catre un mecanism cu care se organizeaza memoria complexa pentru un canvas.*/
     private static Graphics g;          /*!< Referinta catre un context grafic.*/
-    private static Scene currentScene, changedScene;
+    //private static Scene currentScene;
+    private static Stack<Scene> sceneStack = new Stack<>();
+    // private static GameStateMachine sceneStateMachine;
+    private static SceneFactory sceneFactory;
 
     public Game(String title, int width, int height) {
         wnd = new GameWindow(title, width, height);
@@ -28,6 +31,13 @@ public class Game implements Runnable {
     }
 
     private void InitGame() {
+        sceneFactory = new SceneFactory();
+//        sceneStateMachine = new GameStateMachine();
+//        sceneStateMachine.addState(SceneType.MAIN_MENU);
+//        sceneStateMachine.addState(SceneType.LEVEL1);
+//        sceneStateMachine.addState(SceneType.MAIN_MENU.name(), SceneType.LEVEL1.name(), "start");
+//        sceneStateMachine.setDefaultState(SceneType.MAIN_MENU.name());
+
         wnd.BuildGameWindow();
 
         wnd.getCanvas().addMouseMotionListener(MouseListener.getInstance());
@@ -49,7 +59,7 @@ public class Game implements Runnable {
 
     public void run() {
         InitGame();
-        changeScene(1);
+        changeScene(SceneType.MAIN_MENU);
 
         long oldTime = System.nanoTime();
         long curentTime;
@@ -59,14 +69,15 @@ public class Game implements Runnable {
 
             if ((curentTime - oldTime) > Setting.FRAME_TIME) {
                 //currentScene.eventHandler();
-                if (currentScene.isRunning()) {
-                    currentScene.update();
-                    currentScene.draw();
-                    currentScene.checkForDeaths();
+                if (getCurrentScene().isRunning()) {
+                    getCurrentScene().update();
+                    getCurrentScene().draw();
+                    getCurrentScene().checkForDeaths();
                 }
                 oldTime = curentTime;
             }
         }
+        StopGame();
     }
 
     public synchronized void StartGame() {
@@ -79,44 +90,68 @@ public class Game implements Runnable {
     }
 
     public synchronized void StopGame() {
-        if (runState) {
-            runState = false;
-            try {
-                gameThread.join();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        } else
-            return;
+        // if (runState) {
+        runState = false;
+        try {
+            destroyAllScenes();
+            wnd.closeWindow();
+            System.exit(0);
+            gameThread.join();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        // } else
+        //     return;
     }
 
-    public static void changeScene(int newSceneId) {
-        Scene oldScene = null;
-        switch (newSceneId) {
-            case 0 -> {
-                oldScene = currentScene;
-                currentScene = new LeveleScene();
-                currentScene.init();
-            }
-            case 1 -> {
-                oldScene = currentScene;
-                currentScene = new MainMenuScene();
-                currentScene.init();
-            }
-            default -> {
-                assert false : "Unknown scene :" + newSceneId;
-            }
+    public static void changeScene(SceneType newScene) {
+        Scene intermediary;
+        //TODO: foloseste FSM ul pt scene
+        //TODO: fa o exceptie proprie pt asta
+        try {
+            intermediary = sceneFactory.create(newScene);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
         }
-        if(oldScene != null)
-        {
-            //TODO: Vezi ce naiba se intampla aici
-           oldScene.destroy();
-            //oldScene = null;
+
+        sceneStack.push(intermediary);
+        sceneStack.peek().init();
+    }
+
+    public static void changeLevel(int level)
+    {
+        Scene intermediary;
+        try {
+            intermediary = sceneFactory.createLevel(level);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        sceneStack.push(intermediary);
+        sceneStack.peek().init();
+        destroyAllWithoutTopScenes();
+    }
+
+    public static void destroyViewingScene()
+    {
+        sceneStack.pop().destroy();
+    }
+    public static void destroyAllScenes()
+    {
+        while (!sceneStack.isEmpty())
+            sceneStack.pop().destroy();
+    }
+    public static void destroyAllWithoutTopScenes()
+    {
+        if (sceneStack.size() > 1) {
+            sceneStack.subList(0, sceneStack.size() - 1).clear();
         }
     }
 
     public static Scene getCurrentScene() {
-        return currentScene;
+        return !sceneStack.isEmpty() ? sceneStack.peek() : null;
     }
 
     public static GameWindow getWindow() {
@@ -131,6 +166,10 @@ public class Game implements Runnable {
     public static Graphics getGraphics() {
         g = getBufferStrategy().getDrawGraphics();
         return g;
+    }
+
+    public static void exitGame() {
+        runState = false;
     }
 }
 

@@ -5,6 +5,7 @@ import casm.ECS.Components.Collision.DyncamicColliderComponent;
 import casm.ECS.Components.Collision.MovementMediator;
 import casm.Game;
 import casm.Observer.ObserverKeyboard;
+import casm.Scenes.SceneType;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.FlipEntityMediator;
 import casm.Utils.Mediator;
@@ -49,12 +50,16 @@ public class KeyboardControllerComponent extends Component implements ObserverKe
      */
     @Override
     public void init() {
-        KeyboardListener.getInstance().subscribe(this);
+        KeyboardListener.getInstance().subscribe(Game.getCurrentScene(),this);
 
         animationStateMachine = gameObject.getComponent(AnimationStateMachine.class);
         mediator = MovementMediator.getInstance(gameObject);
     }
 
+    /**
+     * Destroy the component<br>
+     * Unsubscribe the entity from the {@link KeyboardListener} observer
+     */
     @Override
     public void destroy() {
         Thread th = new Thread(() -> {
@@ -111,6 +116,10 @@ public class KeyboardControllerComponent extends Component implements ObserverKe
         if (e.getKeyCode() == KeyEvent.VK_D) {
             dKey = KeyState.PRESSED;
             mediator.notify(this);
+        }
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+        {
+            Game.changeScene(SceneType.PAUSE_MENU);
         }
     }
 

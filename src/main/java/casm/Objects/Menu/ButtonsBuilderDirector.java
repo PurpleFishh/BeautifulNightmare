@@ -16,26 +16,31 @@ public class ButtonsBuilderDirector implements BuilderDirector {
     @Override
     public Object makeObject(BuilderTypeEnum type, Vector2D spawnPosition) {
         builder.reset();
+        String sheetPath = "menu_assets\\buttons\\buttons_spritesheet.png";
         if (type.equals(MenuEntityType.BUTTON.PLAY)) {
-            return builder.setType((MenuEntityType.BUTTON) type).addImage().setPosition(spawnPosition)
+            return builder.setType((MenuEntityType.BUTTON) type).addImage(sheetPath).setPosition(spawnPosition)
                     .clickable().build();
         } else if (type.equals(MenuEntityType.BUTTON.LOAD)) {
-            return builder.setType((MenuEntityType.BUTTON) type).addImage().setPosition(spawnPosition)
+            return builder.setType((MenuEntityType.BUTTON) type).addImage(sheetPath).setPosition(spawnPosition)
                     .clickable().build();
         } else if (type.equals(MenuEntityType.BUTTON.EXIT)) {
-            return builder.setType((MenuEntityType.BUTTON) type).addImage().setPosition(spawnPosition)
+            return builder.setType((MenuEntityType.BUTTON) type).addImage(sheetPath).setPosition(spawnPosition)
                     .clickable().build();
         } else if (type.equals(MenuEntityType.BUTTON.RETRY)) {
-            return builder.setType((MenuEntityType.BUTTON) type).addImage().setPosition(spawnPosition)
+            return builder.setType((MenuEntityType.BUTTON) type).addImage(sheetPath).setPosition(spawnPosition)
                     .clickable().build();
         } else if (type.equals(MenuEntityType.BUTTON.RESUME)) {
-            return builder.setType((MenuEntityType.BUTTON) type).addImage().setPosition(spawnPosition)
+            return builder.setType((MenuEntityType.BUTTON) type).addImage(sheetPath).setPosition(spawnPosition)
                     .clickable().build();
         } else if (type.equals(MenuEntityType.BUTTON.NEW)) {
-            return builder.setType((MenuEntityType.BUTTON) type).addImage().setPosition(spawnPosition)
+            return builder.setType((MenuEntityType.BUTTON) type).addImage(sheetPath).setPosition(spawnPosition)
                     .clickable().build();
         } else if (type.equals(MenuEntityType.BUTTON.SETTINGS)) {
-            return builder.setType((MenuEntityType.BUTTON) type).addImage().setPosition(spawnPosition)
+            return builder.setType((MenuEntityType.BUTTON) type).addImage(sheetPath).setPosition(spawnPosition)
+                    .clickable().build();
+        }else if (type.equals(MenuEntityType.BUTTON.BACK)) {
+            sheetPath = "menu_assets\\buttons\\back_button_spritesheet.png";
+            return builder.setType((MenuEntityType.BUTTON) type).addImage(sheetPath).setPosition(spawnPosition)
                     .clickable().build();
         }
         return null;

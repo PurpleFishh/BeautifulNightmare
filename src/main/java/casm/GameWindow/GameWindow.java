@@ -57,6 +57,7 @@ public class GameWindow
         {
             return;
         }
+        System.setProperty("prism.allowhidpi", "false");
             /// Aloca memorie pentru obiectul de tip fereastra si seteaza denumirea
             /// ce apare in bara de titlu
         wndFrame = new JFrame(wndTitle);
@@ -78,8 +79,8 @@ public class GameWindow
         wndFrame.setLocationRelativeTo(null);
             /// Implicit o fereastra cand este creata nu este vizibila motiv pentru
             /// care trebuie setata aceasta proprietate
+        wndFrame.setUndecorated(true);
         wndFrame.setVisible(true);
-
             /// Creaza obiectul de tip canvas (panza) pe care se poate desena.
         canvas = new Canvas();
             /// In aceeasi maniera trebuiesc setate proprietatile pentru acest obiect
@@ -134,5 +135,10 @@ public class GameWindow
 
     public Canvas getCanvas() {
         return canvas;
+    }
+
+    public void closeWindow()
+    {
+        wndFrame.dispose();
     }
 }

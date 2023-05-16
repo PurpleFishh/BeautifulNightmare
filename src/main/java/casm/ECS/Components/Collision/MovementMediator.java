@@ -7,6 +7,7 @@ import casm.Objects.Entities.Entity;
 import casm.Game;
 import casm.Map.Map;
 import casm.Scenes.LeveleScene;
+import casm.Scenes.SceneType;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.FlipEntityMediator;
 import casm.Utils.Mediator;
@@ -14,13 +15,34 @@ import casm.Utils.Settings.EntitiesSettings;
 import casm.Utils.Settings.Setting;
 import casm.Utils.Vector2D;
 
+/**
+ * The mediator that is used for every entity for movement<br>
+ * It resolve the dependencies between components finding solutions for problems like entity movement,
+ * collision resolver, keyboard movement
+ */
 public class MovementMediator implements Mediator {
 
     //TODO: Mediatorul SingleTone inca nu merge cu mi-as dori, mai exact el ar fi trebuit sa fie cate un mediator pentru fiecare GameObject, nu sa se intializeze cate unul pentru fiecare Componenta a unui obiect
+    /**
+     * The object that the mediator is resolving movement for<br>
+     * The class is singleton for every object(this is the reference to that object)
+     */
     private static GameObject gameObject = null;
+    /**
+     * The instance of the class used in the singleton
+     */
     private static MovementMediator instance = null;
+    /**
+     * Time delay used for damaging by lava, because we don't want the lava to damage on every update, so a delay is a good solution
+     */
     private double lavaDamageDelay = 0;
 
+    /**
+     * Get the instance of the singleton
+     *
+     * @param gameObject the object that the class will be singleton to
+     * @return the instance of the class
+     */
     public static MovementMediator getInstance(GameObject gameObject) {
         if (MovementMediator.gameObject == null)
             instance = new MovementMediator(gameObject);
@@ -31,18 +53,32 @@ public class MovementMediator implements Mediator {
         MovementMediator.gameObject = gameObject;
     }
 
+    /**
+     * Used when something changes in the component, to notify the mediator, and it will deal with that if it has support for that problem
+     *
+     * @param component the component from which you notify the component
+     */
     @Override
     public void notify(Component component) {
         if (component instanceof KeyboardControllerComponent)
             keysMovementManager((KeyboardControllerComponent) component);
         if (component instanceof PositionComponent) {
-            if (component.gameObject.hasComponent(DyncamicColliderComponent.class))
-                collisionManager((PositionComponent) component);
-            else
+            if (component.gameObject.hasComponent(DyncamicColliderComponent.class)) {
+                //TODO: Quick Fix: cand schimb scena la GameOver el mai da o data update la inamici si gaseste scena noua fara mapa
+                if (Game.getCurrentScene().getGameObjects().contains(component.gameObject))
+                    collisionManager((PositionComponent) component);
+            } else
                 positionUpdate((PositionComponent) component);
         }
     }
 
+    /**
+     * For resolving the collisions of an object, activate by {@link PositionComponent}<br>
+     * This method is resolving the collisions with the map tiles, setting the flags for collision, if the entity is on leader,
+     * if the entity is in collision with lava, and if it reached the final door to win the game<br>
+     *
+     * @param positionComponent the position component of the entity({@link PositionComponent})
+     */
     private void collisionManager(PositionComponent positionComponent) {
         GameObject gameObject = positionComponent.gameObject;
         DyncamicColliderComponent dynamicColl = gameObject.getComponent(DyncamicColliderComponent.class);
@@ -56,10 +92,8 @@ public class MovementMediator implements Mediator {
         Vector2D xColliderPotential = new Vector2D(potentialPositionColl.x, playerCollider.getY());
         Vector2D yColliderPotential = new Vector2D(playerCollider.getX(), potentialPositionColl.y);
 
-
         dynamicColl.checkCollision(xColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
                 Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
-
 
         boolean collisionX = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.MAP_TILE);
         if (collisionX) {
@@ -83,7 +117,7 @@ public class MovementMediator implements Mediator {
                 hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
         boolean yLeaderBottom = hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.LEADER) ||
                 hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
-        boolean yLavaCollision =  hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
+        boolean yLavaCollision = hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
 
         if (collisionY)
             moveToTileEdgeY(positionComponent, playerCollider);
@@ -110,18 +144,36 @@ public class MovementMediator implements Mediator {
         verifyIfGameWon(playerCollider);
     }
 
+    /**
+     * If the game was won, it verify if the player is in contact with the door that will send him to the next level
+     *
+     * @param playerCollider rectangle collider of the player
+     */
     private void verifyIfGameWon(Rectangle playerCollider) {
         if (playerCollider.intersects(((LeveleScene) Game.getCurrentScene()).getWinDoor().
                 getComponent(ColliderComponent.class).getCollider(ColliderType.WIN_DOOR)))
             if (((LeveleScene) Game.getCurrentScene()).isWon()) {
                 System.out.println("Ai castigat");
+                Game.changeLevel(((LeveleScene) Game.getCurrentScene()).getLevel() + 1);
             }
     }
 
+    /**
+     * If the entity is not in any collision, it will set its position to new potential position
+     *
+     * @param positionComponent entity position component({@link PositionComponent})
+     */
     private void positionUpdate(PositionComponent positionComponent) {
         positionComponent.position = positionComponent.getPotentialPosition();
     }
 
+    /**
+     * If the entity has collision on the X axe,
+     * it will move it to the tile edge to don't have wired space between the entity and the tile collided to
+     *
+     * @param positionComponent the entity position component({@link PositionComponent})
+     * @param collider          entity collider rectangle({@link Rectangle})
+     */
     public void moveToTileEdgeX(PositionComponent positionComponent, Rectangle collider) {
         if (positionComponent.sign.x > 0) {
             double oldPosition = positionComponent.position.x;
@@ -142,6 +194,13 @@ public class MovementMediator implements Mediator {
         }
     }
 
+    /**
+     * If the entity has collision on the Y axe,
+     * it will move it to the tile edge to don't have wired space between the entity and the tile collided to
+     *
+     * @param positionComponent the entity position component({@link PositionComponent})
+     * @param collider          entity collider rectangle({@link Rectangle})
+     */
     public void moveToTileEdgeY(PositionComponent positionComponent, Rectangle collider) {
         if (positionComponent.velocity.y < 0) {
             if (!positionComponent.isClimbing()) {
@@ -157,6 +216,13 @@ public class MovementMediator implements Mediator {
         }
     }
 
+    /**
+     * Verify if the entity has any collection of 'type' in its collider flags
+     *
+     * @param collisionCornersFlags the collider flags form {@link DyncamicColliderComponent}
+     * @param type                  the type of the searched collider
+     * @return if it was found or not
+     */
     private boolean hasCollisionOfType(ColliderType[] collisionCornersFlags, ColliderType type) {
         for (ColliderType flagType : collisionCornersFlags)
             if (flagType == type)
@@ -164,14 +230,34 @@ public class MovementMediator implements Mediator {
         return false;
     }
 
+    /**
+     * Verify if the entity has any collection of 'type' in the bottom of the entity, searching in its collider flags
+     *
+     * @param collisionCornersFlags the collider flags form {@link DyncamicColliderComponent}
+     * @param type                  the type of the searched collider
+     * @return if it was found or not
+     */
     private boolean hasCollisionOfTypeOnBottom(ColliderType[] collisionCornersFlags, ColliderType type) {
         return collisionCornersFlags[2] == type || collisionCornersFlags[3] == type;
     }
 
+    /**
+     * Verify if the entity has any collection of 'type' in the middle of the entity, searching in its collider flags
+     *
+     * @param collisionCornersFlags the collider flags form {@link DyncamicColliderComponent}
+     * @param type                  the type of the searched collider
+     * @return if it was found or not
+     */
     private boolean hasCollisionOfTypeOnMiddle(ColliderType[] collisionCornersFlags, ColliderType type) {
         return collisionCornersFlags[4] == type || collisionCornersFlags[5] == type;
     }
 
+    /**
+     * Used whene a key in use and it will manage what needs to be done after that action<br>
+     * It is managing the entity movement(W, A, S, D), climbing leaders(Space) and attack(F)
+     *
+     * @param component the keyboard control component({@link KeyboardControllerComponent})
+     */
     private void keysMovementManager(KeyboardControllerComponent component) {
         GameObject gameObject = component.gameObject;
         PositionComponent positionComponent = gameObject.getComponent(PositionComponent.class);

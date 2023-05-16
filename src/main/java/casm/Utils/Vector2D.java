@@ -12,6 +12,10 @@ public class Vector2D {
         x = 0;
         y = 0;
     }
+    public Vector2D(Vector2D vec) {
+        x = vec.x;
+        y = vec.y;
+    }
 
     public Vector2D(double x, double y) {
         this.x = x;
@@ -139,13 +143,30 @@ public class Vector2D {
         y += height / 2. - objectHeight / 2.;
         return this;
     }
+    public Vector2D centerVertically(double objectWidth, double width) {
+        x += width / 2. - objectWidth / 2.;
+        return this;
+    }
+
+    public Vector2D centerHorizontally(double objectHeight, double height) {
+        y += height / 2. - objectHeight / 2.;
+        return this;
+    }
 
     public Vector2D center(int objectWidth, int objectHeight, int width, int height) {
         centerVertically(objectWidth, width);
         centerHorizontally(objectHeight, height);
         return this;
+    } public Vector2D center(double objectWidth, double objectHeight, double width, double height) {
+        centerVertically(objectWidth, width);
+        centerHorizontally(objectHeight, height);
+        return this;
     }
     public Vector2D center(Sprite objectSprite, int width, int height) {
+        centerVertically(objectSprite.getWidth(), width);
+        centerHorizontally(objectSprite.getHeight(), height);
+        return this;
+    }public Vector2D center(Sprite objectSprite, double width, double height) {
         centerVertically(objectSprite.getWidth(), width);
         centerHorizontally(objectSprite.getHeight(), height);
         return this;

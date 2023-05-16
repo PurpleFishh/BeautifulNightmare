@@ -11,10 +11,16 @@ import java.util.List;
 
 public abstract class Scene {
 
+    private SceneType type;
     protected boolean isRunning = false;
     protected List<GameObject> gameObjects = new ArrayList<>();
     protected HashMap<Integer, List<GameObject>> layeringObjects = new HashMap<>();
     public int layerCounter = 0;
+
+    public Scene(SceneType type)
+    {
+        this.type = type;
+    }
 
     public abstract void init();
 
@@ -94,5 +100,9 @@ public abstract class Scene {
 
     public boolean isRunning() {
         return isRunning;
+    }
+
+    public SceneType getType() {
+        return type;
     }
 }

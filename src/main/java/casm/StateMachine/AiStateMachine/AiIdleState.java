@@ -3,10 +3,9 @@ package casm.StateMachine.AiStateMachine;
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.GameObject;
 import casm.StateMachine.AfterStateEndsNotify;
-import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
-import casm.StateMachine.State;
+import casm.StateMachine.UpdatableState;
 
-public class AiIdleState implements State {
+public class AiIdleState implements UpdatableState {
     private String name;
     private GameObject gameObject;
 

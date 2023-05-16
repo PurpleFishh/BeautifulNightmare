@@ -7,6 +7,7 @@ import casm.ECS.Components.MouseListener;
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
 import casm.Factory.MenuFactory.MenuEntityType;
+import casm.Game;
 import casm.Objects.Object;
 import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
@@ -21,18 +22,31 @@ public class ButtonBuilder implements Builder {
         return this;
     }
 
-    public ButtonBuilder addImage() {
-        Sprite buttonTexture = AssetsCollection.getInstance().getSpriteSheet("menu_assets\\buttons\\buttons_spritesheet.png")
-                .getSprite(objectBuilt.getType().ordinal() * 2);
+    public ButtonBuilder addImage(String sheetPath) {
+        //TODO: fa diferenta dintre alea mari si alea mici
+        Sprite buttonTexture;
+        int index = objectBuilt.getType().ordinal();
+        if(objectBuilt.getType() !=  MenuEntityType.BUTTON.BACK) {
+            index *= 2;
+            buttonTexture = AssetsCollection.getInstance().getSpriteSheet(sheetPath)
+                    .getSprite(index);
+        }
+        else {
+            index -= (MenuEntityType.BUTTON.BACK.ordinal());
+            index *= 2;
+            buttonTexture = AssetsCollection.getInstance().getSpriteSheet(sheetPath)
+                    .getSprite((index));
+        }
         objectBuilt.updateDimensions(buttonTexture.getWidth(), buttonTexture.getHeight());
         objectBuilt.addComponent(new SpriteComponent(buttonTexture));
         objectBuilt.addComponent(new ColliderComponent(ColliderType.BUTTON, buttonTexture.getWidth(), buttonTexture.getHeight()));
+        objectBuilt.setAsset(AssetsCollection.getInstance().getSpriteSheet(sheetPath), index);
 
         return this;
     }
     public ButtonBuilder clickable()
     {
-        MouseListener.getInstance().subscribe(objectBuilt);
+        MouseListener.getInstance().subscribe(Game.getCurrentScene(),objectBuilt);
         return this;
     }
 

@@ -3,9 +3,9 @@ package casm.StateMachine.AiStateMachine;
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.GameObject;
 import casm.StateMachine.AfterStateEndsNotify;
-import casm.StateMachine.State;
+import casm.StateMachine.UpdatableState;
 
-public class AiMoveToPlayerState implements State {
+public class AiMoveToPlayerState implements UpdatableState {
     private String name;
     private GameObject gameObject;
 
@@ -13,7 +13,7 @@ public class AiMoveToPlayerState implements State {
         this.name = name;
         this.gameObject = gameObject;
     }
-    @Override
+
     public void update(AfterStateEndsNotify notifier) {
         gameObject.getComponent(PositionComponent.class).velocity.x = 0;
         gameObject.getComponent(PositionComponent.class).sign.x = 0;

@@ -6,7 +6,9 @@ import casm.ECS.Components.Collision.ColliderType;
 import casm.ECS.Components.Collision.DyncamicColliderComponent;
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
+import casm.Game;
 import casm.Objects.Object;
+import casm.Scenes.SceneType;
 import casm.StateMachine.AfterStateEndsNotify;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Vector2D;
@@ -72,7 +74,7 @@ public class Entity extends Object implements AfterStateEndsNotify {
 
     public void damage(double damage) {
         this.life -= damage;
-        if (life < 0)
+        if (life <= 0)
             death();
     }
 
@@ -85,6 +87,11 @@ public class Entity extends Object implements AfterStateEndsNotify {
         //((LeveleScene)Game.getCurrentScene()).removeEntity(this);
         //TODO: Fa cu un timer sa se despauneze in timp nu instant dupa animatie
         this.kill();
+        if(this instanceof Player)
+        {
+            Game.changeScene(SceneType.GAME_OVER_MENU);
+            Game.destroyAllWithoutTopScenes();
+        }
     }
 }
 

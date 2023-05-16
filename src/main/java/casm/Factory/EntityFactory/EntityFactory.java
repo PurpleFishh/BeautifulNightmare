@@ -8,7 +8,16 @@ import casm.Factory.FactoryTypes;
 import casm.Objects.Object;
 import casm.Utils.Vector2D;
 
+/**
+ * Factory for creating entities
+ */
 public class EntityFactory implements Factory {
+    /**
+     * Create an entity
+     * @param type the type of the entity
+     * @param spawnPosition the position where it will be spawned
+     * @return the entity created
+     */
     @Override
     public Object create(FactoryTypes type, Vector2D spawnPosition) {
         if (type.equals(EntityType.PLAYER)) {

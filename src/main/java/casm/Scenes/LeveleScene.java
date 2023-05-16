@@ -1,5 +1,6 @@
 package casm.Scenes;
 
+import casm.ECS.Components.KeyboardControllerComponent;
 import casm.ECS.Components.KeyboardListener;
 import casm.ECS.Components.MouseListener;
 import casm.ECS.GameObject;
@@ -16,24 +17,34 @@ import casm.Objects.Entities.SpawnDoor;
 import casm.Objects.Entities.WinDoor;
 import casm.SpriteUtils.AssetsCollection;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
+import casm.StateMachine.AnimationStateMachine.State;
+import casm.StateMachine.UpdatableState;
 import casm.Utils.Vector2D;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class LeveleScene extends Scene {
+public class LeveleScene extends Scene implements State {
 
     private Player player;
     private WinDoor winDoor;
     private Set<Enemy> enemies = new HashSet<>();
     private Factory factory;
     private boolean won = false;
+    private String name;
+    private int level = 1;
 
-    public LeveleScene() {
+    public LeveleScene(SceneType type) {
+        super(type);
         factory = new EntityFactory();
+        name = "LevelScene";
+    }
+
+    public LeveleScene(SceneType type, int level) {
+        super(type);
+        factory = new EntityFactory();
+        name = "LevelScene";
+        this.level = level;
     }
 
     public enum layers {
@@ -46,7 +57,7 @@ public class LeveleScene extends Scene {
 
         long time = System.nanoTime();
         AssetsCollection.getInstance().addSpriteSheet("player_single_frame.png", 16, 22);
-        Map.loadMap(this, "level1.tmj", "tiles2.png");
+        Map.loadMap(this, "level" + level + ".tmj", "level" + level + "_tiles.png");
 
 
         player = (Player) createEntity(EntityType.PLAYER, Map.getPlayerSpawnPosition());
@@ -138,10 +149,18 @@ public class LeveleScene extends Scene {
     @Override
     public void destroy() {
         Thread th = new Thread(() -> {
-            KeyboardListener.getInstance().unsubscribeAll();
-            MouseListener.getInstance().unsubscribeAll();
+            KeyboardListener.getInstance().unsubscribe(player.getComponent(KeyboardControllerComponent.class));
             super.destroy();
         });
         th.start();
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    public int getLevel() {
+        return level;
     }
 }

@@ -1,0 +1,19 @@
+{
+  "sprite_image": "heart_spritesheet.png",
+  "frames_width": "28",
+  "frames_height": "26",
+  "rows": "1",
+  "animations": [
+    {
+      "name": "rotate",
+      "columns": "8",
+      "x_start": "0",
+      "y_start": "0",
+      "frame_width": "28",
+      "frame_height": "26",
+      "speed": "1",
+      "loop": true,
+      "frame_time": [5, 1, 1, 1, 1, 1, 1, 1]
+    }
+  ]
+}

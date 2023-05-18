@@ -11,6 +11,7 @@ import casm.Game;
 import casm.Objects.Menu.BackgroundImageObject;
 import casm.Objects.Menu.Button;
 import casm.Objects.Object;
+import casm.Objects.TextObject;
 import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
 import casm.StateMachine.AnimationStateMachine.State;
@@ -48,12 +49,14 @@ public class SettingsMenuScene extends Scene implements State {
         buttons.add((Button) createObject(MenuEntityType.BUTTON.BACK, buttonsPlace.sub(new Vector2D(90, 75)), layers.FOREGROUND));
 
         //TODO: fa cumva mai frumoasa crearea de text
-        GameObject text = new GameObject("Text");
-        text.addComponent(new TextComponent("Settings", new Vector2D(0, 0), "Eras Bold ITC", 30,
-                new Color(219, 246, 255)));
-        Vector2D size = text.getComponent(TextComponent.class).getSize();
-        text.getComponent(TextComponent.class).setPosition(new Vector2D(titleBar.getSpawnPosition()).center(size.x, size.y,
-                titleBar.getWidth(), titleBar.getHeight() - size.y / 2));
+//        GameObject text = new GameObject("Text");
+//        text.addComponent(new TextComponent("Settings", new Vector2D(0, 0), "Eras Bold ITC", 30,
+//                new Color(219, 246, 255)));
+//        Vector2D size = text.getComponent(TextComponent.class).getSize();
+//        text.getComponent(TextComponent.class).setPosition(new Vector2D(titleBar.getSpawnPosition()).center(size.x, size.y,
+//                titleBar.getWidth(), titleBar.getHeight() - size.y / 2));
+        TextObject text = new TextObject("Settings", new Vector2D(0, 0), 30)
+                .center(titleBar.getSpawnPosition(), titleBar.getWidth(), titleBar.getHeight());
         addGameObjectToScene(text);
         addGameObjectToLayer(text, layers.FOREGROUND.ordinal());
     }

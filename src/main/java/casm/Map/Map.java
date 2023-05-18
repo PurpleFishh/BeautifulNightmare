@@ -2,6 +2,7 @@ package casm.Map;
 
 import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
+import casm.Factory.EntityFactory.EntityType;
 import casm.Scenes.Scene;
 import casm.Objects.Entities.Tile;
 import casm.SpriteUtils.Assets;
@@ -16,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -24,9 +26,11 @@ public class Map {
 
     private static int cols, rows, tileWidth, tileHeight;
     private static Vector2D playerSpawnPosition, spawnDoor, winDoor;
-    private static Set<Vector2D> enemiesSpawnPosition = new HashSet<>();
+    private static HashMap<EntityType, Set<Vector2D>> enemiesSpawnPosition = new HashMap<>();
+    private static HashSet<Vector2D> heartsSpawnPosition = new HashSet<>();
 
     public static void loadMap(Scene scene, String path, String sprites_name) {
+        enemiesSpawnPosition.clear();
         try {
             JSONObject json = (JSONObject) new JSONParser().parse(new FileReader(Paths.get("").toAbsolutePath() + "\\resources\\GameMaps\\" + path));
             JSONArray layers = (JSONArray) json.get("layers");
@@ -72,6 +76,8 @@ public class Map {
                         double y = Double.parseDouble(((JSONObject) positionObject).get("y").toString());
                         if (layerObj.get("name").toString().equals("player"))
                             playerSpawnPosition = new Vector2D(x, y);
+                        if (layerObj.get("name").toString().equals("heart"))
+                            heartsSpawnPosition.add(new Vector2D(x, y));
                         if (layerObj.get("name").toString().equals("spawn door")) {
                             double h = Double.parseDouble(((JSONObject) positionObject).get("height").toString());
                             spawnDoor = new Vector2D(x, y - h);
@@ -80,8 +86,18 @@ public class Map {
                             double h = Double.parseDouble(((JSONObject) positionObject).get("height").toString());
                             winDoor = new Vector2D(x, y - h);
                         }
-                        if (layerObj.get("name").toString().equals("enemies"))
-                            enemiesSpawnPosition.add(new Vector2D(x, y));
+                        if (layerObj.get("name").toString().equals("enemies")) {
+                            EntityType type = null;
+                            switch (((JSONObject) positionObject).get("name").toString().toLowerCase()) {
+                                case "weasel" -> type = EntityType.WEASEL_FISHERMAN;
+                                case "catfish" -> type = EntityType.CATFISH;
+                            }
+                            if (type != null) {
+                                if (!enemiesSpawnPosition.containsKey(type))
+                                    enemiesSpawnPosition.put(type, new HashSet<>());
+                                enemiesSpawnPosition.get(type).add(new Vector2D(x, y));
+                            }
+                        }
                     });
 
                 }
@@ -123,7 +139,15 @@ public class Map {
         return winDoor;
     }
 
-    public static Set<Vector2D> getEnemiesSpawnPosition() {
+    public static HashMap<EntityType, Set<Vector2D>> getEnemiesSpawnPosition() {
         return enemiesSpawnPosition;
+    }
+
+    public static Set<Vector2D> getEnemiesSpawnPositionByType(EntityType type) {
+        return enemiesSpawnPosition.get(type);
+    }
+
+    public static HashSet<Vector2D> getHeartsSpawnPosition() {
+        return heartsSpawnPosition;
     }
 }

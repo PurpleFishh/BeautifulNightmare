@@ -2,6 +2,9 @@ package casm.Objects.Entities;
 
 import casm.ECS.Components.*;
 import casm.ECS.Components.Collision.ColliderType;
+import casm.Factory.EntityFactory.EntityType;
+import casm.Game;
+import casm.Objects.InfoBar;
 import casm.StateMachine.AnimationStateMachine.AnimationState;
 import casm.SpriteUtils.Animation.AnimationsExtract;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
@@ -10,6 +13,7 @@ import casm.Utils.Settings.EntitiesSettings;
 import casm.Utils.Vector2D;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Player extends Entity {
 
@@ -31,6 +35,7 @@ public class Player extends Entity {
 
         updateDimensions(playerWidth, playerHeight);
         this.getComponent(PositionComponent.class).setMaxSpeed(EntitiesSettings.PlayerInfo.PLAYER_MAX_SPEED);
+        this.addComponent(new AttackComponent(EntityType.PLAYER));
         this.getComponent(AttackComponent.class).setAttackDelay(4L);
         this.addComponent(new KeyboardControllerComponent());
         this.addComponent(Camera.getInstance());
@@ -69,4 +74,20 @@ public class Player extends Entity {
         this.addComponent(stateMachine);
     }
 
+    @Override
+    public void setLife(double life) {
+        super.setLife(life);
+        Objects.requireNonNull(Game.getLevelScene()).infoBar.updateHealth(this.getLife());
+    }
+
+    @Override
+    public void damage(double damage) {
+        super.damage(damage);
+        Objects.requireNonNull(Game.getLevelScene()).infoBar.updateHealth(this.getLife());
+    }
+    @Override
+    public void revive(double health) {
+        super.revive(health);
+        Objects.requireNonNull(Game.getLevelScene()).infoBar.updateHealth(this.getLife());
+    }
 }

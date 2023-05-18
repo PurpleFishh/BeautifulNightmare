@@ -36,11 +36,19 @@ public enum ColliderType {
      * For the door that will open when the tasks are done and you can go to the next level
      */
     WIN_DOOR,
+    /**
+     * Collider for life revival
+     */
+    HEART_BONUS,
 
     /**
      * Used for buttons form the menu
      */
-    BUTTON;
+    BUTTON,
+    /**
+     * Used when the entity gets of the map and it will be killed
+     */
+    VOID;
 
     /**
      * Get a set of collider types that are for map tiles
@@ -81,6 +89,9 @@ public enum ColliderType {
             }
             case LAVA -> {
                 return Color.YELLOW;
+            }
+            case HEART_BONUS -> {
+                return Color.MAGENTA;
             }
             default -> {
                 return Color.BLACK;

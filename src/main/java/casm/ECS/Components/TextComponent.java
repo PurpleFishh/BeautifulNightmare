@@ -69,4 +69,8 @@ public class TextComponent extends Component {
         Rectangle2D rect = Game.getGraphics().getFontMetrics(font).getStringBounds(text, Game.getGraphics());
         return new Vector2D(rect.getWidth(), rect.getHeight());
     }
+
+    public Font getFont() {
+        return font;
+    }
 }

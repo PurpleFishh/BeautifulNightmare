@@ -39,7 +39,6 @@ public class Entity extends Object implements AfterStateEndsNotify {
         this.addComponent(new SpriteComponent());
         this.addComponent(new ColliderComponent(colliderType, colliderWidth, colliderHeight));
         this.addComponent(new DyncamicColliderComponent());
-        this.addComponent(new AttackComponent());
 
         //this.init();
     }
@@ -79,18 +78,17 @@ public class Entity extends Object implements AfterStateEndsNotify {
     }
 
     public void revive(double health) {
-        this.life += health;
+        this.life = (health + life) > 100 ? 100 : (health + life);
     }
 
     @Override
     public void afterStateEndsNotify() {
-        //((LeveleScene)Game.getCurrentScene()).removeEntity(this);
         //TODO: Fa cu un timer sa se despauneze in timp nu instant dupa animatie
         this.kill();
         if(this instanceof Player)
         {
             Game.changeScene(SceneType.GAME_OVER_MENU);
-            Game.destroyAllWithoutTopScenes();
+            //Game.destroyAllWithoutTopScenes();
         }
     }
 }

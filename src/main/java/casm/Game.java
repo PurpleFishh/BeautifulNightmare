@@ -1,7 +1,10 @@
 package casm;
 
 import casm.ECS.Components.MouseListener;
+import casm.Exception.SceneCanNotBeSaved;
 import casm.Factory.SceneFactory.SceneFactory;
+import casm.Scenes.Level.LevelSaverLoader;
+import casm.Scenes.Level.LeveleScene;
 import casm.Scenes.Scene;
 import casm.GameWindow.GameWindow;
 import casm.Scenes.SceneType;
@@ -9,6 +12,7 @@ import casm.Utils.Settings.Setting;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.sql.SQLException;
 import java.util.Stack;
 
 /*! \class Game
@@ -93,6 +97,10 @@ public class Game implements Runnable {
         // if (runState) {
         runState = false;
         try {
+            LevelSaverLoader.getInstance().save();
+        } catch (SceneCanNotBeSaved ignored) {
+        }
+        try {
             destroyAllScenes();
             wnd.closeWindow();
             System.exit(0);
@@ -119,39 +127,66 @@ public class Game implements Runnable {
         sceneStack.peek().init();
     }
 
-    public static void changeLevel(int level)
-    {
+    public static void changeScene(SceneType newScene, boolean restore) {
         Scene intermediary;
+        //TODO: foloseste FSM ul pt scene
+        //TODO: fa o exceptie proprie pt asta
         try {
-            intermediary = sceneFactory.createLevel(level);
+            intermediary = sceneFactory.create(newScene);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return;
         }
 
         sceneStack.push(intermediary);
+        if (intermediary instanceof LeveleScene)
+            ((LeveleScene) intermediary).load(restore);
+        sceneStack.peek().init();
+    }
+
+    public static void changeLevel(int level, boolean restore) {
+        LeveleScene intermediary;
+        try {
+            intermediary = sceneFactory.createLevel(level);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+        sceneStack.push(intermediary);
+        intermediary.load(restore);
         sceneStack.peek().init();
         destroyAllWithoutTopScenes();
     }
 
-    public static void destroyViewingScene()
-    {
+    public static void destroyViewingScene() {
         sceneStack.pop().destroy();
     }
-    public static void destroyAllScenes()
-    {
+
+    public static void destroyAllScenes() {
         while (!sceneStack.isEmpty())
             sceneStack.pop().destroy();
     }
-    public static void destroyAllWithoutTopScenes()
-    {
+
+    public static void destroyAllWithoutTopScenes() {
         if (sceneStack.size() > 1) {
+            sceneStack.subList(0, sceneStack.size() - 1).forEach(Scene::destroy);
             sceneStack.subList(0, sceneStack.size() - 1).clear();
         }
     }
 
+    public static void destroySecondScenes() {
+        sceneStack.remove(sceneStack.size() - 2).destroy();
+    }
+
     public static Scene getCurrentScene() {
         return !sceneStack.isEmpty() ? sceneStack.peek() : null;
+    }
+
+    public static LeveleScene getLevelScene() {
+        for (int i = sceneStack.size() - 1; i >= 0; --i)
+            if (sceneStack.get(i) instanceof LeveleScene)
+                return (LeveleScene) sceneStack.get(i);
+        return null;
     }
 
     public static GameWindow getWindow() {

@@ -4,10 +4,11 @@ import casm.ECS.Component;
 import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
 import casm.ECS.Components.Collision.Rectangle;
+import casm.Factory.EntityFactory.EntityType;
 import casm.Objects.Entities.Enemies.Enemy;
 import casm.Objects.Entities.Player;
 import casm.Game;
-import casm.Scenes.LeveleScene;
+import casm.Scenes.Level.LeveleScene;
 import casm.StateMachine.AfterStateEndsNotify;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Settings.Setting;
@@ -35,9 +36,13 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
      * attackDelay - the attack between attacks
      */
     private double attackDelayDefault = 10L, attackDelay = 0L;
+    private EntityType type;
 
     public AttackComponent() {
 
+    }
+    public AttackComponent(EntityType type) {
+        this.type = type;
     }
 
     /**
@@ -46,8 +51,16 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
     @Override
     public void init() {
         playerCollider = gameObject.getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY);
-        attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
-                0, 3, 30 + (int) playerCollider.getWidth(), 20);
+        switch (type)
+        {
+            case CATFISH -> attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
+                    0, 13, 5 + (int) playerCollider.getWidth(), 23);
+            case WEASEL_FISHERMAN ->  attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
+                    0, 3, 20 + (int) playerCollider.getWidth(), 33);
+            default ->  attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
+                    0, 3, 30 + (int) playerCollider.getWidth(), 20);
+        }
+
 //        attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
 //                (int) playerCollider.getWidth(), 3, 30 , 20);
     }

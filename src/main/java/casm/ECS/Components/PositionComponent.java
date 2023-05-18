@@ -149,10 +149,9 @@ public class PositionComponent extends Component {
      */
     @Override
     public void update() {
-        if (canMove) {
-            velocity = getPotentialVelocity();
-            mediator.notify(this);
-        }
+        velocity = getPotentialVelocity();
+        mediator.notify(this);
+
     }
 
 
@@ -166,29 +165,31 @@ public class PositionComponent extends Component {
         double new_velocity_x = potVelocity.x + (Setting.DELTA_TIME / 1000) * sign.x;
         double new_velocity_y = potVelocity.y + (Setting.DELTA_TIME / 1000) * sign.y;
 
-        // Miscare pe axa X
-        if (sign.x != 0 && Math.abs(new_velocity_x) < maxSpeed) {
-            potVelocity.x = new_velocity_x;
-        }
+        if (canMove)
+            // Miscare pe axa X
+            if (sign.x != 0 && Math.abs(new_velocity_x) < maxSpeed) {
+                potVelocity.x = new_velocity_x;
+            }
 
         // Daca entitatea are gravitatie
         if (gravity) {
-
-            // Daca ajunge la inaltimea maxima a sariturii aplicam inapoi gravitatiea
-            if (isJumping && sign.y == -1 && Math.abs(new_velocity_y) >= EntitiesSettings.MAX_JUMP) {
-                sign.y = 1;
-                isJumping = false;
+            if (canMove) {// Daca ajunge la inaltimea maxima a sariturii aplicam inapoi gravitatiea
+                if (isJumping && sign.y == -1 && Math.abs(new_velocity_y) >= EntitiesSettings.MAX_JUMP) {
+                    sign.y = 1;
+                    isJumping = false;
+                }
+                // Daca ajunge la viteza maxima de catarat il limitam
+                if (isClimbing && sign.y == -1 && Math.abs(new_velocity_y) >= EntitiesSettings.MAX_CLIMBING_SPEED)
+                    new_velocity_y = potVelocity.y;
             }
-            // Daca ajunge la viteza maxima de catarat il limitam
-            if (isClimbing && sign.y == -1 && Math.abs(new_velocity_y) >= EntitiesSettings.MAX_CLIMBING_SPEED)
-                new_velocity_y = potVelocity.y;
             // Daca e nevoie de gravidatie, nu o lasam sa treaca de maximul acesteia
             if (sign.y == 1 && new_velocity_y >= EntitiesSettings.GRAVITY)
                 new_velocity_y = potVelocity.y;
             // Aplicam gravitatia
             if (sign.y == 0 && new_velocity_y < EntitiesSettings.GRAVITY)
                 new_velocity_y = potVelocity.y + (Setting.DELTA_TIME / 1000) * EntitiesSettings.GRAVITY;
-            potVelocity.y = new_velocity_y;
+            if (canMove || sign.y != -1)
+                potVelocity.y = new_velocity_y;
         } else
             // Miscare pe axa Y(ca o fantoma ;))
             if (sign.y != 0 && Math.abs(new_velocity_y) < maxSpeed) {
@@ -209,6 +210,7 @@ public class PositionComponent extends Component {
         potPosition.y += velocity.y * Setting.DELTA_TIME * speed;
         return potPosition;
     }
+
     /**
      * Calculate the potential entity position as vector using a position vector, not the position of the entity
      *
@@ -223,6 +225,7 @@ public class PositionComponent extends Component {
 
     /**
      * Get if the entity is in a jump
+     *
      * @return if the entity is jumping
      */
     public boolean isJumping() {
@@ -231,6 +234,7 @@ public class PositionComponent extends Component {
 
     /**
      * Set the jumping flag
+     *
      * @param jumping value for the jumping flag
      */
     public void setJumping(boolean jumping) {
@@ -239,13 +243,16 @@ public class PositionComponent extends Component {
 
     /**
      * Get if the entity is climbing a leader
+     *
      * @return if the entity is climbing
      */
     public boolean isClimbing() {
         return isClimbing;
     }
+
     /**
      * Set the climbing flag
+     *
      * @param climbing value for the climbing flag
      */
     public void setClimbing(boolean climbing) {
@@ -282,7 +289,8 @@ public class PositionComponent extends Component {
 
     /**
      * Set dimensions of the entity
-     * @param width entity width
+     *
+     * @param width  entity width
      * @param height entity height
      */
     public void setDimensions(int width, int height) {
@@ -299,6 +307,7 @@ public class PositionComponent extends Component {
 
     /**
      * Set new entity speed limit for running
+     *
      * @param maxSpeed entity speed limit
      */
     public void setMaxSpeed(double maxSpeed) {

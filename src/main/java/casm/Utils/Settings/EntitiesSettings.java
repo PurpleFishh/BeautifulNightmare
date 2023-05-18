@@ -13,4 +13,7 @@ public class EntitiesSettings {
     public static class WeaselInfo {
         public static final double WEASEL_MAX_SPEED = 0.17;
     }
+    public static class CatfishInfo {
+        public static final double CATFISH_MAX_SPEED = 0.19;
+    }
 }

@@ -40,15 +40,24 @@ public class Button extends Object implements ObserverMouse {
         if (event.getID() == MouseEvent.MOUSE_CLICKED) {
             Rectangle collider = this.getComponent(ColliderComponent.class).getCollider(ColliderType.BUTTON);
             if (collider.contains(event.getX(), event.getY())) {
-                if (type == MenuEntityType.BUTTON.PLAY || type == MenuEntityType.BUTTON.RETRY) {
-                    Game.changeScene(SceneType.LEVEL);
-                    Game.destroyAllWithoutTopScenes();
+                if (type == MenuEntityType.BUTTON.PLAY) {
+                    if (Game.getLevelScene() == null) {
+                        //Game.changeScene(SceneType.LEVEL, true);
+                        Game.changeLevel(2, false);
+                        Game.destroyAllWithoutTopScenes();
+                    } else {
+                        Game.destroyViewingScene();
+                    }
+                } else if (type == MenuEntityType.BUTTON.RETRY) {
+                    Game.changeLevel(Game.getLevelScene().getLevel(), false);
                 } else if (type == MenuEntityType.BUTTON.EXIT) {
                     if (Game.getCurrentScene().getType() == SceneType.MAIN_MENU)
                         Game.exitGame();
                     else {
+                        //Game.destroyViewingScene();
                         Game.changeScene(SceneType.MAIN_MENU);
-                        Game.destroyAllWithoutTopScenes();
+                        Game.destroySecondScenes();
+                        //Game.destroyAllWithoutTopScenes();
                     }
                 } else if (type == MenuEntityType.BUTTON.SETTINGS)
                     Game.changeScene(SceneType.SETTINGS_MENU);

@@ -1,7 +1,9 @@
 package casm.Factory.SceneFactory;
 
+import casm.Exception.UnknownFactoryType;
 import casm.Factory.FactoryTypes;
 import casm.Scenes.*;
+import casm.Scenes.Level.LeveleScene;
 
 public class SceneFactory {
     /**
@@ -15,7 +17,7 @@ public class SceneFactory {
      * @param type the type of the entity
      * @return the entity created
      */
-    public Scene create(FactoryTypes type) throws Exception {
+    public Scene create(FactoryTypes type) throws UnknownFactoryType {
         if (type.equals(SceneType.LEVEL)) {
             return new LeveleScene((SceneType) type, createLevelIndex);
         } else if (type.equals(SceneType.MAIN_MENU)) {
@@ -27,7 +29,7 @@ public class SceneFactory {
         } else if (type.equals(SceneType.GAME_OVER_MENU)) {
             return new GameOverScene((SceneType) type);
         } else {
-            throw new Exception("The type of the scene was not found!");
+            throw new UnknownFactoryType();
         }
     }
 

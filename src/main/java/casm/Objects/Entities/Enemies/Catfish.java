@@ -1,43 +1,48 @@
 package casm.Objects.Entities.Enemies;
 
 import casm.ECS.Components.AttackComponent;
-import casm.Factory.EntityFactory.EntityType;
-import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
+import casm.ECS.Components.Collision.ColliderComponent;
+import casm.ECS.Components.Collision.ColliderType;
+import casm.ECS.Components.Collision.Rectangle;
 import casm.ECS.Components.PositionComponent;
-import casm.StateMachine.AnimationStateMachine.AnimationState;
+import casm.Factory.EntityFactory.EntityType;
 import casm.SpriteUtils.Animation.AnimationsExtract;
+import casm.StateMachine.AnimationStateMachine.AnimationState;
+import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Settings.EntitiesSettings;
 import casm.Utils.Vector2D;
 
 import java.util.List;
 
-public class WeaselFisherman extends Enemy {
+public class Catfish extends Enemy {
 
     private int enemyWidth, enemyHeight;
-    public WeaselFisherman(Vector2D spawnPosition) {
-        super(EntityType.WEASEL_FISHERMAN,spawnPosition, 0, 0);
+
+    public Catfish(Vector2D spawnPosition) {
+        super(EntityType.CATFISH, spawnPosition, 0, 0);
         initiate();
     }
 
-    public WeaselFisherman(String name, Vector2D spawnPosition) {
-        super(name, EntityType.WEASEL_FISHERMAN, spawnPosition, 0, 0);
+    public Catfish(String name, Vector2D spawnPosition) {
+        super(name, EntityType.CATFISH, spawnPosition, 0, 0);
         initiate();
     }
 
-    public void initiate()
-    {
+    public void initiate() {
         generateAnimationStateMachine();
-        this.getComponent(PositionComponent.class).setMaxSpeed(EntitiesSettings.WeaselInfo.WEASEL_MAX_SPEED);
-        this.getComponent(AttackComponent.class).setAttackDelay(8L);
+        this.getComponent(PositionComponent.class).setMaxSpeed(EntitiesSettings.CatfishInfo.CATFISH_MAX_SPEED);
+        this.getComponent(AttackComponent.class).setAttackDelay(6L);
         updateDimensions(enemyWidth, enemyHeight);
-        this.setDamage(10);
-        this.setLife(55);
+        this.setDamage(16);
+        this.setLife(40);
 
-       // this.init();
+
+        // this.init();
     }
+
     private void generateAnimationStateMachine() {
         AnimationStateMachine stateMachine = new AnimationStateMachine();
-        List<AnimationState> animationStates = AnimationsExtract.getInstance().extractAnimations("enemy_weasel_animation.json");
+        List<AnimationState> animationStates = AnimationsExtract.getInstance().extractAnimations("enemy_catfish_animation.json");
 
         animationStates.forEach(stateMachine::addState);
         stateMachine.setDefaultState(animationStates.get(0).getName());

@@ -6,14 +6,19 @@ import casm.ECS.GameObject;
 import casm.Objects.Entities.Entity;
 import casm.Game;
 import casm.Map.Map;
-import casm.Scenes.LeveleScene;
-import casm.Scenes.SceneType;
+import casm.Objects.Entities.Player;
+import casm.Objects.HeartBonus;
+import casm.Scenes.Level.LevelSaverLoader;
+import casm.Scenes.Level.LeveleScene;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.FlipEntityMediator;
 import casm.Utils.Mediator;
 import casm.Utils.Settings.EntitiesSettings;
 import casm.Utils.Settings.Setting;
 import casm.Utils.Vector2D;
+
+import java.sql.SQLException;
+import java.util.Objects;
 
 /**
  * The mediator that is used for every entity for movement<br>
@@ -122,6 +127,8 @@ public class MovementMediator implements Mediator {
         if (collisionY)
             moveToTileEdgeY(positionComponent, playerCollider);
         else {
+            if(hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.VOID ))
+                ((Entity)gameObject).setLife(0);
             if (positionComponent.isClimbing() && !(xLeaderBottom || yLeaderBottom)) {
                 positionComponent.sign.y = 0;
                 positionComponent.velocity.y = 0;
@@ -138,10 +145,19 @@ public class MovementMediator implements Mediator {
         if (lavaDamageDelay <= 0) {
             if (xLavaCollision || yLavaCollision)
                 ((Entity) gameObject).damage(EntitiesSettings.LAVA_DAMAGE);
-            lavaDamageDelay = 1;
+            lavaDamageDelay = 6;
         } else
             lavaDamageDelay -= 1 / Setting.DELTA_TIME;
-        verifyIfGameWon(playerCollider);
+        if (gameObject instanceof Player) {
+            if (((Entity) gameObject).getLife() != 100)
+                Objects.requireNonNull(Game.getLevelScene()).getHeartBonuses().forEach(heart -> {
+                    if (heart.getCollider().intersects(playerCollider)) {
+                        ((Player) gameObject).revive(40);
+                        heart.kill();
+                    }
+                });
+            verifyIfGameWon(playerCollider);
+        }
     }
 
     /**
@@ -154,7 +170,12 @@ public class MovementMediator implements Mediator {
                 getComponent(ColliderComponent.class).getCollider(ColliderType.WIN_DOOR)))
             if (((LeveleScene) Game.getCurrentScene()).isWon()) {
                 System.out.println("Ai castigat");
-                Game.changeLevel(((LeveleScene) Game.getCurrentScene()).getLevel() + 1);
+                try {
+                    LevelSaverLoader.getInstance().saveHighScore();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                Game.changeLevel(((LeveleScene) Game.getCurrentScene()).getLevel() + 1, true);
             }
     }
 

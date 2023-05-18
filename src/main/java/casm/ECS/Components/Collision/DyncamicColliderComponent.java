@@ -70,7 +70,8 @@ public class DyncamicColliderComponent extends Component {
      */
     private static ColliderType IsSolid(double x, double y, List<GameObject> testEntities, int testWidth, int testHeight) {
         if (x < 0 || x >= Map.getCols() * Map.getTileWidth()) return ColliderType.MAP_TILE;
-        if (y < 0 || y >= Map.getRows() * Map.getTileHeight()) return ColliderType.MAP_TILE;
+        if (y < 0) return ColliderType.MAP_TILE;
+        if (y >= Map.getRows() * Map.getTileHeight()) return ColliderType.VOID;
 
         int xIndex = (int) (x / testWidth);
         int yIndex = (int) (y / testHeight);
@@ -89,6 +90,7 @@ public class DyncamicColliderComponent extends Component {
 
     /**
      * Set if the entity is on the ground or not
+     *
      * @param onGround is on the ground or not
      */
     public void setOnGround(boolean onGround) {
@@ -101,14 +103,17 @@ public class DyncamicColliderComponent extends Component {
     public ColliderType[] getCollisionCornersFlags() {
         return collisionCorners;
     }
+
     /**
      * @return get if the entity is on leader
      */
     public boolean isOnLeader() {
         return onLeader;
     }
+
     /**
      * Set if the entity is on leader or not
+     *
      * @param onLeader is on the leader or not
      */
     public void setOnLeader(boolean onLeader) {

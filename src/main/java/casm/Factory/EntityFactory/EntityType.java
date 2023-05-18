@@ -7,6 +7,8 @@ import casm.Factory.FactoryTypes;
  */
 public enum EntityType implements FactoryTypes {
     PLAYER,
-    WEASEL_FISHERMAN;
+    WEASEL_FISHERMAN,
+    HEART_BONUS,
+    CATFISH;
 
 }

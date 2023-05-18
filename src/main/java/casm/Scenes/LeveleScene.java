@@ -61,18 +61,20 @@ public class LeveleScene extends Scene implements State {
 
 
         player = (Player) createEntity(EntityType.PLAYER, Map.getPlayerSpawnPosition());
-        Map.getEnemiesSpawnPosition().forEach(position -> {
-            // Runnable runnableEnemy = () -> {
-            WeaselFisherman enemy = (WeaselFisherman) createEntity(EntityType.WEASEL_FISHERMAN, position);
-            //    synchronized (this) {
+//        Map.getEnemiesSpawnPosition().forEach(position -> {
+//            // Runnable runnableEnemy = () -> {
+//            WeaselFisherman enemy = (WeaselFisherman) createEntity(EntityType.WEASEL_FISHERMAN, position);
+//            //    synchronized (this) {
+//            enemies.add(enemy);
+//            //         System.out.println("Gata inammic");
+//            //     }
+//            //  };
+//            //  new Thread(runnableEnemy).start();
+//        });
+        if( !Map.getEnemiesSpawnPosition().isEmpty()) {
+            WeaselFisherman enemy = (WeaselFisherman) createEntity(EntityType.WEASEL_FISHERMAN, (Vector2D) Map.getEnemiesSpawnPosition().toArray()[3]);
             enemies.add(enemy);
-            //         System.out.println("Gata inammic");
-            //     }
-            //  };
-            //  new Thread(runnableEnemy).start();
-        });
-
-
+        }
         SpawnDoor spawnDoor = new SpawnDoor("Spawn Door", Map.getSpawnDoor());
         addGameObjectToScene(spawnDoor);
         addGameObjectToLayer(spawnDoor, layers.BACKGROUND.ordinal());

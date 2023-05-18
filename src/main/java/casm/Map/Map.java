@@ -27,6 +27,7 @@ public class Map {
     private static Set<Vector2D> enemiesSpawnPosition = new HashSet<>();
 
     public static void loadMap(Scene scene, String path, String sprites_name) {
+        enemiesSpawnPosition.clear();
         try {
             JSONObject json = (JSONObject) new JSONParser().parse(new FileReader(Paths.get("").toAbsolutePath() + "\\resources\\GameMaps\\" + path));
             JSONArray layers = (JSONArray) json.get("layers");

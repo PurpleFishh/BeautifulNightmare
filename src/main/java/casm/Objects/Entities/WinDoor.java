@@ -15,7 +15,14 @@ import casm.Utils.Vector2D;
 
 import java.util.List;
 
+/**
+ * The door that leads to the next level<br>
+ * It opens when the player completes all the tasks
+ */
 public class WinDoor extends Object {
+    /**
+     * Size of the door
+     */
     private Vector2D size;
     /**
      * Create a new entity
@@ -27,11 +34,18 @@ public class WinDoor extends Object {
         initialize();
     }
 
+    /**
+     * @param name    name for the entity
+     * @param position position for the entity
+     */
     public WinDoor(String name, Vector2D position) {
         super(name, position);
         initialize();
     }
 
+    /**
+     * Initialize the entity
+     */
     public void initialize() {
         generateAnimationStateMachine();
         super.updateDimensions((int) size.x, (int) size.y);
@@ -40,6 +54,12 @@ public class WinDoor extends Object {
 
         //this.init();
     }
+
+    /**
+     * Generate the animation state machine for the door
+     * It has 2 states: closed and opened
+     * To open the door, the state machine trigger is "open" from closed to opened
+     */
     private void generateAnimationStateMachine() {
         AnimationStateMachine stateMachine = new AnimationStateMachine();
         List<AnimationState> animationStates = AnimationsExtract.getInstance().extractAnimations("new_level_door_animation.json");

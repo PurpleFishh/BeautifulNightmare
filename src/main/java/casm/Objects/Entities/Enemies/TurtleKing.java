@@ -1,9 +1,6 @@
 package casm.Objects.Entities.Enemies;
 
 import casm.ECS.Components.AttackComponent;
-import casm.ECS.Components.Collision.ColliderComponent;
-import casm.ECS.Components.Collision.ColliderType;
-import casm.ECS.Components.Collision.Rectangle;
 import casm.ECS.Components.PositionComponent;
 import casm.Factory.EntityFactory.EntityType;
 import casm.SpriteUtils.Animation.AnimationsExtract;
@@ -15,9 +12,9 @@ import casm.Utils.Vector2D;
 import java.util.List;
 
 /**
- * Catfish is a type of enemy
+ * Turtle King is a type of enemy
  */
-public class Catfish extends Enemy {
+public class TurtleKing extends Enemy {
     /**
      * <b>enemyWidth</b> - Width of the enemy<br>
      * <b>enemyHeight</b> - Height of the enemy
@@ -27,8 +24,8 @@ public class Catfish extends Enemy {
     /**
      * @param spawnPosition Position where the enemy will be spawned
      */
-    public Catfish(Vector2D spawnPosition) {
-        super(EntityType.CATFISH, spawnPosition, 0, 0);
+    public TurtleKing(Vector2D spawnPosition) {
+        super(EntityType.TURTLE_KING, spawnPosition, 0, 0);
         initiate();
     }
 
@@ -36,8 +33,8 @@ public class Catfish extends Enemy {
      * @param name          Name of the enemy
      * @param spawnPosition Position where the enemy will be spawned
      */
-    public Catfish(String name, Vector2D spawnPosition) {
-        super(name, EntityType.CATFISH, spawnPosition, 0, 0);
+    public TurtleKing(String name, Vector2D spawnPosition) {
+        super(name, EntityType.TURTLE_KING, spawnPosition, 0, 0);
         initiate();
     }
 
@@ -46,11 +43,11 @@ public class Catfish extends Enemy {
      */
     public void initiate() {
         generateAnimationStateMachine();
-        this.getComponent(PositionComponent.class).setMaxSpeed(EntitiesSettings.CatfishInfo.CATFISH_MAX_SPEED);
-        this.getComponent(AttackComponent.class).setAttackDelay(6L);
+        this.getComponent(PositionComponent.class).setMaxSpeed(EntitiesSettings.TurtleInfo.TURTLE_MAX_SPEED);
+        this.getComponent(AttackComponent.class).setAttackDelay(12L);
         updateDimensions(enemyWidth, enemyHeight);
-        this.setDamage(16);
-        this.setLife(40);
+        this.setDamage(22);
+        this.setLife(65);
 
 
         // this.init();
@@ -76,7 +73,7 @@ public class Catfish extends Enemy {
      */
     private void generateAnimationStateMachine() {
         AnimationStateMachine stateMachine = new AnimationStateMachine();
-        List<AnimationState> animationStates = AnimationsExtract.getInstance().extractAnimations("enemy_catfish_animation.json");
+        List<AnimationState> animationStates = AnimationsExtract.getInstance().extractAnimations("enemy_turtle_animation.json");
 
         animationStates.forEach(stateMachine::addState);
         stateMachine.setDefaultState(animationStates.get(0).getName());

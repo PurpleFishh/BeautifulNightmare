@@ -21,10 +21,11 @@ public class PositionComponent extends Component {
     /**
      * <b>scale</b> - the entity scale<br>
      * <b>speed</b> -
-     * the movement speed<i>(if you want the entity to move faster or slower, normal value: 1)</><br>
+     * the movement speed<i>(if you want the entity to move faster or slower, normal value: 1)</i><br>
      * <b>maxSpeed</b> - the speed movement for the entity, can be modified from {@link EntitiesSettings}
+     * <b>maxJump</b> - the jump maximum velocity for the entity, can be modified from {@link EntitiesSettings}
      */
-    private double scale = 1, speed = 1, maxSpeed = EntitiesSettings.MAX_SPEED;
+    private double scale = 1, speed = 1, maxSpeed = EntitiesSettings.MAX_SPEED, maxJump = EntitiesSettings.MAX_JUMP;
     /**
      * <b>width</b> - the entity velocity of width<br>
      * <b>height</b> - the entity height<br>
@@ -174,7 +175,7 @@ public class PositionComponent extends Component {
         // Daca entitatea are gravitatie
         if (gravity) {
             if (canMove) {// Daca ajunge la inaltimea maxima a sariturii aplicam inapoi gravitatiea
-                if (isJumping && sign.y == -1 && Math.abs(new_velocity_y) >= EntitiesSettings.MAX_JUMP) {
+                if (isJumping && sign.y == -1 && Math.abs(new_velocity_y) >= maxJump) {
                     sign.y = 1;
                     isJumping = false;
                 }
@@ -333,5 +334,13 @@ public class PositionComponent extends Component {
      */
     public void setGravity(boolean gravity) {
         this.gravity = gravity;
+    }
+
+    /**
+     * Set maximum jump velocity
+     * @param maxJump maximum jump velocity
+     */
+    public void setMaxJump(double maxJump) {
+        this.maxJump = maxJump;
     }
 }

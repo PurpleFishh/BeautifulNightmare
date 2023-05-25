@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Not used
+ */
 public class GameStateMachine implements StateMachine {
     public HashMap<StateTrigger, String> stateTransfers = new HashMap<>();
     private List<SceneType> states = new ArrayList<>();

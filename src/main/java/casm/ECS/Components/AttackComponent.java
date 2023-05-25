@@ -36,11 +36,15 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
      * attackDelay - the attack between attacks
      */
     private double attackDelayDefault = 10L, attackDelay = 0L;
+    /**
+     * The entity type that the attack component will be created for(entities have different attack hit boxes)
+     */
     private EntityType type;
 
     public AttackComponent() {
 
     }
+
     public AttackComponent(EntityType type) {
         this.type = type;
     }
@@ -51,14 +55,19 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
     @Override
     public void init() {
         playerCollider = gameObject.getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY);
-        switch (type)
-        {
-            case CATFISH -> attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
-                    0, 13, 5 + (int) playerCollider.getWidth(), 23);
-            case WEASEL_FISHERMAN ->  attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
-                    0, 3, 20 + (int) playerCollider.getWidth(), 33);
-            default ->  attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
-                    0, 3, 30 + (int) playerCollider.getWidth(), 20);
+        switch (type) {
+            case CATFISH ->
+                    attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
+                            0, 13, 5 + (int) playerCollider.getWidth(), 23);
+            case TURTLE_KING ->
+                    attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
+                            0, 25, 33 + (int) playerCollider.getWidth(), 30);
+            case WEASEL_FISHERMAN ->
+                    attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
+                            0, 3, 20 + (int) playerCollider.getWidth(), 33);
+            default ->
+                    attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
+                            0, 3, 30 + (int) playerCollider.getWidth(), 20);
         }
 
 //        attackCollider = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.ATTACKING_BOX,
@@ -134,9 +143,10 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
     public void setFlipColliderVertically(boolean flip) {
         if (flip != isFlippedVertically) {
             if (flip)
-                attackCollider.getOffset().x -= attackCollider.getWidth() - playerCollider.getWidth();
+                attackCollider.getOffset().y -= playerCollider.getHeight() + attackCollider.getHeight();
+
             else
-                attackCollider.getOffset().x += attackCollider.getWidth() - playerCollider.getWidth();
+                attackCollider.getOffset().y += playerCollider.getHeight() + attackCollider.getHeight();
             isFlippedVertically = flip;
         }
     }
@@ -149,9 +159,9 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
     public void setFlipColliderHorizontally(boolean flip) {
         if (flip != isFlippedHorizontally) {
             if (flip)
-                attackCollider.getOffset().y -= playerCollider.getHeight() + attackCollider.getHeight();
+                attackCollider.getOffset().x -= attackCollider.getWidth() - playerCollider.getWidth();
             else
-                attackCollider.getOffset().y += playerCollider.getHeight() + attackCollider.getHeight();
+                attackCollider.getOffset().x += attackCollider.getWidth() - playerCollider.getWidth();
             isFlippedHorizontally = flip;
         }
     }

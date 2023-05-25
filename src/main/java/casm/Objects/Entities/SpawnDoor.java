@@ -8,6 +8,9 @@ import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
 import casm.Utils.Vector2D;
 
+/**
+ * The spawn door is the door where the player will spawn representing the transition between levels
+ */
 public class SpawnDoor extends Object {
     /**
      * Create a new entity
@@ -19,15 +22,22 @@ public class SpawnDoor extends Object {
         initialize();
     }
 
+    /**
+     * @param name     name for the entity
+     * @param position position for the door
+     */
     public SpawnDoor(String name, Vector2D position) {
         super(name, position);
         initialize();
     }
 
+    /**
+     * Initialize the spawn door
+     */
     public void initialize() {
         Sprite asset = AssetsCollection.getInstance().addSprite("spawn_door.png");
         super.updateDimensions(asset.getWidth(), asset.getHeight());
         this.addComponent(new SpriteComponent(asset));
-       // this.init();
+        // this.init();
     }
 }

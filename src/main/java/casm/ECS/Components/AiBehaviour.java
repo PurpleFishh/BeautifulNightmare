@@ -76,11 +76,11 @@ public class AiBehaviour extends Component {
 
             if (leftRect.intersects(chase)) {
                 positionComponent.sign.x = -1;
-                FlipEntityMediator.getInstance().flipVertically(gameObject, true);
+                FlipEntityMediator.getInstance().flipHorizontally(gameObject, true);
                 gameObject.getComponent(AnimationStateMachine.class).trigger("startRun");
             } else if (rightRect.intersects(chase)) {
                 positionComponent.sign.x = 1;
-                FlipEntityMediator.getInstance().flipVertically(gameObject, false);
+                FlipEntityMediator.getInstance().flipHorizontally(gameObject, false);
                 gameObject.getComponent(AnimationStateMachine.class).trigger("startRun");
             } else {
                 positionComponent.sign.x = 0;
@@ -91,7 +91,7 @@ public class AiBehaviour extends Component {
         } else {
             if (positionComponent.sign.x == 0) {
                 positionComponent.sign.x = 1;
-                FlipEntityMediator.getInstance().flipVertically(gameObject, false);
+                FlipEntityMediator.getInstance().flipHorizontally(gameObject, false);
             }
             gameObject.getComponent(AnimationStateMachine.class).trigger("startRun");
         }
@@ -104,7 +104,7 @@ public class AiBehaviour extends Component {
             }
             else {
                 positionComponent.sign.x = 1;
-                FlipEntityMediator.getInstance().flipVertically(gameObject, false);
+                FlipEntityMediator.getInstance().flipHorizontally(gameObject, false);
             }
             positionComponent.velocity.x = 0;
         }
@@ -115,7 +115,7 @@ public class AiBehaviour extends Component {
             }
             else {
                 positionComponent.sign.x = -1;
-                FlipEntityMediator.getInstance().flipVertically(gameObject, true);
+                FlipEntityMediator.getInstance().flipHorizontally(gameObject, true);
             }
             positionComponent.velocity.x = 0;
         }

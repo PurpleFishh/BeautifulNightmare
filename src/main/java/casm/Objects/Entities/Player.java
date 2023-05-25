@@ -15,21 +15,38 @@ import casm.Utils.Vector2D;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The player of the game
+ */
 public class Player extends Entity {
 
+    /**
+     * <b>playerWidth</b> - Width of the player<br>
+     * <b>playerHeight</b> - Height of the player
+     */
     private int playerWidth, playerHeight;
 
+    /**
+     * @param spawnPosition Position where the player will be spawned
+     */
     public Player(Vector2D spawnPosition) {
         super("player", spawnPosition, 0, 0, ColliderType.ENTITY, 0, 0);
         playerInit();
     }
 
+    /**
+     * @param name          Name of the player
+     * @param spawnPosition Position where the player will be spawned
+     */
     public Player(String name, Vector2D spawnPosition) {
         super(name, spawnPosition, 0, 0, ColliderType.ENTITY, 0, 0);
         playerInit();
 
     }
 
+    /**
+     * Initializes the player
+     */
     private void playerInit() {
         generateAnimationStateMachine();
 
@@ -43,6 +60,26 @@ public class Player extends Entity {
         //this.init();
     }
 
+    /**
+     * Generates the animation state machine of the player<br>
+     * States: <b>idle, run, jump, climb, attack, dead</b><br>
+     * <b>Transitions:</b><br>
+     * <b>idle -> run</b>: startRun<br>
+     * <b>run -> idle</b>: stopRun<br>
+     * <b>idle -> jump</b>: startJump<br>
+     * <b>run -> jump</b>: startJump<br>
+     * <b>jump -> idle</b>: stopJump_StartIdle<br>
+     * <b>jump -> run</b>: stopJump_StartRun<br>
+     * <b>run -> climb</b>: startClimb<br>
+     * <b>idle -> climb</b>: startClimb<br>
+     * <b>climb -> idle</b>: stopClimb<br>
+     * <b>run -> attack</b>: startAttack<br>
+     * <b>idle -> attack</b>: startAttack<br>
+     * <b>attack -> idle</b>: stopAttack_idle<br>
+     * <b>attack -> run</b>: stopAttack_run<br>
+     * <b>run -> dead</b>: Dead<br>
+     * <b>idle -> dead</b>: Dead<br>
+     */
     private void generateAnimationStateMachine() {
         AnimationStateMachine stateMachine = new AnimationStateMachine();
         List<AnimationState> animationStates = AnimationsExtract.getInstance().extractAnimations("player_animation.json");
@@ -74,17 +111,30 @@ public class Player extends Entity {
         this.addComponent(stateMachine);
     }
 
+    /**
+     * Update player health
+     * @param life Life of the player
+     */
     @Override
     public void setLife(double life) {
         super.setLife(life);
         Objects.requireNonNull(Game.getLevelScene()).infoBar.updateHealth(this.getLife());
     }
 
+    /**
+     * Applies damage to the player
+     * @param damage Damage to be applied to the player
+     */
     @Override
     public void damage(double damage) {
         super.damage(damage);
         Objects.requireNonNull(Game.getLevelScene()).infoBar.updateHealth(this.getLife());
     }
+
+    /**
+     * Revives the player
+     * @param health Health to be added to the player
+     */
     @Override
     public void revive(double health) {
         super.revive(health);

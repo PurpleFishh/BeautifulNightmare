@@ -17,18 +17,66 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * AnimationsExtract is used to extract animations from a json file.
+ * You pass throw a JSON file the animation sheet, every state of the animation, the number of frames and its dimensions and offsets, and it will extract it and store everything.
+ */
 public class AnimationsExtract {
+    /**
+     * The instance of the singleton class.
+     */
     private static AnimationsExtract instance = null;
 
     private AnimationsExtract() {
     }
 
+    /**
+     * @return get the singleton instance.
+     */
     public static AnimationsExtract getInstance() {
         if (instance == null)
             instance = new AnimationsExtract();
         return instance;
     }
 
+    /**
+     * This method extracts all the animations from a json file.
+     * JSON format example:
+     * <pre>{@code
+     * {
+     *   "sprite_image": "player_spritesheer.png",
+     *   "frames_width": "128",
+     *   "frames_height": "64",
+     *   "rows": "9",
+     *   "animations": [
+     *     {
+     *       "name": "idle",
+     *       "columns": "8",
+     *       "x_start": "48",
+     *       "y_start": "20",
+     *       "frame_width": "32",
+     *       "frame_height": "44",
+     *       "speed" : "1",
+     *       "loop" : true,
+     *       "frame_time": [30, 1, 1, 1, 1, 1, 1, 1]
+     *     },
+     *     {
+     *       "name": "run",
+     *       "columns": "8",
+     *       "x_start": "48",
+     *       "y_start": "14",
+     *       "frame_width": "34",
+     *       "frame_height": "50",
+     *       "speed" : "2",
+     *       "loop" : true
+     *     },
+     *   ]
+     * }
+     * }</pre>
+     *
+     * @param path path to the json file.
+     * @return a list of all the animations extracted from the json file.
+     */
     public List<AnimationState> extractAnimations(String path) {
         List<AnimationState> animationsList = new ArrayList<>();
         try {

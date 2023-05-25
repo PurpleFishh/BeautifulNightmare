@@ -11,15 +11,27 @@ import casm.Utils.Vector2D;
 
 import java.util.List;
 
+/**
+ * Object that represents a heart bonus for recovering life
+ */
 public class HeartBonus extends Object {
 
+    /**
+     * Collider of the heart bonus for collision detection
+     */
     private Rectangle collider;
 
+    /**
+     * @param spawnPosition Position where the heart bonus will be spawned
+     */
     public HeartBonus(Vector2D spawnPosition) {
         super("Heart", spawnPosition);
         entityInit();
     }
 
+    /**
+     * Initializes the heart bonus
+     */
     private void entityInit() {
         this.addComponent(new SpriteComponent());
         AnimationStateMachine stateMachine = new AnimationStateMachine();
@@ -39,6 +51,9 @@ public class HeartBonus extends Object {
         //this.init();
     }
 
+    /**
+     * @return Collider of the heart bonus for collision detection
+     */
     public Rectangle getCollider() {
         return collider;
     }

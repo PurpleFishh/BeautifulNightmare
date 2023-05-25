@@ -5,26 +5,48 @@ import casm.ECS.Components.PositionComponent;
 import casm.Map.Map;
 import casm.Utils.Settings.Setting;
 
+/**
+ * The camera of the game that follows an object
+ */
 public class Camera extends Component {
 
+    /**
+     * Singleton instance
+     */
     private static Camera instance = null;
 
+    /**
+     * <b>camera</b> - is the position of the camera in the map
+     * <b>cameraOffset</b> - is the offset of the camera in the map
+     */
     private Vector2D camera, cameraOffset;
+    /**
+     * The position of the followed object
+     */
     private PositionComponent positionComponent;
 
     private Camera() {
     }
 
+    /**
+     * @return get the singleton instance
+     */
     public static Camera getInstance() {
         if (instance == null)
             instance = new Camera();
         return instance;
     }
 
+    /**
+     * @return if the camera has a target
+     */
     public static boolean hasTargget() {
         return instance != null;
     }
 
+    /**
+     * Initialize the camera
+     */
     @Override
     public void init() {
         camera = new Vector2D();
@@ -33,6 +55,9 @@ public class Camera extends Component {
         positionComponent = gameObject.getComponent(PositionComponent.class);
     }
 
+    /**
+     * Update camera position
+     */
     @Override
     public void update() {
         cameraOffset = (Vector2D) camera.clone();
@@ -53,19 +78,28 @@ public class Camera extends Component {
         cameraOffset.y = camera.y - cameraOffset.y;
     }
 
+    /**
+     * Test if an object is the target of the camera
+     *
+     * @param objectPosition the object to be tested
+     * @return if the object given by parameter is the target of the camera
+     */
     public boolean equalsToTarget(Vector2D objectPosition) {
         return positionComponent.position.equals(objectPosition);
     }
 
+    /**
+     * @return the position of the camera
+     */
     public Vector2D getCamera() {
         return camera;
     }
 
+    /**
+     * @return the offset of the camera
+     */
     public Vector2D getCameraOffset() {
         return cameraOffset;
     }
 
-    public void setCameraOffset(Vector2D cameraOffset) {
-        this.cameraOffset = cameraOffset;
-    }
 }

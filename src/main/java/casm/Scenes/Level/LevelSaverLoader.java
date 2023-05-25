@@ -11,6 +11,9 @@ import casm.Utils.Vector2D;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * Manages the saving and loading of the game
+ */
 public class LevelSaverLoader {
 
     private static LevelSaverLoader instance;
@@ -18,16 +21,29 @@ public class LevelSaverLoader {
     private LevelSaverLoader() {
     }
 
+    /**
+     * @return The instance of the class
+     */
     public static LevelSaverLoader getInstance() {
         if (instance == null)
             instance = new LevelSaverLoader();
         return instance;
     }
 
+    /**
+     * The history of the game, the most recent memento is at the top of the stack
+     */
     private Stack<LevelMemento> history = new Stack<>();
+    /**
+     * Used in database to save the memento to it
+     */
     private final String insertAntet = "INSERT INTO save_entities (TYPE, POSITION_X, POSITION_Y, HEALTH)";
 
 
+    /**
+     * Saves the current scene to the history and to the database
+     * @throws SceneCanNotBeSaved If the scene can not be saved(the current scenes are not a savable scene)
+     */
     public void save() throws SceneCanNotBeSaved {
         if (Game.getLevelScene() == null)
             throw new SceneCanNotBeSaved();
@@ -39,6 +55,11 @@ public class LevelSaverLoader {
         }
     }
 
+    /**
+     * Restores the scene from the database
+     * @throws SceneCanNotBeSaved If the scene can not be saved(the current scenes are not a savable scene)
+     * @throws SQLException If the database can not be accessed
+     */
     public void load() throws SceneCanNotBeSaved, SQLException {
         if (Game.getLevelScene() == null)
             throw new SceneCanNotBeSaved();
@@ -49,6 +70,10 @@ public class LevelSaverLoader {
         (Game.getLevelScene()).restore(memento);
     }
 
+    /**
+     * Save the memento to database
+     * @throws SQLException If the database can not be accessed
+     */
     public void saveToDataBase() throws SQLException {
         Connection conn = getConnection();
         Statement stam = conn.createStatement();
@@ -86,6 +111,10 @@ public class LevelSaverLoader {
         conn.close();
     }
 
+    /**
+     * Save the best score to the database
+     * @throws SQLException If the database can not be accessed
+     */
     public void saveHighScore() throws SQLException {
         Connection conn = getConnection();
         Statement stam = conn.createStatement();
@@ -107,6 +136,11 @@ public class LevelSaverLoader {
         conn.close();
     }
 
+    /**
+     * Read the last memento from the database
+     * @return the read memento from the database
+     * @throws SQLException If the database can not be accessed
+     */
     public LevelMemento restoreFromDataBase() throws SQLException {
         Connection conn = getConnection();
         Statement stam = conn.createStatement();
@@ -135,11 +169,43 @@ public class LevelSaverLoader {
         return new LevelMemento(savedEntitySet, level, score);
     }
 
+    /**
+     * Save an entity state to the database
+     * @param stam The statement to execute the query
+     * @param type The type of the entity
+     * @param entity The entity to save
+     * @throws SQLException If the database can not be accessed
+     */
     private void saveEntity(Statement stam, EntityType type, LevelMemento.SavedEntity entity) throws SQLException {
         stam.executeUpdate(insertAntet + " VALUES ('" + type.name() + "', " +
                 entity.getPosition().x + ", " + entity.getPosition().y + ", " + entity.getHealth() + ")");
     }
 
+    /**
+     * Read the high score from the database
+     * @return The high score
+     * @throws SQLException If the database can not be accessed
+     */
+    public HashMap<Integer, Double> getHighScore() throws SQLException {
+        Connection conn = getConnection();
+        Statement stam = conn.createStatement();
+        conn.setAutoCommit(false);
+
+        HashMap<Integer, Double> highScores = new HashMap<>();
+        ResultSet result = stam.executeQuery("SELECT * FROM high_score");
+        while (result.next())
+        {
+            highScores.put(result.getInt(1), result.getDouble(2));
+        }
+
+        stam.close();
+        conn.close();
+        return  highScores;
+    }
+
+    /**
+     * @return A connection to the database
+     */
     public Connection getConnection() {
         Connection c = null;
         try {

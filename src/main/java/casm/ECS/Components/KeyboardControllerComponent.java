@@ -121,6 +121,10 @@ public class KeyboardControllerComponent extends Component implements ObserverKe
         {
             Game.changeScene(SceneType.PAUSE_MENU);
         }
+        if(e.getKeyCode() == KeyEvent.VK_R)
+        {
+            Game.getLevelScene().getPlayer().setLife(0);
+        }
     }
 
     /**
@@ -220,6 +224,10 @@ public class KeyboardControllerComponent extends Component implements ObserverKe
         fKey = KeyState.NOT_USED;
     }
 
+    /**
+     * Notify the mediator for the pressed keys
+     * @param event the event to be processed
+     */
     @Override
     public void notify(KeyEvent event) {
         if (event.getID() == KeyEvent.KEY_PRESSED)

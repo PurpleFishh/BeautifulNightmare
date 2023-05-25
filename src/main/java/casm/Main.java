@@ -2,6 +2,9 @@ package casm;
 
 import casm.Utils.Settings.Setting;
 
+/**
+ * The main class where the game is stated
+ */
 public class Main
 {
     public static void main(String[] args) throws InterruptedException {

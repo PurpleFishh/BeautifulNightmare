@@ -12,6 +12,7 @@ import casm.Objects.Menu.BackgroundImageObject;
 import casm.Objects.Menu.Button;
 import casm.Objects.Object;
 import casm.Objects.TextObject;
+import casm.Scenes.Level.LevelSaverLoader;
 import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
 import casm.StateMachine.AnimationStateMachine.State;
@@ -19,24 +20,47 @@ import casm.Utils.Renderer;
 import casm.Utils.Vector2D;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+/**
+ * The settings menu scene
+ */
 public class SettingsMenuScene extends Scene implements State {
+    /**
+     * The factory for creating the game objects
+     */
     private Factory factory;
+    /**
+     * The name of the scene
+     */
     private String name;
+    /**
+     * The list of buttons in the scene
+     */
     private ArrayList<Button> buttons = new ArrayList<>();
 
+    /**
+     * @param type The type of scene
+     */
     public SettingsMenuScene(SceneType type) {
         super(type);
         factory = new MenuEntityFactory();
         name = "Settings Menu";
     }
 
+    /**
+     * The layers of the scene
+     */
     public enum layers {
         BACKGROUND,
         FOREGROUND
     }
 
+    /**
+     * Construct the menu
+     */
     private void menuConstruct() {
         Sprite buttonsBg = AssetsCollection.getInstance().getSprite("menu_assets\\settings_buttons_bg.png");
 
@@ -45,8 +69,24 @@ public class SettingsMenuScene extends Scene implements State {
         BackgroundImageObject buttonsBG = (BackgroundImageObject) createObject(MenuEntityType.BACKGROUND_SETTINGS,
                 new Vector2D(), layers.BACKGROUND);
 
-        Vector2D buttonsPlace = buttonsBG.getSpawnPosition().add(new Vector2D(buttonsBG.getWidth(), buttonsBG.getHeight()));
-        buttons.add((Button) createObject(MenuEntityType.BUTTON.BACK, buttonsPlace.sub(new Vector2D(90, 75)), layers.FOREGROUND));
+        Vector2D buttonsPlace = buttonsBG.getSpawnPosition();
+        buttons.add((Button) createObject(MenuEntityType.BUTTON.BACK, ((Vector2D) buttonsPlace.clone()).add(
+                new Vector2D(buttonsBG.getWidth() - 90, buttonsBG.getHeight() - 75)), layers.FOREGROUND));
+        TextObject text;
+        //        TextObject text = new TextObject("Best Score", new Vector2D(), 25).center(buttonsPlace, buttonsBG.getWidth(), 110);
+//        addGameObjectToScene(text);
+//        addGameObjectToLayer(text, layers.FOREGROUND.ordinal());
+        try {
+            HashMap<Integer, Double> highScores = LevelSaverLoader.getInstance().getHighScore();
+            for (int level : highScores.keySet()) {
+                text = new TextObject("Level " + level + ": " + highScores.get(level), new Vector2D(
+                        buttonsPlace.x + (double) buttonsBG.getWidth() / 4, buttonsPlace.y + 15 + level * 25), 20);
+                addGameObjectToScene(text);
+                addGameObjectToLayer(text, layers.FOREGROUND.ordinal());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         //TODO: fa cumva mai frumoasa crearea de text
 //        GameObject text = new GameObject("Text");
@@ -55,12 +95,20 @@ public class SettingsMenuScene extends Scene implements State {
 //        Vector2D size = text.getComponent(TextComponent.class).getSize();
 //        text.getComponent(TextComponent.class).setPosition(new Vector2D(titleBar.getSpawnPosition()).center(size.x, size.y,
 //                titleBar.getWidth(), titleBar.getHeight() - size.y / 2));
-        TextObject text = new TextObject("Settings", new Vector2D(0, 0), 30)
+        text = new TextObject("Best Score", new Vector2D(0, 0), 30)
                 .center(titleBar.getSpawnPosition(), titleBar.getWidth(), titleBar.getHeight());
         addGameObjectToScene(text);
         addGameObjectToLayer(text, layers.FOREGROUND.ordinal());
     }
 
+    /**
+     * Create an entity for the scene
+     *
+     * @param type          The type of the object
+     * @param spawnPosition The spawn position of the object
+     * @param layers        The layer the object will be added to
+     * @return The created object
+     */
     private Object createObject(FactoryTypes type, Vector2D spawnPosition, layers layers) {
         Object entity = factory.create(type, spawnPosition);
         addGameObjectToScene(entity);
@@ -68,6 +116,11 @@ public class SettingsMenuScene extends Scene implements State {
         return entity;
     }
 
+    /**
+     * Remove entity form the menu
+     *
+     * @param entity The entity to be removed
+     */
     public void removeEntity(GameObject entity) {
         removeGameObject(entity);
     }
@@ -89,6 +142,9 @@ public class SettingsMenuScene extends Scene implements State {
         th.start();
     }
 
+    /**
+     * @return The name of the scene
+     */
     @Override
     public String getName() {
         return null;

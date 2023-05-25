@@ -127,8 +127,8 @@ public class MovementMediator implements Mediator {
         if (collisionY)
             moveToTileEdgeY(positionComponent, playerCollider);
         else {
-            if(hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.VOID ))
-                ((Entity)gameObject).setLife(0);
+            if (hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.VOID))
+                ((Entity) gameObject).setLife(0);
             if (positionComponent.isClimbing() && !(xLeaderBottom || yLeaderBottom)) {
                 positionComponent.sign.y = 0;
                 positionComponent.velocity.y = 0;
@@ -166,17 +166,20 @@ public class MovementMediator implements Mediator {
      * @param playerCollider rectangle collider of the player
      */
     private void verifyIfGameWon(Rectangle playerCollider) {
-        if (playerCollider.intersects(((LeveleScene) Game.getCurrentScene()).getWinDoor().
-                getComponent(ColliderComponent.class).getCollider(ColliderType.WIN_DOOR)))
-            if (((LeveleScene) Game.getCurrentScene()).isWon()) {
-                System.out.println("Ai castigat");
-                try {
-                    LevelSaverLoader.getInstance().saveHighScore();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
+        if (((LeveleScene) Objects.requireNonNull(Game.getCurrentScene())).isWon()) {
+            for (Rectangle winCollider : ((LeveleScene) Game.getCurrentScene()).getWinColliders()) {
+                if (playerCollider.intersects(winCollider)) {
+                    System.out.println("Ai castigat");
+                    try {
+                        LevelSaverLoader.getInstance().saveHighScore();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Game.changeLevel(((LeveleScene) Game.getCurrentScene()).getLevel() + 1, false);
+                    break;
                 }
-                Game.changeLevel(((LeveleScene) Game.getCurrentScene()).getLevel() + 1, true);
             }
+        }
     }
 
     /**
@@ -308,7 +311,7 @@ public class MovementMediator implements Mediator {
             component.left = true;
             //if(gameObject.getComponent(DyncamicColliderComponent.class).isOnGround())
             gameObject.getComponent(AnimationStateMachine.class).trigger("startRun");
-            FlipEntityMediator.getInstance().flipVertically(gameObject, true);
+            FlipEntityMediator.getInstance().flipHorizontally(gameObject, true);
         }
         if (component.getDKeyState() == KeyState.PRESSED) {
             if (!component.left) {
@@ -317,7 +320,7 @@ public class MovementMediator implements Mediator {
             component.right = true;
             //if(gameObject.getComponent(DyncamicColliderComponent.class).isOnGround())
             gameObject.getComponent(AnimationStateMachine.class).trigger("startRun");
-            FlipEntityMediator.getInstance().flipVertically(gameObject, false);
+            FlipEntityMediator.getInstance().flipHorizontally(gameObject, false);
         }
 
         if (component.getWKeyState() == KeyState.RELEASED) {

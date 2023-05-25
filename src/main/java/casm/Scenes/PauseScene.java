@@ -19,22 +19,43 @@ import casm.Utils.Vector2D;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * The pause menu scene
+ */
 public class PauseScene extends Scene implements State {
+    /**
+     * The factory for creating the game objects
+     */
     private Factory factory;
+    /**
+     * The name of the scene
+     */
     private String name;
+    /**
+     * The list of buttons in the scene
+     */
     private ArrayList<Button> buttons = new ArrayList<>();
 
+    /**
+     * @param type The type of scene
+     */
     public PauseScene(SceneType type) {
         super(type);
         factory = new MenuEntityFactory();
         name = "Pause Menu";
     }
 
+    /**
+     * The layers of the scene
+     */
     public enum layers {
         BACKGROUND,
         FOREGROUND
     }
 
+    /**
+     * Construct the scene
+     */
     private void menuConstruct() {
         loadAssets();
         Sprite buttonsBg = AssetsCollection.getInstance().addSprite("menu_assets\\menu_buttons_bg.png");
@@ -66,11 +87,22 @@ public class PauseScene extends Scene implements State {
         buttons.add(button);
     }
 
+    /**
+     * Load the needed assets to the collection
+     */
     private void loadAssets() {
         AssetsCollection.getInstance().addSpriteSheet("menu_assets\\buttons\\buttons_spritesheet.png", 74, 58);
         AssetsCollection.getInstance().addSpriteSheet("menu_assets\\buttons\\back_button_spritesheet.png", 42, 42);
     }
 
+    /**
+     * Create an entity for the scene
+     *
+     * @param type          The type of the object
+     * @param spawnPosition The spawn position of the object
+     * @param layers        The layer the object will be added to
+     * @return The created object
+     */
     private Object createObject(FactoryTypes type, Vector2D spawnPosition, layers layers) {
         Object entity = factory.create(type, spawnPosition);
         addGameObjectToScene(entity);
@@ -78,6 +110,9 @@ public class PauseScene extends Scene implements State {
         return entity;
     }
 
+    /**
+     * @param entity The entity to be removed
+     */
     public void removeEntity(GameObject entity) {
         removeGameObject(entity);
     }

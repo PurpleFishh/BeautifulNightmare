@@ -5,6 +5,9 @@ import casm.ECS.GameObject;
 import casm.StateMachine.AfterStateEndsNotify;
 import casm.StateMachine.UpdatableState;
 
+/**
+ * Not used.
+ */
 public class AiIdleState implements UpdatableState {
     private String name;
     private GameObject gameObject;

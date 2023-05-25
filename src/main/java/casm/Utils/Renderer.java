@@ -7,20 +7,39 @@ import casm.Utils.Settings.Setting;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 
+/**
+ * Used to display graphics on the screen
+ */
 public class Renderer {
 
+    /**
+     * Singleton instance
+     */
     private static Renderer instance = null;
 
     private Renderer() {
     }
 
+    /**
+     * @return get the singleton instance
+     */
     public static Renderer getInstance() {
         if (instance == null)
             instance = new Renderer();
         return instance;
     }
 
+    /**
+     * Draw an image on the screen
+     *
+     * @param image    the image to be drawn
+     * @param position the position of the image
+     * @param width    the width of the image
+     * @param height   the height of the image
+     */
     public void drawImage(BufferedImage image, Vector2D position, double width, double height) {
         if (position.x <= Setting.SCREEN_WIDTH + 64 && position.y <= Setting.SCREEN_HEIGHT + 64)
             return;
@@ -29,25 +48,46 @@ public class Renderer {
 
     }
 
+    /**
+     * Draw an image on the screen
+     *
+     * @param image           the image to be drawn
+     * @param position        the position of the image
+     * @param width           the width of the image
+     * @param height          the height of the image
+     * @param flip_vertical   flip the image vertically
+     * @param flip_horizontal flip the image horizontally
+     */
     public void drawImage(BufferedImage image, Vector2D position, double width, double height, boolean flip_vertical, boolean flip_horizontal) {
-        Vector2D positionOnCamera = calculateCameraPosition(position);
+        Vector2D positionOnCamera = null;
+        if (!(width == Setting.SCREEN_WIDTH && height == Setting.SCREEN_HEIGHT))
+            positionOnCamera = calculateCameraPosition(position);
+        else
+            positionOnCamera = position;
         if (!(positionOnCamera.x <= Setting.SCREEN_WIDTH + 64 && positionOnCamera.y <= Setting.SCREEN_HEIGHT + 64))
             return;
         Graphics g = Game.getGraphics();
         int x_offset = 0, y_offset = 0;
         if (flip_horizontal) {
-            y_offset = (int) height;
-            height = -height;
-        }
-        if (flip_vertical) {
             x_offset = (int) width;
             width = -width;
         }
+        if (flip_vertical) {
+            y_offset = (int) height;
+            height = -height;
+        }
 
         g.drawImage(image, (int) Math.floor(positionOnCamera.x + x_offset), (int) Math.floor(positionOnCamera.y + y_offset), (int) width, (int) height, null);
-
     }
 
+    /**
+     * Draw a rectangle on the screen
+     *
+     * @param position the position of the rectangle
+     * @param width    the width of the rectangle
+     * @param height   the height of the rectangle
+     * @param color    the color of the rectangle
+     */
     public void drawRect(Vector2D position, double width, double height, Color color) {
         Vector2D positionOnCamera = calculateCameraPosition(position);
         if (!(positionOnCamera.x <= Setting.SCREEN_WIDTH + 64 && positionOnCamera.y <= Setting.SCREEN_HEIGHT + 64))
@@ -58,6 +98,12 @@ public class Renderer {
 
     }
 
+    /**
+     * Calculate what is an object position after applying the camera offset
+     *
+     * @param position the position of the object
+     * @return the position of the object after applying the camera offset
+     */
     private Vector2D calculateCameraPosition(Vector2D position) {
         Vector2D positionOnCamera = (Vector2D) position.clone();
         if (Game.getCurrentScene().getType() == SceneType.LEVEL)
@@ -73,6 +119,14 @@ public class Renderer {
         return positionOnCamera;
     }
 
+    /**
+     * Display text on screen
+     *
+     * @param text     the text to be drawn
+     * @param position the position of the text
+     * @param font     the font of the text
+     * @param color    the color of the text
+     */
     public void drawString(String text, Vector2D position, Font font, Color color) {
         Vector2D positionOnCamera = calculateCameraPosition(position);
         if (!(positionOnCamera.x <= Setting.SCREEN_WIDTH + 64 && positionOnCamera.y <= Setting.SCREEN_HEIGHT + 64))

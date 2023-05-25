@@ -1,6 +1,7 @@
 package casm.Factory.EntityFactory;
 
 import casm.Objects.Entities.Enemies.Catfish;
+import casm.Objects.Entities.Enemies.TurtleKing;
 import casm.Objects.Entities.Enemies.WeaselFisherman;
 import casm.Objects.Entities.Entity;
 import casm.Objects.Entities.Player;
@@ -31,6 +32,8 @@ public class EntityFactory implements Factory {
             return new Catfish(spawnPosition);
         } else if (type.equals(EntityType.HEART_BONUS)) {
             return new HeartBonus(spawnPosition);
+        }else if (type.equals(EntityType.TURTLE_KING)) {
+            return new TurtleKing(spawnPosition);
         } else {
             return null;
         }

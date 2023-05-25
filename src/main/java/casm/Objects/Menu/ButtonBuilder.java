@@ -13,15 +13,30 @@ import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
 import casm.Utils.Vector2D;
 
+/**
+ * Used to build buttons
+ */
 public class ButtonBuilder implements Builder {
+    /**
+     * The button that will be built
+     */
     private Button objectBuilt = new Button("button", new Vector2D());
 
+    /**
+     * @param type - The type of the button.
+     * @return - Reference to the builder.
+     */
     public ButtonBuilder setType(MenuEntityType.BUTTON type)
     {
         objectBuilt.setType(type);
         return this;
     }
 
+    /**
+     * Sets the image to the button and adds its collider.
+     * @param sheetPath - The path to the sprite sheet.
+     * @return - Reference to the builder.
+     */
     public ButtonBuilder addImage(String sheetPath) {
         //TODO: fa diferenta dintre alea mari si alea mici
         Sprite buttonTexture;
@@ -44,22 +59,37 @@ public class ButtonBuilder implements Builder {
 
         return this;
     }
+
+    /**
+     * Make the button clickable(It will be notified by the {@link casm.Observer.Observable}).
+     * @return - Reference to the builder.
+     */
     public ButtonBuilder clickable()
     {
         MouseListener.getInstance().subscribe(Game.getCurrentScene(),objectBuilt);
         return this;
     }
 
+    /**
+     * @param position - The position where the button will be displayed.
+     * @return - Reference to the builder.
+     */
     public ButtonBuilder setPosition(Vector2D position) {
         objectBuilt.getComponent(PositionComponent.class).position = position;
         return this;
     }
 
+    /**
+     * @return - The button that was built.
+     */
     @Override
     public Object build() {
         return objectBuilt;
     }
 
+    /**
+     * Resets the button that will be built.
+     */
     @Override
     public void reset() {
         objectBuilt = new Button("button", new Vector2D());

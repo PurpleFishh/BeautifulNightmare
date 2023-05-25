@@ -3,8 +3,11 @@ package casm.ECS.Components;
 import casm.ECS.Component;
 import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
+import casm.Utils.FlipEntityMediator;
 import casm.Utils.Renderer;
 import casm.Utils.Vector2D;
+
+import java.awt.image.BufferedImage;
 
 /**
  * SpriteComponent will draw a sprite at the entity position<br>
@@ -28,12 +31,17 @@ public class SpriteComponent extends Component {
     /**
      * If the sprite is flipped horizontally
      */
+    private boolean antidiagonal_flipped = false;
     private boolean flipped_horizontally = false;
     /**
      * width - image render width <br>
      * height - image render height
      */
     private int width = 0, height = 0;
+    /**
+     * If the sprite needs an anti-diagonal flip, it will be done at the initialization on a copy of the sprite
+     */
+    private BufferedImage antiDiagonalFlip = null;
 
     /**
      * Create a {@link SpriteComponent} with a blank sprite
@@ -79,11 +87,29 @@ public class SpriteComponent extends Component {
     }
 
     /**
+     * Create a {@link SpriteComponent}
+     *
+     * @param sprite                the sprite that will be rendered
+     * @param flipped_vertically    if it is flipped vertically
+     * @param flipped_horizontally  if it is flipped horizontally
+     * @param anti_diagonal_flipped if it is flipped anti-diagonally
+     */
+    public SpriteComponent(Sprite sprite, boolean flipped_vertically, boolean flipped_horizontally, boolean anti_diagonal_flipped) {
+        this.sprite = sprite;
+        this.flipped_vertically = flipped_vertically;
+        this.flipped_horizontally = flipped_horizontally;
+        this.antidiagonal_flipped = anti_diagonal_flipped;
+    }
+
+    /**
      * Initialize the component
      */
     @Override
     public void init() {
         positionComp = gameObject.getComponent(PositionComponent.class);
+        if (antidiagonal_flipped) {
+            antiDiagonalFlip = FlipEntityMediator.getInstance().antiDiagonalFlip(sprite.getTexture());
+        }
     }
 
     /**
@@ -93,17 +119,19 @@ public class SpriteComponent extends Component {
     public void draw() {
         if (gameObject.isAlive()) {
             /// To center the sprite in the entity "hit-box" so if the sprite is bigger, it will be centered
-            if ((positionComp.getHeight() > 0 && positionComp.getHeight() < sprite.getHeight()) ||
-                    (positionComp.getWidth() > 0 && positionComp.getWidth() < sprite.getWidth())) {
-                Vector2D offset = new Vector2D((double) (sprite.getWidth() - positionComp.getWidth()) / 2,
-                        sprite.getHeight() - positionComp.getHeight());
-                offset = ((Vector2D) positionComp.position.clone()).sub(offset);
-                Renderer.getInstance().drawImage(sprite.getTexture(), offset, width == 0 ? sprite.getWidth() : width,
-                        height == 0 ? sprite.getHeight() : height, flipped_vertically, flipped_horizontally);
-            } else {
-                Renderer.getInstance().drawImage(sprite.getTexture(), positionComp.position, width == 0 ? sprite.getWidth() : width,
-                        height == 0 ? sprite.getHeight() : height, flipped_vertically, flipped_horizontally);
-            }
+            if (positionComp != null)
+                if ((positionComp.getHeight() > 0 && positionComp.getHeight() < sprite.getHeight()) ||
+                        (positionComp.getWidth() > 0 && positionComp.getWidth() < sprite.getWidth())) {
+                    Vector2D offset = new Vector2D((double) (sprite.getWidth() - positionComp.getWidth()) / 2,
+                            sprite.getHeight() - positionComp.getHeight());
+                    offset = ((Vector2D) positionComp.position.clone()).sub(offset);
+                    Renderer.getInstance().drawImage(antiDiagonalFlip == null ? sprite.getTexture() : antiDiagonalFlip, offset, width == 0 ? sprite.getWidth() : width,
+                            height == 0 ? sprite.getHeight() : height, flipped_vertically, flipped_horizontally);
+                    return;
+                }
+            Renderer.getInstance().drawImage(antiDiagonalFlip == null ? sprite.getTexture() : antiDiagonalFlip, positionComp.position, width == 0 ? sprite.getWidth() : width,
+                    height == 0 ? sprite.getHeight() : height, flipped_vertically, flipped_horizontally);
+
         }
     }
 

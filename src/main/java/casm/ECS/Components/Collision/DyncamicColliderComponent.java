@@ -1,8 +1,11 @@
 package casm.ECS.Components.Collision;
 
 import casm.ECS.Component;
+import casm.ECS.Components.PositionComponent;
 import casm.ECS.GameObject;
+import casm.Game;
 import casm.Map.Map;
+import casm.Objects.Entities.Tile;
 import casm.Utils.Vector2D;
 
 import java.util.List;
@@ -21,12 +24,14 @@ public class DyncamicColliderComponent extends Component {
     /**
      * collisionCorners is an array of flags that specify if it has a collision on an edge, what type of collider it is<br>
      * Array indexing:
-     * <li>0 - left top corner<br>
-     * <li>1 - right top corner<br>
-     * <li>2 - left button corner<br>
-     * <li>3 - right button corner<br>
-     * <li>4 - left middle<br>
-     * <li>5 - right middle<br>
+     * <ul>
+     * <li>0 - left top corner</li>
+     * <li>1 - right top corner</li>
+     * <li>2 - left button corner</li>
+     * <li>3 - right button corner</li>
+     * <li>4 - left middle</li>
+     * <li>5 - right middle</li>
+     * </ul>
      */
     private ColliderType[] collisionCorners;
 
@@ -75,10 +80,24 @@ public class DyncamicColliderComponent extends Component {
 
         int xIndex = (int) (x / testWidth);
         int yIndex = (int) (y / testHeight);
-        if (testEntities.get(yIndex * Map.getCols() + xIndex).hasComponent(ColliderComponent.class))
-            return testEntities.get(yIndex * Map.getCols() + xIndex).getComponent(ColliderComponent.class).getType();
-        else
-            return null;
+        if (testEntities != null) {
+            if (Game.getLevelScene().getLevel() != 1) {
+                if (testEntities.get(yIndex * Map.getCols() + xIndex).hasComponent(ColliderComponent.class))
+                    return testEntities.get(yIndex * Map.getCols() + xIndex).getComponent(ColliderComponent.class).getType();
+            } else {
+                for (GameObject testObj : testEntities) {
+                    if (testObj.getComponent(PositionComponent.class).position.x == xIndex * testWidth &&
+                            testObj.getComponent(PositionComponent.class).position.y == yIndex * testHeight) {
+                        if (testObj.hasComponent(ColliderComponent.class)) {
+                            return testObj.getComponent(ColliderComponent.class).getType();
+                        }
+                        //break;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

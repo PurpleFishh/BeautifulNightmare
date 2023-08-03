@@ -8,6 +8,7 @@ import casm.Factory.MenuFactory.MenuEntityType;
 import casm.Game;
 import casm.Objects.Object;
 import casm.Observer.ObserverMouse;
+import casm.Scenes.Level.LevelSaverLoader;
 import casm.SpriteUtils.Assets;
 import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
@@ -15,6 +16,7 @@ import casm.Scenes.SceneType;
 import casm.Utils.Vector2D;
 
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 
 /**
  * Object used for buttons
@@ -50,7 +52,7 @@ public class Button extends Object implements ObserverMouse {
     }
 
     /**
-     * @param name         - The name of the button.
+     * @param name          - The name of the button.
      * @param spawnPosition - The position where the button will be displayed.
      */
     public Button(String name, Vector2D spawnPosition) {
@@ -59,6 +61,7 @@ public class Button extends Object implements ObserverMouse {
 
     /**
      * Update the dimensions of the button.
+     *
      * @param width  new width of the button
      * @param height new height of the button
      */
@@ -69,6 +72,7 @@ public class Button extends Object implements ObserverMouse {
     /**
      * This method is called by the {@link casm.Observer.Observable} class when a mouse event is triggered.<br>
      * e.g. When the mouse is clicked, when the mouse moves.
+     *
      * @param event The mouse event.
      */
     @Override
@@ -78,8 +82,12 @@ public class Button extends Object implements ObserverMouse {
             if (collider.contains(event.getX(), event.getY())) {
                 if (type == MenuEntityType.BUTTON.PLAY) {
                     if (Game.getLevelScene() == null) {
-                        //Game.changeScene(SceneType.LEVEL, true);
-                        Game.changeLevel(3, false);
+                        //Game.changeScene(SceneType.LEVEL);
+                        try {
+                            Game.changeLevel(LevelSaverLoader.getInstance().getSavedLevelIndex(), true);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
                         Game.destroyAllWithoutTopScenes();
                     } else {
                         Game.destroyViewingScene();
@@ -118,6 +126,7 @@ public class Button extends Object implements ObserverMouse {
 
     /**
      * Change the texture of the button if it is hovered or not.
+     *
      * @param isHovered - If the button is hovered.
      */
     public void hover(boolean isHovered) {

@@ -118,20 +118,21 @@ public class SpriteComponent extends Component {
     @Override
     public void draw() {
         if (gameObject.isAlive()) {
-            /// To center the sprite in the entity "hit-box" so if the sprite is bigger, it will be centered
-            if (positionComp != null)
-                if ((positionComp.getHeight() > 0 && positionComp.getHeight() < sprite.getHeight()) ||
-                        (positionComp.getWidth() > 0 && positionComp.getWidth() < sprite.getWidth())) {
-                    Vector2D offset = new Vector2D((double) (sprite.getWidth() - positionComp.getWidth()) / 2,
-                            sprite.getHeight() - positionComp.getHeight());
-                    offset = ((Vector2D) positionComp.position.clone()).sub(offset);
-                    Renderer.getInstance().drawImage(antiDiagonalFlip == null ? sprite.getTexture() : antiDiagonalFlip, offset, width == 0 ? sprite.getWidth() : width,
-                            height == 0 ? sprite.getHeight() : height, flipped_vertically, flipped_horizontally);
-                    return;
-                }
-            Renderer.getInstance().drawImage(antiDiagonalFlip == null ? sprite.getTexture() : antiDiagonalFlip, positionComp.position, width == 0 ? sprite.getWidth() : width,
-                    height == 0 ? sprite.getHeight() : height, flipped_vertically, flipped_horizontally);
-
+            if(sprite.getTexture() != null) {
+                /// To center the sprite in the entity "hit-box" so if the sprite is bigger, it will be centered
+                if (positionComp != null)
+                    if ((positionComp.getHeight() > 0 && positionComp.getHeight() < sprite.getHeight()) ||
+                            (positionComp.getWidth() > 0 && positionComp.getWidth() < sprite.getWidth())) {
+                        Vector2D offset = new Vector2D((double) (sprite.getWidth() - positionComp.getWidth()) / 2,
+                                sprite.getHeight() - positionComp.getHeight());
+                        offset = ((Vector2D) positionComp.position.clone()).sub(offset);
+                        Renderer.getInstance().drawImage(antiDiagonalFlip == null ? sprite.getTexture() : antiDiagonalFlip, offset, width == 0 ? sprite.getWidth() : width,
+                                height == 0 ? sprite.getHeight() : height, flipped_vertically, flipped_horizontally);
+                        return;
+                    }
+                Renderer.getInstance().drawImage(antiDiagonalFlip == null ? sprite.getTexture() : antiDiagonalFlip, positionComp.position, width == 0 ? sprite.getWidth() : width,
+                        height == 0 ? sprite.getHeight() : height, flipped_vertically, flipped_horizontally);
+            }
         }
     }
 

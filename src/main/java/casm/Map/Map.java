@@ -6,6 +6,8 @@ import casm.ECS.Components.PositionComponent;
 import casm.ECS.GameObject;
 import casm.Factory.EntityFactory.EntityType;
 import casm.Game;
+import casm.Objects.Entities.EmptyTile;
+import casm.Scenes.Level.LeveleScene;
 import casm.Scenes.Scene;
 import casm.Objects.Entities.Tile;
 import casm.SpriteUtils.Assets;
@@ -20,10 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Create the map from a json file given by parameter<br>
@@ -83,24 +82,30 @@ public class Map {
                     int layer_id = Integer.parseInt(layerObj.get("id").toString());
                     JSONArray data = (JSONArray) layerObj.get("data");
                     String layerName = layerObj.get("name").toString();
+
                     if (Objects.equals(layerName, "collision")) {
-                        for (int i = 0; i < rows; i++) {
+                        for (int i = 0; i < rows; i++)
                             for (int j = 0; j < cols; j++) {
                                 int colliderType = Integer.parseInt(data.get(i * cols + j).toString());
                                 if (colliderType != 0) {
-                                    //Tile tile = (Tile) scene.getLayeringObjects().get(0).get(i * cols + j);
-                                    for (GameObject testObj : scene.getLayeringObjects().get(0)) {
-                                        if (testObj.getComponent(PositionComponent.class).position.equals(new Vector2D(j * tileWidth, i * tileHeight))) {
-                                            Tile tile = (Tile) testObj;
-                                            tile.addComponent(new ColliderComponent(ColliderType.values()[colliderType - 1], tile.getTileWidth(), tileHeight));
-                                            if (colliderType - 1 == ColliderType.WIN_DOOR.ordinal())
-                                                Objects.requireNonNull(Game.getLevelScene()).addToWinColliders(tile.getComponent(ColliderComponent.class).getCollider(ColliderType.WIN_DOOR));
-                                            break;
-                                        }
-                                    }
+                                    if (colliderType - 1 == ColliderType.WIN_DOOR.ordinal()) {
+                                        EmptyTile tile = new EmptyTile("WinDoor", j , i, tileWidth, tileHeight);
+                                        tile.addComponent(new ColliderComponent(ColliderType.values()[colliderType - 1], tileWidth, tileHeight));
+                                        tile.init();
+                                        scene.addGameObjectToScene(tile);
+                                        scene.addGameObjectToLayer(tile, 0);
+                                        ((LeveleScene) scene).addToWinColliders(tile.getComponent(ColliderComponent.class).getCollider(ColliderType.WIN_DOOR));
+
+                                    } else
+                                        //Tile tile = (Tile) scene.getLayeringObjects().get(0).get(i * cols + j);
+                                        for (GameObject testObj : scene.getLayeringObjects().get(0))
+                                            if (testObj.getComponent(PositionComponent.class).position.equals(new Vector2D(j * tileWidth, i * tileHeight))) {
+                                                Tile tile = (Tile) testObj;
+                                                tile.addComponent(new ColliderComponent(ColliderType.values()[colliderType - 1], tile.getTileWidth(), tileHeight));
+                                                break;
+                                            }
                                 }
                             }
-                        }
                     } else
                         for (int i = 0; i < rows; i++) {
                             for (int j = 0; j < cols; j++) {

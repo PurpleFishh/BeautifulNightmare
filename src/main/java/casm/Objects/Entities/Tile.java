@@ -17,7 +17,7 @@ public class Tile extends GameObject {
     /**
      * The id of the texture in the sprite sheet
      */
-    private int textureId;
+    private final int textureId;
     /**
      * <b>tileWidth</b> - The width of the tile<br>
      * <b>tileHeight</b> - The height of the tile
@@ -58,15 +58,6 @@ public class Tile extends GameObject {
         tileHeight = texture.getHeight();
         this.addComponent(new PositionComponent(x * tileWidth, y * tileHeight, tileWidth, tileHeight));
         this.addComponent(new SpriteComponent(texture, flipped_vertically, flipped_horizontally, antiDiagonalFlip));
-        //this.init();
-    }
-
-    private void tileMaker(Assets tileSet, int x, int y) {
-        Sprite texture = tileSet.getSprite(textureId);
-        tileWidth = texture.getWidth();
-        tileHeight = texture.getHeight();
-        this.addComponent(new PositionComponent(x * tileWidth, y * tileHeight));
-        this.addComponent(new SpriteComponent(texture));
         //this.init();
     }
 

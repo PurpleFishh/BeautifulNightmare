@@ -166,20 +166,21 @@ public class MovementMediator implements Mediator {
      * @param playerCollider rectangle collider of the player
      */
     private void verifyIfGameWon(Rectangle playerCollider) {
-        if (((LeveleScene) Objects.requireNonNull(Game.getCurrentScene())).isWon()) {
-            for (Rectangle winCollider : ((LeveleScene) Game.getCurrentScene()).getWinColliders()) {
-                if (playerCollider.intersects(winCollider)) {
-                    System.out.println("Ai castigat");
-                    try {
-                        LevelSaverLoader.getInstance().saveHighScore();
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
+        if (Game.getCurrentScene() instanceof LeveleScene)
+            if (((LeveleScene) Objects.requireNonNull(Game.getCurrentScene())).isWon()) {
+                for (Rectangle winCollider : ((LeveleScene) Game.getCurrentScene()).getWinColliders()) {
+                    if (playerCollider.intersects(winCollider)) {
+                        System.out.println("Ai castigat");
+                        try {
+                            LevelSaverLoader.getInstance().saveHighScore();
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                        Game.changeLevel(((LeveleScene) Game.getCurrentScene()).getLevel() + 1, false);
+                        break;
                     }
-                    Game.changeLevel(((LeveleScene) Game.getCurrentScene()).getLevel() + 1, false);
-                    break;
                 }
             }
-        }
     }
 
     /**

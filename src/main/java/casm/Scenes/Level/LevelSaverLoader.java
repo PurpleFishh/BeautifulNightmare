@@ -42,6 +42,7 @@ public class LevelSaverLoader {
 
     /**
      * Saves the current scene to the history and to the database
+     *
      * @throws SceneCanNotBeSaved If the scene can not be saved(the current scenes are not a savable scene)
      */
     public void save() throws SceneCanNotBeSaved {
@@ -57,8 +58,9 @@ public class LevelSaverLoader {
 
     /**
      * Restores the scene from the database
+     *
      * @throws SceneCanNotBeSaved If the scene can not be saved(the current scenes are not a savable scene)
-     * @throws SQLException If the database can not be accessed
+     * @throws SQLException       If the database can not be accessed
      */
     public void load() throws SceneCanNotBeSaved, SQLException {
         if (Game.getLevelScene() == null)
@@ -72,6 +74,7 @@ public class LevelSaverLoader {
 
     /**
      * Save the memento to database
+     *
      * @throws SQLException If the database can not be accessed
      */
     public void saveToDataBase() throws SQLException {
@@ -113,6 +116,7 @@ public class LevelSaverLoader {
 
     /**
      * Save the best score to the database
+     *
      * @throws SQLException If the database can not be accessed
      */
     public void saveHighScore() throws SQLException {
@@ -138,6 +142,7 @@ public class LevelSaverLoader {
 
     /**
      * Read the last memento from the database
+     *
      * @return the read memento from the database
      * @throws SQLException If the database can not be accessed
      */
@@ -169,10 +174,27 @@ public class LevelSaverLoader {
         return new LevelMemento(savedEntitySet, level, score);
     }
 
+    public int getSavedLevelIndex() throws SQLException {
+        Connection conn = getConnection();
+        Statement stam = conn.createStatement();
+
+        ResultSet result = stam.executeQuery("SELECT name FROM  sqlite_master  WHERE type='table' AND name='save_info';");
+        int level = 1;
+        if(result.next()) {
+            result = stam.executeQuery("SELECT LEVEL FROM save_info");
+            if (result.next())
+                level = result.getInt(1);
+            stam.close();
+            conn.close();
+        }
+        return level;
+    }
+
     /**
      * Save an entity state to the database
-     * @param stam The statement to execute the query
-     * @param type The type of the entity
+     *
+     * @param stam   The statement to execute the query
+     * @param type   The type of the entity
      * @param entity The entity to save
      * @throws SQLException If the database can not be accessed
      */
@@ -183,6 +205,7 @@ public class LevelSaverLoader {
 
     /**
      * Read the high score from the database
+     *
      * @return The high score
      * @throws SQLException If the database can not be accessed
      */
@@ -193,14 +216,13 @@ public class LevelSaverLoader {
 
         HashMap<Integer, Double> highScores = new HashMap<>();
         ResultSet result = stam.executeQuery("SELECT * FROM high_score");
-        while (result.next())
-        {
+        while (result.next()) {
             highScores.put(result.getInt(1), result.getDouble(2));
         }
 
         stam.close();
         conn.close();
-        return  highScores;
+        return highScores;
     }
 
     /**

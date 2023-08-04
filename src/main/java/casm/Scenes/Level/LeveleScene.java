@@ -254,7 +254,6 @@ public class LeveleScene extends Scene implements State, Originator {
         if (isRunning)
             if (enemies.isEmpty()) {
                 if (!won) {
-                    System.out.println("WIN!");
                     won = true;
                     if (winDoor != null)
                         winDoor.getComponent(AnimationStateMachine.class).trigger("open");

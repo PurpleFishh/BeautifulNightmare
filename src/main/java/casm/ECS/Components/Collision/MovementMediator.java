@@ -1,23 +1,20 @@
 package casm.ECS.Components.Collision;
 
 import casm.ECS.Component;
-import casm.ECS.Components.*;
+import casm.ECS.Components.AttackComponent;
+import casm.ECS.Components.KeyState;
+import casm.ECS.Components.KeyboardControllerComponent;
+import casm.ECS.Components.PositionComponent;
 import casm.ECS.GameObject;
-import casm.Objects.Entities.Entity;
 import casm.Game;
 import casm.Map.Map;
+import casm.Objects.Entities.Entity;
 import casm.Objects.Entities.Player;
-import casm.Objects.HeartBonus;
-import casm.Scenes.Level.LevelSaverLoader;
-import casm.Scenes.Level.LeveleScene;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
-import casm.Utils.FlipEntityMediator;
-import casm.Utils.Mediator;
+import casm.Utils.*;
 import casm.Utils.Settings.EntitiesSettings;
 import casm.Utils.Settings.Setting;
-import casm.Utils.Vector2D;
 
-import java.sql.SQLException;
 import java.util.Objects;
 
 /**
@@ -41,6 +38,10 @@ public class MovementMediator implements Mediator {
      * Time delay used for damaging by lava, because we don't want the lava to damage on every update, so a delay is a good solution
      */
     private double lavaDamageDelay = 0;
+    /**
+     * Collision utilities from where functions for easier collision detection can be used
+     */
+    private CollisionUtils collisionUtils = CollisionUtils.getInstance();
 
     /**
      * Get the instance of the singleton
@@ -100,34 +101,32 @@ public class MovementMediator implements Mediator {
         dynamicColl.checkCollision(xColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
                 Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
 
-        boolean collisionX = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.MAP_TILE);
-        if (collisionX) {
-            moveToTileEdgeX(positionComponent, playerCollider);
-        } else
-            positionComponent.position.x = xPlayerPotential.x;
+        byte collisionCodify = collisionUtils.getCollisionVariable(dynamicColl);
+        boolean collisionX = (collisionCodify & 0b0001) == 0b0001;
+        boolean xLeaderMiddle = (collisionCodify & 0b0010) == 0b0010;
+        boolean xLeaderBottom = (collisionCodify & 0b0100) == 0b0100;
+        boolean xLavaCollision = (collisionCodify & 0b1000) == 0b1000;
 
-        boolean xLeaderMiddle = hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LEADER) ||
-                hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
-        boolean xLeaderBottom = hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.LEADER) ||
-                hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
-        boolean xLavaCollision = hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
+        if (collisionX) {
+            collisionUtils.moveToTileEdgeX(positionComponent, playerCollider);
+        } else {
+            positionComponent.position.x = xPlayerPotential.x;
+        }
 
         /// Check for Y movement
         dynamicColl.checkCollision(yColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
                 Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
 
-        boolean collisionY = hasCollisionOfType(dynamicColl.getCollisionCornersFlags(), ColliderType.MAP_TILE);
-
-        boolean yLeaderMiddle = hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LEADER) ||
-                hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
-        boolean yLeaderBottom = hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.LEADER) ||
-                hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
-        boolean yLavaCollision = hasCollisionOfTypeOnMiddle(dynamicColl.getCollisionCornersFlags(), ColliderType.LAVA);
+        collisionCodify = collisionUtils.getCollisionVariable(dynamicColl);
+        boolean collisionY = (collisionCodify & 0b0001) == 0b0001;
+        boolean yLeaderMiddle = (collisionCodify & 0b0010) == 0b0010;
+        boolean yLeaderBottom = (collisionCodify & 0b0100) == 0b0100;
+        boolean yLavaCollision = (collisionCodify & 0b1000) == 0b1000;
 
         if (collisionY)
-            moveToTileEdgeY(positionComponent, playerCollider);
+            collisionUtils.moveToTileEdgeY(positionComponent, playerCollider);
         else {
-            if (hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.VOID))
+            if (collisionUtils.hasCollisionOfTypeOnBottom(dynamicColl.getCollisionCornersFlags(), ColliderType.VOID))
                 ((Entity) gameObject).setLife(0);
             if (positionComponent.isClimbing() && !(xLeaderBottom || yLeaderBottom)) {
                 positionComponent.sign.y = 0;
@@ -156,32 +155,10 @@ public class MovementMediator implements Mediator {
                         heart.kill();
                     }
                 });
-            verifyIfGameWon(playerCollider);
+            Winning.getInstance().verifyIfGameWon(playerCollider);
         }
     }
 
-    /**
-     * If the game was won, it verify if the player is in contact with the door that will send him to the next level
-     *
-     * @param playerCollider rectangle collider of the player
-     */
-    private void verifyIfGameWon(Rectangle playerCollider) {
-        if (Game.getCurrentScene() instanceof LeveleScene)
-            if (((LeveleScene) Objects.requireNonNull(Game.getCurrentScene())).isWon()) {
-                for (Rectangle winCollider : ((LeveleScene) Game.getCurrentScene()).getWinColliders()) {
-                    if (playerCollider.intersects(winCollider)) {
-                        System.out.println("Ai castigat");
-                        try {
-                            LevelSaverLoader.getInstance().saveHighScore();
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-                        Game.changeLevel(((LeveleScene) Game.getCurrentScene()).getLevel() + 1, false);
-                        break;
-                    }
-                }
-            }
-    }
 
     /**
      * If the entity is not in any collision, it will set its position to new potential position
@@ -190,91 +167,6 @@ public class MovementMediator implements Mediator {
      */
     private void positionUpdate(PositionComponent positionComponent) {
         positionComponent.position = positionComponent.getPotentialPosition();
-    }
-
-    /**
-     * If the entity has collision on the X axe,
-     * it will move it to the tile edge to don't have wired space between the entity and the tile collided to
-     *
-     * @param positionComponent the entity position component({@link PositionComponent})
-     * @param collider          entity collider rectangle({@link Rectangle})
-     */
-    public void moveToTileEdgeX(PositionComponent positionComponent, Rectangle collider) {
-        if (positionComponent.sign.x > 0) {
-            double oldPosition = positionComponent.position.x;
-            positionComponent.position.x = ((int) (collider.getX() / Map.getTileWidth()) + 1) * Map.getTileWidth()
-                    - collider.getWidth() - collider.getOffset().x - 1 + oldPosition;
-            positionComponent.position.x += oldPosition - positionComponent.position.x;
-            //TODO: Trebuie reparat BugFix-ul asta: il folosim deoare ce AiBehaviour vedem daca avem collziune pe o parte si daca da mergem in cealata parte, dar asa noi il lipim fix langa tile fara coliziune(ceea ce vrem pentru player)
-            if (positionComponent.gameObject.getName().equals("enemy")) {
-                positionComponent.position.x += 1;
-            }
-        }
-        if (positionComponent.sign.x < 0) {
-            double oldPosition = positionComponent.position.x;
-            positionComponent.position.x = (int) (collider.getX() / Map.getTileWidth()) * Map.getTileWidth() - collider.getOffset().x;
-            positionComponent.position.x += oldPosition - positionComponent.position.x;
-            if (positionComponent.gameObject.getName().equals("enemy"))
-                positionComponent.position.x -= 1;
-        }
-    }
-
-    /**
-     * If the entity has collision on the Y axe,
-     * it will move it to the tile edge to don't have wired space between the entity and the tile collided to
-     *
-     * @param positionComponent the entity position component({@link PositionComponent})
-     * @param collider          entity collider rectangle({@link Rectangle})
-     */
-    public void moveToTileEdgeY(PositionComponent positionComponent, Rectangle collider) {
-        if (positionComponent.velocity.y < 0) {
-            if (!positionComponent.isClimbing()) {
-                positionComponent.position.y = (int) (collider.getY() / Map.getTileHeight()) * Map.getTileHeight() + 1 - collider.getOffset().y;
-
-                positionComponent.sign.y = 0;
-                positionComponent.velocity.y = 0;
-                positionComponent.setJumping(false);
-            }
-        } else {
-            positionComponent.position.y = ((int) ((collider.getY() + collider.getHeight()) / Map.getTileHeight()) + 1)
-                    * Map.getTileHeight() - collider.getHeight() - 1 - collider.getOffset().y;
-        }
-    }
-
-    /**
-     * Verify if the entity has any collection of 'type' in its collider flags
-     *
-     * @param collisionCornersFlags the collider flags form {@link DyncamicColliderComponent}
-     * @param type                  the type of the searched collider
-     * @return if it was found or not
-     */
-    private boolean hasCollisionOfType(ColliderType[] collisionCornersFlags, ColliderType type) {
-        for (ColliderType flagType : collisionCornersFlags)
-            if (flagType == type)
-                return true;
-        return false;
-    }
-
-    /**
-     * Verify if the entity has any collection of 'type' in the bottom of the entity, searching in its collider flags
-     *
-     * @param collisionCornersFlags the collider flags form {@link DyncamicColliderComponent}
-     * @param type                  the type of the searched collider
-     * @return if it was found or not
-     */
-    private boolean hasCollisionOfTypeOnBottom(ColliderType[] collisionCornersFlags, ColliderType type) {
-        return collisionCornersFlags[2] == type || collisionCornersFlags[3] == type;
-    }
-
-    /**
-     * Verify if the entity has any collection of 'type' in the middle of the entity, searching in its collider flags
-     *
-     * @param collisionCornersFlags the collider flags form {@link DyncamicColliderComponent}
-     * @param type                  the type of the searched collider
-     * @return if it was found or not
-     */
-    private boolean hasCollisionOfTypeOnMiddle(ColliderType[] collisionCornersFlags, ColliderType type) {
-        return collisionCornersFlags[4] == type || collisionCornersFlags[5] == type;
     }
 
     /**

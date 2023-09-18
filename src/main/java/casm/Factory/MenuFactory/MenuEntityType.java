@@ -1,7 +1,7 @@
 package casm.Factory.MenuFactory;
 
-import casm.Factory.FactoryTypes;
 import casm.Builder.BuilderTypeEnum;
+import casm.Factory.FactoryTypes;
 
 /**
  * The type of the entities that can be created in the {@link MenuEntityFactory}

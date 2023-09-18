@@ -2,7 +2,6 @@ package casm.Objects;
 
 import casm.ECS.Components.TextComponent;
 import casm.Game;
-import casm.Scenes.SettingsMenuScene;
 import casm.Utils.Vector2D;
 
 import java.awt.*;

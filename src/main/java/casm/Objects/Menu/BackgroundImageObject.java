@@ -1,6 +1,5 @@
 package casm.Objects.Menu;
 
-import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
 import casm.Objects.Object;
 import casm.SpriteUtils.Sprite;

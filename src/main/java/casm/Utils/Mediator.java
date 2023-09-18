@@ -1,7 +1,6 @@
 package casm.Utils;
 
 import casm.ECS.Component;
-import casm.ECS.Components.Collision.MovementMediator;
 
 /**
  * Used to communicate components

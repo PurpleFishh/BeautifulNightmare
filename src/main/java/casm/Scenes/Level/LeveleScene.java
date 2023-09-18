@@ -14,7 +14,6 @@ import casm.Factory.Factory;
 import casm.Factory.FactoryTypes;
 import casm.Map.Map;
 import casm.Objects.Entities.Enemies.Enemy;
-import casm.Objects.Entities.Entity;
 import casm.Objects.Entities.Player;
 import casm.Objects.Entities.SpawnDoor;
 import casm.Objects.Entities.WinDoor;
@@ -32,7 +31,10 @@ import casm.Utils.Settings.Setting;
 import casm.Utils.Vector2D;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * LevelScene is the scene that contains a level of the game.

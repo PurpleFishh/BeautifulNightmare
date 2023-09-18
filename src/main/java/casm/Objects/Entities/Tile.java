@@ -4,10 +4,7 @@ import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
 import casm.ECS.GameObject;
 import casm.SpriteUtils.Assets;
-import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
-
-import java.util.function.IntBinaryOperator;
 
 /**
  * The tile object used for the map

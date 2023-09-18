@@ -1,7 +1,6 @@
 package casm.GameWindow;
 
 import casm.ECS.Components.KeyboardListener;
-import casm.Game;
 
 import javax.swing.*;
 import java.awt.*;

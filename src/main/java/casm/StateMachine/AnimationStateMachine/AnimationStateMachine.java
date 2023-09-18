@@ -9,7 +9,6 @@ import casm.StateMachine.StateTrigger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * The mechanism used for the animations of every object

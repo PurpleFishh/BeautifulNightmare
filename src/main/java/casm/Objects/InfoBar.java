@@ -1,11 +1,7 @@
 package casm.Objects;
 
-import casm.Observer.Observable;
-import casm.Observer.Observer;
 import casm.Scenes.Scene;
 import casm.Utils.Vector2D;
-
-import java.util.ArrayList;
 
 /**
  * Object used to display information on the screen(player stats).<br>

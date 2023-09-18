@@ -1,9 +1,7 @@
 package casm.Objects.Entities;
 
-import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
 import casm.Objects.Object;
-import casm.SpriteUtils.Assets;
 import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
 import casm.Utils.Vector2D;

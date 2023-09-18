@@ -2,7 +2,6 @@ package casm.SpriteUtils.Animation;
 
 import casm.SpriteUtils.Assets;
 import casm.SpriteUtils.AssetsCollection;
-import casm.SpriteUtils.ImageLoader;
 import casm.StateMachine.AnimationStateMachine.AnimationState;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

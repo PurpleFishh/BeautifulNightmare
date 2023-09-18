@@ -3,10 +3,10 @@ package casm.Scenes;
 import casm.ECS.Components.MouseListener;
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.GameObject;
-import casm.Factory.MenuFactory.MenuEntityFactory;
-import casm.Factory.MenuFactory.MenuEntityType;
 import casm.Factory.Factory;
 import casm.Factory.FactoryTypes;
+import casm.Factory.MenuFactory.MenuEntityFactory;
+import casm.Factory.MenuFactory.MenuEntityType;
 import casm.Objects.Menu.BackgroundImageObject;
 import casm.Objects.Menu.Button;
 import casm.Objects.Object;
@@ -16,7 +16,6 @@ import casm.StateMachine.AnimationStateMachine.State;
 import casm.Utils.Vector2D;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The main menu scene

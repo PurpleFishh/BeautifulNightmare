@@ -1,12 +1,11 @@
 package casm.Factory.EntityFactory;
 
+import casm.Factory.Factory;
+import casm.Factory.FactoryTypes;
 import casm.Objects.Entities.Enemies.Catfish;
 import casm.Objects.Entities.Enemies.TurtleKing;
 import casm.Objects.Entities.Enemies.WeaselFisherman;
-import casm.Objects.Entities.Entity;
 import casm.Objects.Entities.Player;
-import casm.Factory.Factory;
-import casm.Factory.FactoryTypes;
 import casm.Objects.HeartBonus;
 import casm.Objects.Object;
 import casm.Utils.Vector2D;

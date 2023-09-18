@@ -1,7 +1,5 @@
 package casm.StateMachine;
 
-import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
-
 import java.util.Objects;
 
 /**

@@ -1,9 +1,6 @@
 package casm.Objects.Entities.Enemies;
 
 import casm.ECS.Components.AttackComponent;
-import casm.ECS.Components.Collision.ColliderComponent;
-import casm.ECS.Components.Collision.ColliderType;
-import casm.ECS.Components.Collision.Rectangle;
 import casm.ECS.Components.PositionComponent;
 import casm.Factory.EntityFactory.EntityType;
 import casm.SpriteUtils.Animation.AnimationsExtract;

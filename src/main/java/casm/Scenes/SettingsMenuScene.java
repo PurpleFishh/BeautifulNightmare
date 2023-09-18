@@ -1,13 +1,11 @@
 package casm.Scenes;
 
 import casm.ECS.Components.MouseListener;
-import casm.ECS.Components.TextComponent;
 import casm.ECS.GameObject;
 import casm.Factory.Factory;
 import casm.Factory.FactoryTypes;
 import casm.Factory.MenuFactory.MenuEntityFactory;
 import casm.Factory.MenuFactory.MenuEntityType;
-import casm.Game;
 import casm.Objects.Menu.BackgroundImageObject;
 import casm.Objects.Menu.Button;
 import casm.Objects.Object;
@@ -16,10 +14,8 @@ import casm.Scenes.Level.LevelSaverLoader;
 import casm.SpriteUtils.AssetsCollection;
 import casm.SpriteUtils.Sprite;
 import casm.StateMachine.AnimationStateMachine.State;
-import casm.Utils.Renderer;
 import casm.Utils.Vector2D;
 
-import java.awt.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;

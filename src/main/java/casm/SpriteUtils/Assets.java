@@ -3,7 +3,6 @@ package casm.SpriteUtils;
 import casm.Utils.Vector2D;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

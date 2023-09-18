@@ -3,9 +3,7 @@ package casm.Objects.Entities;
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
 import casm.ECS.GameObject;
-import casm.SpriteUtils.Assets;
 import casm.SpriteUtils.AssetsCollection;
-import casm.SpriteUtils.Sprite;
 
 /**
  * The tile object used for the map

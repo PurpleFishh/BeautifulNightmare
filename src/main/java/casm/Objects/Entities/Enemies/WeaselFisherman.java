@@ -1,11 +1,11 @@
 package casm.Objects.Entities.Enemies;
 
 import casm.ECS.Components.AttackComponent;
-import casm.Factory.EntityFactory.EntityType;
-import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.ECS.Components.PositionComponent;
-import casm.StateMachine.AnimationStateMachine.AnimationState;
+import casm.Factory.EntityFactory.EntityType;
 import casm.SpriteUtils.Animation.AnimationsExtract;
+import casm.StateMachine.AnimationStateMachine.AnimationState;
+import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Settings.EntitiesSettings;
 import casm.Utils.Vector2D;
 

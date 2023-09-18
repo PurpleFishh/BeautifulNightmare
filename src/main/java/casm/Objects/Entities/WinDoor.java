@@ -2,13 +2,9 @@ package casm.Objects.Entities;
 
 import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
-import casm.ECS.Components.PositionComponent;
 import casm.ECS.Components.SpriteComponent;
-import casm.ECS.GameObject;
 import casm.Objects.Object;
 import casm.SpriteUtils.Animation.AnimationsExtract;
-import casm.SpriteUtils.Assets;
-import casm.SpriteUtils.AssetsCollection;
 import casm.StateMachine.AnimationStateMachine.AnimationState;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Vector2D;

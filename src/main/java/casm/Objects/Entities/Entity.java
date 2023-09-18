@@ -1,6 +1,5 @@
 package casm.Objects.Entities;
 
-import casm.ECS.Components.AttackComponent;
 import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
 import casm.ECS.Components.Collision.DyncamicColliderComponent;

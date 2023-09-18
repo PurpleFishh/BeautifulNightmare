@@ -17,23 +17,23 @@ public abstract class Component {
     /**
      * Called on every iteration of the game loop for entities to be updated
      */
-    public void update() { };
+    public void update() { }
 
     /**
      * Called on every iteration of the game loop, after the entities are update, they will be drawn
      */
-    public void draw() { };
+    public void draw() { }
 
     /**
      * Called on every iteration of the game loop for handling events like keyboard usage
      */
-    public void eventHandler() { };
+    public void eventHandler() { }
 
     /**
      * Used to kill end destroy entities
      * It will deallocate every component and after delete the object
      * It will no more be part of the scene or game
      */
-    public void destroy() { };
+    public void destroy() { }
 
 }

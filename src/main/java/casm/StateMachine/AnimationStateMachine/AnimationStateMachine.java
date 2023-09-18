@@ -24,7 +24,7 @@ public class AnimationStateMachine extends Component implements StateMachine {
     /**
      * All the animation states
      */
-    private List<AnimationState> states = new ArrayList<>();
+    private final List<AnimationState> states = new ArrayList<>();
     /**
      * <b>currentState</b> - the current animation state that is playing.
      * <b>playAfter</b> - if the next state of animation should play after the current one ends or the transition should be made instant.

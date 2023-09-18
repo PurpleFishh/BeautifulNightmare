@@ -21,7 +21,7 @@ public class LevelMemento implements Memento {
     /**
      * The score of the saved level
      */
-    private double score;
+    private final double score;
     /**
      * The player saved state
      */

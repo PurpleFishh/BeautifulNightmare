@@ -10,5 +10,5 @@ public enum SceneType implements FactoryTypes {
     PAUSE_MENU,
     GAME_OVER_MENU,
     SETTINGS_MENU,
-    LEVEL;
+    LEVEL
 }

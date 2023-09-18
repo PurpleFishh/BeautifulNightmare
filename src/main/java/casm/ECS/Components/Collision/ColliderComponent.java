@@ -21,7 +21,7 @@ public class ColliderComponent extends Component {
     /**
      * This is where the colliders are stored
      */
-    private HashMap<ColliderType, Rectangle> componentColliders = new HashMap<>();
+    private final HashMap<ColliderType, Rectangle> componentColliders = new HashMap<>();
     //TODO: Nu prea va rostu sa tin ceata lu pitiogi dupa mine sa tot dau update la pozitie pt obiectele ce nu se misca, Pot folosi PossitionComp
 
     /**

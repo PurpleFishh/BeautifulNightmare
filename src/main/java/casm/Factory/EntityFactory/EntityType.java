@@ -26,6 +26,6 @@ public enum EntityType implements FactoryTypes {
     /**
      * The turtle king enemy
      */
-    TURTLE_KING;
+    TURTLE_KING
 
 }

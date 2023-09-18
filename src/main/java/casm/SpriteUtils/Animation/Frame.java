@@ -10,7 +10,7 @@ public class Frame {
     /**
      * The texture of the frame.
      */
-    private Sprite frameTexture;
+    private final Sprite frameTexture;
     /**
      * How long the frame lasts.
      */

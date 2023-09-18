@@ -17,7 +17,7 @@ public abstract class Scene {
     /**
      * The type of scene
      */
-    private SceneType type;
+    private final SceneType type;
     /**
      * If the scene is running
      */

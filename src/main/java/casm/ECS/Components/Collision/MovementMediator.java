@@ -15,8 +15,6 @@ import casm.Utils.*;
 import casm.Utils.Settings.EntitiesSettings;
 import casm.Utils.Settings.Setting;
 
-import java.util.Objects;
-
 /**
  * The mediator that is used for every entity for movement<br>
  * It resolve the dependencies between components finding solutions for problems like entity movement,
@@ -41,7 +39,7 @@ public class MovementMediator implements Mediator {
     /**
      * Collision utilities from where functions for easier collision detection can be used
      */
-    private CollisionUtils collisionUtils = CollisionUtils.getInstance();
+    private final CollisionUtils collisionUtils = CollisionUtils.getInstance();
 
     /**
      * Get the instance of the singleton
@@ -71,7 +69,8 @@ public class MovementMediator implements Mediator {
         if (component instanceof PositionComponent) {
             if (component.gameObject.hasComponent(DyncamicColliderComponent.class)) {
                 //TODO: Quick Fix: cand schimb scena la GameOver el mai da o data update la inamici si gaseste scena noua fara mapa
-                if (Game.getCurrentScene().getGameObjects().contains(component.gameObject))
+                if (Game.getCurrentScene().isPresent() &&
+                        Game.getCurrentScene().get().getGameObjects().contains(component.gameObject))
                     collisionManager((PositionComponent) component);
             } else
                 positionUpdate((PositionComponent) component);
@@ -98,8 +97,9 @@ public class MovementMediator implements Mediator {
         Vector2D xColliderPotential = new Vector2D(potentialPositionColl.x, playerCollider.getY());
         Vector2D yColliderPotential = new Vector2D(playerCollider.getX(), potentialPositionColl.y);
 
-        dynamicColl.checkCollision(xColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
-                Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
+        if (Game.getCurrentScene().isPresent())
+            dynamicColl.checkCollision(xColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
+                    Game.getCurrentScene().get().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
 
         byte collisionCodify = collisionUtils.getCollisionVariable(dynamicColl);
         boolean collisionX = (collisionCodify & 0b0001) == 0b0001;
@@ -114,8 +114,9 @@ public class MovementMediator implements Mediator {
         }
 
         /// Check for Y movement
-        dynamicColl.checkCollision(yColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
-                Game.getCurrentScene().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
+        if (Game.getCurrentScene().isPresent())
+            dynamicColl.checkCollision(yColliderPotential, (int) playerCollider.getWidth(), (int) playerCollider.getHeight(),
+                    Game.getCurrentScene().get().getLayeringObjects().get(0), Map.getTileWidth(), Map.getTileHeight());
 
         collisionCodify = collisionUtils.getCollisionVariable(dynamicColl);
         boolean collisionY = (collisionCodify & 0b0001) == 0b0001;
@@ -149,12 +150,13 @@ public class MovementMediator implements Mediator {
             lavaDamageDelay -= 1 / Setting.DELTA_TIME;
         if (gameObject instanceof Player) {
             if (((Entity) gameObject).getLife() != 100)
-                Objects.requireNonNull(Game.getLevelScene()).getHeartBonuses().forEach(heart -> {
-                    if (heart.getCollider().intersects(playerCollider)) {
-                        ((Player) gameObject).revive(40);
-                        heart.kill();
-                    }
-                });
+                if (Game.getLevelScene().isPresent())
+                    Game.getLevelScene().get().getHeartBonuses().forEach(heart -> {
+                        if (heart.getCollider().intersects(playerCollider)) {
+                            ((Player) gameObject).revive(40);
+                            heart.kill();
+                        }
+                    });
             Winning.getInstance().verifyIfGameWon(playerCollider);
         }
     }

@@ -5,7 +5,6 @@ import casm.ECS.Components.PositionComponent;
 import casm.ECS.GameObject;
 import casm.Game;
 import casm.Map.Map;
-import casm.Objects.Entities.Tile;
 import casm.Utils.Vector2D;
 
 import java.util.List;
@@ -81,7 +80,9 @@ public class DyncamicColliderComponent extends Component {
         int xIndex = (int) (x / testWidth);
         int yIndex = (int) (y / testHeight);
         if (testEntities != null) {
-            if (Game.getLevelScene().getLevel() != 1) {
+            if(Game.getLevelScene().isEmpty())
+                return null;
+            if (Game.getLevelScene().get().getLevel() != 1) {
                 if (testEntities.get(yIndex * Map.getCols() + xIndex).hasComponent(ColliderComponent.class))
                     return testEntities.get(yIndex * Map.getCols() + xIndex).getComponent(ColliderComponent.class).getType();
             } else {

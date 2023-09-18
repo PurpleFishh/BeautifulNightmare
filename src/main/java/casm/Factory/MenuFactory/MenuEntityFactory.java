@@ -17,7 +17,7 @@ public class MenuEntityFactory implements Factory {
     /**
      * The director used for building buttons
      */
-    private BuilderDirector builder;
+    private final BuilderDirector builder;
 
     public MenuEntityFactory() {
         this.builder = new ButtonsBuilderDirector();

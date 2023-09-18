@@ -18,7 +18,7 @@ public class MouseListener implements Observable, java.awt.event.MouseListener, 
     /**
      * The subscribers of the observer
      */
-    private HashMap<Scene, List<ObserverMouse>> subscribersSync = new HashMap<>();
+    private final HashMap<Scene, List<ObserverMouse>> subscribersSync = new HashMap<>();
     /**
      * Used for synchronizing the access to the list
      */
@@ -34,7 +34,7 @@ public class MouseListener implements Observable, java.awt.event.MouseListener, 
     /**
      * Used for synchronizing the access to the list(a semaphore in the access thread)
      */
-    private boolean iteratorSync = false;
+    private final boolean iteratorSync = false;
 
     private MouseListener() {
     }
@@ -53,14 +53,15 @@ public class MouseListener implements Observable, java.awt.event.MouseListener, 
      */
     @Override
     public synchronized void notifyAllSubs() {
-
-       // iteratorSync = true;
-        if(subscribersSync.containsKey(Game.getCurrentScene())) {
-            List<ObserverMouse> copyList = new ArrayList<>(subscribersSync.get(Game.getCurrentScene()));
+        if (Game.getCurrentScene().isEmpty())
+            return;
+        // iteratorSync = true;
+        if (subscribersSync.containsKey(Game.getCurrentScene().get())) {
+            List<ObserverMouse> copyList = new ArrayList<>(subscribersSync.get(Game.getCurrentScene().get()));
             for (ObserverMouse observerMouse : copyList) observerMouse.notify(event);
         }
-       // iteratorSync = false;
-      //  notifyAll();
+        // iteratorSync = false;
+        //  notifyAll();
     }
 
     /**
@@ -78,14 +79,14 @@ public class MouseListener implements Observable, java.awt.event.MouseListener, 
 //                System.err.println("Thread Interrupted");
 //            }
 //        }
-        if(subscribersSync.containsKey(scene))
+        if (subscribersSync.containsKey(scene))
             subscribersSync.get(scene).add((ObserverMouse) subscriber);
         else {
             ArrayList<ObserverMouse> list = new ArrayList<>();
             list.add((ObserverMouse) subscriber);
             subscribersSync.put(scene, list);
         }
-       // notifyAll();
+        // notifyAll();
     }
 
     /**
@@ -94,7 +95,7 @@ public class MouseListener implements Observable, java.awt.event.MouseListener, 
      * @param subscriber the unsubscriber
      */
     @Override
-    public synchronized void unsubscribe( Observer subscriber) {
+    public synchronized void unsubscribe(Observer subscriber) {
 //        while (iteratorSync) {
 //            try {
 //                wait();
@@ -103,9 +104,9 @@ public class MouseListener implements Observable, java.awt.event.MouseListener, 
 //                System.err.println("Thread Interrupted");
 //            }
 //        }
-        for(Scene scene : subscribersSync.keySet())
+        for (Scene scene : subscribersSync.keySet())
             subscribersSync.get(scene).remove((ObserverMouse) subscriber);
-       // notifyAll();
+        // notifyAll();
     }
 
     /**

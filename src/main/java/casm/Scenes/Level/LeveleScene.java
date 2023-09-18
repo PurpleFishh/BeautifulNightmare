@@ -50,15 +50,15 @@ public class LeveleScene extends Scene implements State, Originator {
     /**
      * List of colliders where if the player hits them he wins the level
      */
-    private ArrayList<Rectangle> winColliders = new ArrayList<>();
+    private final ArrayList<Rectangle> winColliders = new ArrayList<>();
     /**
      * List of the enemies.
      */
-    private Set<Enemy> enemies = new HashSet<>();
+    private final Set<Enemy> enemies = new HashSet<>();
     /**
      * List of the heart bonuses.
      */
-    private Set<HeartBonus> heartBonuses = new HashSet<>();
+    private final Set<HeartBonus> heartBonuses = new HashSet<>();
     /**
      * Info bar to display player health and score.
      */
@@ -66,7 +66,7 @@ public class LeveleScene extends Scene implements State, Originator {
     /**
      * The factory used to create entities.
      */
-    private Factory factory;
+    private final Factory factory;
     /**
      * <b>restored</b> is true if the scene was restored from the database, false otherwise.<br>
      * <b>restore</b> is true if the scene must be restored from the database, false otherwise.<br>
@@ -76,7 +76,7 @@ public class LeveleScene extends Scene implements State, Originator {
     /**
      * The name of the scene.
      */
-    private String name;
+    private final String name;
     /**
      * The level that the scene contains.
      */

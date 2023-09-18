@@ -17,7 +17,8 @@ public class TextComponent extends Component {
      * <b>text</b> - the text that will be rendered <br>
      * <b>fontName</b> - the font name <br>
      */
-    private String text, fontName;
+    private String text;
+    private final String fontName;
     /**
      * The font size <br>
      */

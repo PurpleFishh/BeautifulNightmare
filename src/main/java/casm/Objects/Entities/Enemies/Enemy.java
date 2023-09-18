@@ -1,13 +1,12 @@
 package casm.Objects.Entities.Enemies;
 
-import casm.ECS.Components.*;
+import casm.ECS.Components.AiBehaviour;
+import casm.ECS.Components.AttackComponent;
 import casm.ECS.Components.Collision.ColliderType;
 import casm.Factory.EntityFactory.EntityType;
 import casm.Game;
 import casm.Objects.Entities.Entity;
 import casm.Utils.Vector2D;
-
-import java.util.Objects;
 
 /**
  * The enemy of the game
@@ -17,7 +16,7 @@ public class Enemy extends Entity {
     /**
      * The type of the enemy
      */
-    private EntityType type;
+    private final EntityType type;
 
     /**
      * @param type          type of the enemy
@@ -67,7 +66,8 @@ public class Enemy extends Entity {
     @Override
     public void kill() {
         super.kill();
-        Objects.requireNonNull(Game.getLevelScene()).infoBar.updateScore(
-                Objects.requireNonNull(Game.getLevelScene()).addToScore(5));
+        if (Game.getLevelScene().isPresent())
+            Game.getLevelScene().get().infoBar.updateScore(
+                    Game.getLevelScene().get().addToScore(5));
     }
 }

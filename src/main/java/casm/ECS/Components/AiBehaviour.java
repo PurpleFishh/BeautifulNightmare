@@ -6,7 +6,6 @@ import casm.ECS.Components.Collision.ColliderType;
 import casm.ECS.Components.Collision.DyncamicColliderComponent;
 import casm.ECS.Components.Collision.Rectangle;
 import casm.Game;
-import casm.Scenes.Level.LeveleScene;
 import casm.StateMachine.AiStateMachine.GameStateMachine;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.FlipEntityMediator;
@@ -20,11 +19,13 @@ public class AiBehaviour extends Component {
 
     /**
      * Entity position component
+     *
      * @see PositionComponent
      */
     private PositionComponent positionComponent;
     /**
      * Entity dynamic collider component
+     *
      * @see DyncamicColliderComponent
      */
     private DyncamicColliderComponent dyncamicColliderComponent;
@@ -48,7 +49,8 @@ public class AiBehaviour extends Component {
         dyncamicColliderComponent = gameObject.getComponent(DyncamicColliderComponent.class);
         gameObjectHitBox = gameObject.getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY);
         aiDetection = gameObject.getComponent(ColliderComponent.class).addCollider(ColliderType.AI_DETECTION, (int) -(200 / 2 - gameObjectHitBox.getHeight() / 2), 0, 200, (int) gameObjectHitBox.height);
-        chase = ((LeveleScene) Game.getCurrentScene()).getPlayer().getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY);
+        if (Game.getLevelScene().isPresent())
+            chase = (Game.getLevelScene().get()).getPlayer().getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY);
 
         positionComponent.sign.x = -1;
     }
@@ -101,8 +103,7 @@ public class AiBehaviour extends Component {
             if (inRange) {
                 positionComponent.sign.x = 0;
                 gameObject.getComponent(AnimationStateMachine.class).trigger("stopRun");
-            }
-            else {
+            } else {
                 positionComponent.sign.x = 1;
                 FlipEntityMediator.getInstance().flipHorizontally(gameObject, false);
             }
@@ -112,8 +113,7 @@ public class AiBehaviour extends Component {
             if (inRange) {
                 positionComponent.sign.x = 0;
                 gameObject.getComponent(AnimationStateMachine.class).trigger("stopRun");
-            }
-            else {
+            } else {
                 positionComponent.sign.x = -1;
                 FlipEntityMediator.getInstance().flipHorizontally(gameObject, true);
             }

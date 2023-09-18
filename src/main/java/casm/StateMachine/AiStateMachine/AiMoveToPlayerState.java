@@ -10,7 +10,7 @@ import casm.StateMachine.UpdatableState;
  */
 public class AiMoveToPlayerState implements UpdatableState {
     private String name;
-    private GameObject gameObject;
+    private final GameObject gameObject;
 
     public AiMoveToPlayerState(GameObject gameObject, String name) {
         this.name = name;

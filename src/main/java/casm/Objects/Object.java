@@ -18,7 +18,7 @@ public class Object extends GameObject {
     /**
      * Object spawn position
      */
-    private Vector2D spawnPosition;
+    private final Vector2D spawnPosition;
 
     /**
      * Creat a new object

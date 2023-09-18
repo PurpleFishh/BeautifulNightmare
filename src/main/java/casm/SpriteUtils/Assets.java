@@ -19,7 +19,8 @@ public class Assets {
     /**
      * <b>imageWidth</b> and <b>imageHeight</b> are the dimensions of the image.
      */
-    private int imageWidth, imageHeight;
+    private final int imageWidth;
+    private final int imageHeight;
 
     /**
      * Give the sprite sheet to the method and the dimensions of a tile, and it will cut and store the tiles.

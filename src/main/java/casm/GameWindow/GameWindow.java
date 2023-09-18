@@ -18,9 +18,9 @@ public class GameWindow
 
 
     private JFrame  wndFrame;       /*!< fereastra principala a jocului*/
-    private String  wndTitle;       /*!< titlul ferestrei*/
-    private int     wndWidth;       /*!< latimea ferestrei in pixeli*/
-    private int     wndHeight;      /*!< inaltimea ferestrei in pixeli*/
+    private final String  wndTitle;       /*!< titlul ferestrei*/
+    private final int     wndWidth;       /*!< latimea ferestrei in pixeli*/
+    private final int     wndHeight;      /*!< inaltimea ferestrei in pixeli*/
 
     private Canvas  canvas;         /*!< "panza/tablou" in care se poate desena*/
 

@@ -26,15 +26,15 @@ public class GameOverScene extends Scene implements State {
     /**
      * The factory for creating the game objects
      */
-    private Factory factory;
+    private final Factory factory;
     /**
      * The name of the scene
      */
-    private String name;
+    private final String name;
     /**
      * The list of buttons in the scene
      */
-    private ArrayList<Button> buttons = new ArrayList<>();
+    private final ArrayList<Button> buttons = new ArrayList<>();
 
     /**
      * @param type The type of scene

@@ -20,8 +20,6 @@ public class EmptyTile extends GameObject {
 
     /**
      * @param name      The name of the tile
-     * @param tileSet   The sprite sheet
-     * @param textureId The id of the texture in the sprite sheet
      * @param x         The x position of the tile
      * @param y         The y position of the tile
      */

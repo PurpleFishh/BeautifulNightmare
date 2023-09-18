@@ -3,13 +3,13 @@ package casm.Scenes.Level;
 import casm.Exception.SceneCanNotBeSaved;
 import casm.Factory.EntityFactory.EntityType;
 import casm.Game;
-import casm.Objects.Entities.Enemies.Enemy;
-import casm.Objects.Entities.Entity;
-import casm.Objects.Entities.Player;
 import casm.Utils.Vector2D;
 
 import java.sql.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * Manages the saving and loading of the game
@@ -33,7 +33,7 @@ public class LevelSaverLoader {
     /**
      * The history of the game, the most recent memento is at the top of the stack
      */
-    private Stack<LevelMemento> history = new Stack<>();
+    private final Stack<LevelMemento> history = new Stack<>();
     /**
      * Used in database to save the memento to it
      */
@@ -46,9 +46,9 @@ public class LevelSaverLoader {
      * @throws SceneCanNotBeSaved If the scene can not be saved(the current scenes are not a savable scene)
      */
     public void save() throws SceneCanNotBeSaved {
-        if (Game.getLevelScene() == null)
+        if (Game.getLevelScene().isEmpty())
             throw new SceneCanNotBeSaved();
-        history.push((LevelMemento) ((LeveleScene) Game.getLevelScene()).save());
+        history.push((LevelMemento) (Game.getLevelScene().get()).save());
         try {
             saveToDataBase();
         } catch (SQLException e) {
@@ -63,13 +63,13 @@ public class LevelSaverLoader {
      * @throws SQLException       If the database can not be accessed
      */
     public void load() throws SceneCanNotBeSaved, SQLException {
-        if (Game.getLevelScene() == null)
+        if (Game.getLevelScene().isEmpty())
             throw new SceneCanNotBeSaved();
         LevelMemento memento = restoreFromDataBase();
         if (memento != null) {
             history.push(restoreFromDataBase());
         }
-        (Game.getLevelScene()).restore(memento);
+        Game.getLevelScene().get().restore(memento);
     }
 
     /**
@@ -120,6 +120,9 @@ public class LevelSaverLoader {
      * @throws SQLException If the database can not be accessed
      */
     public void saveHighScore() throws SQLException {
+        if(Game.getLevelScene().isPresent())
+            return;
+
         Connection conn = getConnection();
         Statement stam = conn.createStatement();
         conn.setAutoCommit(false);
@@ -128,12 +131,12 @@ public class LevelSaverLoader {
         conn.commit();
 
         ResultSet result = stam.executeQuery("SELECT HIGH_SCORE FROM high_score");
-        double highScore = Objects.requireNonNull(Game.getLevelScene()).getScore();
+        double highScore = Game.getLevelScene().get().getScore();
         if (result.next())
             if (result.getDouble(1) > highScore)
                 highScore = result.getDouble(1);
 
-        stam.executeUpdate("INSERT OR REPLACE INTO high_score(LEVEL, HIGH_SCORE) VALUES (" + Game.getLevelScene().getLevel() + ", " + highScore + ");");
+        stam.executeUpdate("INSERT OR REPLACE INTO high_score(LEVEL, HIGH_SCORE) VALUES (" + Game.getLevelScene().get().getLevel() + ", " + highScore + ");");
         conn.commit();
 
         stam.close();

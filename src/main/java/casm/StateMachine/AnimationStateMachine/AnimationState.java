@@ -18,11 +18,11 @@ public class AnimationState implements UpdatableState {
     /**
      * The name of the animation state.
      */
-    private String name;
+    private final String name;
     /**
      * The frames of the animation.
      */
-    private List<Frame> animationFrames = new ArrayList<>();
+    private final List<Frame> animationFrames = new ArrayList<>();
     /**
      * <b>time</b> - the timer for every frame until it changes to the next one.
      * <b>speed</b> - the speed that the animation is playing.

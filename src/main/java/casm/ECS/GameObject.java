@@ -24,7 +24,7 @@ public class GameObject {
     /**
      * The name of the entity
      */
-    private String name;
+    private final String name;
     /**
      * If the entity is still alive or it was killed
      */
@@ -34,7 +34,7 @@ public class GameObject {
     /**
      * List of components that are attributed to the entity and will be updated
      */
-    private List<Component> components;
+    private final List<Component> components;
 
     /**
      * Create a new entity

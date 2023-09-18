@@ -4,13 +4,13 @@ import casm.Game;
 import casm.Observer.Observable;
 import casm.Observer.Observer;
 import casm.Observer.ObserverKeyboard;
-import casm.Observer.ObserverMouse;
 import casm.Scenes.Scene;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * An observer that listens to all the keyboard events
@@ -19,7 +19,7 @@ public class KeyboardListener implements Observable, KeyListener {
     /**
      * The subscribers of the observer
      */
-    private HashMap<Scene, List<ObserverKeyboard>> subscribersSync = new HashMap<>();
+    private final HashMap<Scene, List<ObserverKeyboard>> subscribersSync = new HashMap<>();
     /**
      * Used for synchronizing the access to the list
      */
@@ -35,7 +35,7 @@ public class KeyboardListener implements Observable, KeyListener {
     /**
      * Used for synchronizing the access to the list(a semaphore in the access thread)
      */
-    private volatile Boolean iteratorSync = false;
+    private final Boolean iteratorSync = false;
 
     private KeyboardListener() {
     }
@@ -54,8 +54,10 @@ public class KeyboardListener implements Observable, KeyListener {
     @Override
     public synchronized void notifyAllSubs() {
         //iteratorSync = true;
-        if (subscribersSync.containsKey(Game.getCurrentScene())) {
-            List<ObserverKeyboard> copyList = new ArrayList<>(subscribersSync.get(Game.getCurrentScene()));
+        if (Game.getCurrentScene().isEmpty())
+            return;
+        if (subscribersSync.containsKey(Game.getCurrentScene().get())) {
+            List<ObserverKeyboard> copyList = new ArrayList<>(subscribersSync.get(Game.getCurrentScene().get()));
             for (ObserverKeyboard observerKeyboard : copyList) observerKeyboard.notify(event);
         }
         //iteratorSync = false;

@@ -6,7 +6,6 @@ import casm.Scenes.Level.LevelSaverLoader;
 import casm.Scenes.Level.LeveleScene;
 
 import java.sql.SQLException;
-import java.util.Objects;
 
 public class Winning {
     private static Winning instance = null;
@@ -27,16 +26,18 @@ public class Winning {
      * @param playerCollider rectangle collider of the player
      */
     public void verifyIfGameWon(Rectangle playerCollider) {
-        if (Game.getCurrentScene() instanceof LeveleScene)
-            if (((LeveleScene) Objects.requireNonNull(Game.getCurrentScene())).isWon()) {
-                for (Rectangle winCollider : ((LeveleScene) Game.getCurrentScene()).getWinColliders()) {
+        if (Game.getCurrentScene().isEmpty())
+            return;
+        if (Game.getCurrentScene().get() instanceof LeveleScene)
+            if (((LeveleScene) Game.getCurrentScene().get()).isWon()) {
+                for (Rectangle winCollider : ((LeveleScene) Game.getCurrentScene().get()).getWinColliders()) {
                     if (playerCollider.intersects(winCollider)) {
                         try {
                             LevelSaverLoader.getInstance().saveHighScore();
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
-                        Game.changeLevel(((LeveleScene) Game.getCurrentScene()).getLevel() + 1, false);
+                        Game.changeLevel(((LeveleScene) Game.getCurrentScene().get()).getLevel() + 1, false);
                         break;
                     }
                 }

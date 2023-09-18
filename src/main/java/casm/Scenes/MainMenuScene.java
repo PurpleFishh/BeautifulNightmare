@@ -25,15 +25,15 @@ public class MainMenuScene extends Scene implements State {
     /**
      * The factory for creating the game objects
      */
-    private Factory factory;
+    private final Factory factory;
     /**
      * List of buttons in the scene
      */
-    private ArrayList<Button> buttons = new ArrayList<>();
+    private final ArrayList<Button> buttons = new ArrayList<>();
     /**
      * The name of the scene
      */
-    private String name;
+    private final String name;
 
     /**
      * @param type The type of scene

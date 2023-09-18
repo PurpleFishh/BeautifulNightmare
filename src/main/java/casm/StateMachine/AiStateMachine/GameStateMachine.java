@@ -16,10 +16,10 @@ import java.util.List;
  */
 public class GameStateMachine implements StateMachine {
     public HashMap<StateTrigger, String> stateTransfers = new HashMap<>();
-    private List<SceneType> states = new ArrayList<>();
-    private State currentState = null;
+    private final List<SceneType> states = new ArrayList<>();
+    private final State currentState = null;
     private String defaultStateTitle = "";
-    private SceneFactory factory;
+    private final SceneFactory factory;
 
     public GameStateMachine() {
         factory = new SceneFactory();

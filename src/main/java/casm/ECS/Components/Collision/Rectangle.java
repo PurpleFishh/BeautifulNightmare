@@ -15,7 +15,9 @@ public class Rectangle extends Rectangle2D.Double {
      * dimensions - the dimensions of the rectangle stored as {@link Vector2D}<br>
      * offset - the offset of the rectangle, the rectangle will be at that offset of the position
      */
-    private Vector2D position, dimensions, offset = new Vector2D();
+    private Vector2D position;
+    private Vector2D dimensions;
+    private final Vector2D offset = new Vector2D();
 
     /**
      * Constructing a new rectangle

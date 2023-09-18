@@ -15,5 +15,5 @@ public enum KeyState {
     /**
      * The key is pressed
      */
-    PRESSED;
+    PRESSED
 }

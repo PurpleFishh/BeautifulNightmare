@@ -26,14 +26,14 @@ public class ButtonBuilder implements Builder {
      * @param type - The type of the button.
      * @return - Reference to the builder.
      */
-    public ButtonBuilder setType(MenuEntityType.BUTTON type)
-    {
+    public ButtonBuilder setType(MenuEntityType.BUTTON type) {
         objectBuilt.setType(type);
         return this;
     }
 
     /**
      * Sets the image to the button and adds its collider.
+     *
      * @param sheetPath - The path to the sprite sheet.
      * @return - Reference to the builder.
      */
@@ -41,12 +41,11 @@ public class ButtonBuilder implements Builder {
         //TODO: fa diferenta dintre alea mari si alea mici
         Sprite buttonTexture;
         int index = objectBuilt.getType().ordinal();
-        if(objectBuilt.getType() !=  MenuEntityType.BUTTON.BACK) {
+        if (objectBuilt.getType() != MenuEntityType.BUTTON.BACK) {
             index *= 2;
             buttonTexture = AssetsCollection.getInstance().getSpriteSheet(sheetPath)
                     .getSprite(index);
-        }
-        else {
+        } else {
             index -= (MenuEntityType.BUTTON.BACK.ordinal());
             index *= 2;
             buttonTexture = AssetsCollection.getInstance().getSpriteSheet(sheetPath)
@@ -62,11 +61,12 @@ public class ButtonBuilder implements Builder {
 
     /**
      * Make the button clickable(It will be notified by the {@link casm.Observer.Observable}).
+     *
      * @return - Reference to the builder.
      */
-    public ButtonBuilder clickable()
-    {
-        MouseListener.getInstance().subscribe(Game.getCurrentScene(),objectBuilt);
+    public ButtonBuilder clickable() {
+        if (Game.getCurrentScene().isPresent())
+            MouseListener.getInstance().subscribe(Game.getCurrentScene().get(), objectBuilt);
         return this;
     }
 

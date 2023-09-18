@@ -5,11 +5,10 @@ import casm.ECS.Components.Collision.ColliderType;
 import casm.ECS.Components.PositionComponent;
 import casm.ECS.GameObject;
 import casm.Factory.EntityFactory.EntityType;
-import casm.Game;
 import casm.Objects.Entities.EmptyTile;
+import casm.Objects.Entities.Tile;
 import casm.Scenes.Level.LeveleScene;
 import casm.Scenes.Scene;
-import casm.Objects.Entities.Tile;
 import casm.SpriteUtils.Assets;
 import casm.SpriteUtils.AssetsCollection;
 import casm.Utils.Vector2D;
@@ -22,7 +21,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Create the map from a json file given by parameter<br>
@@ -48,11 +50,11 @@ public class Map {
     /**
      * The spawn positions of the enemies
      */
-    private static HashMap<EntityType, Set<Vector2D>> enemiesSpawnPosition = new HashMap<>();
+    private static final HashMap<EntityType, Set<Vector2D>> enemiesSpawnPosition = new HashMap<>();
     /**
      * The spawn positions of the bonus hearts
      */
-    private static HashSet<Vector2D> heartsSpawnPosition = new HashSet<>();
+    private static final HashSet<Vector2D> heartsSpawnPosition = new HashSet<>();
 
     /**
      * Load the map from the given JSON file, create the needed entities and add them to the scene

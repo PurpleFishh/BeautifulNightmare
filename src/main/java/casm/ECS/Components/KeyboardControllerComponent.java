@@ -7,11 +7,9 @@ import casm.Game;
 import casm.Observer.ObserverKeyboard;
 import casm.Scenes.SceneType;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
-import casm.Utils.FlipEntityMediator;
 import casm.Utils.Mediator;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 /**
  * Component used for keyboard controlling which sets the flags for keys and notify the mediator for movement
@@ -50,7 +48,8 @@ public class KeyboardControllerComponent extends Component implements ObserverKe
      */
     @Override
     public void init() {
-        KeyboardListener.getInstance().subscribe(Game.getCurrentScene(),this);
+        if (Game.getCurrentScene().isPresent())
+            KeyboardListener.getInstance().subscribe(Game.getCurrentScene().get(), this);
 
         animationStateMachine = gameObject.getComponent(AnimationStateMachine.class);
         mediator = MovementMediator.getInstance(gameObject);
@@ -117,14 +116,13 @@ public class KeyboardControllerComponent extends Component implements ObserverKe
             dKey = KeyState.PRESSED;
             mediator.notify(this);
         }
-        if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-        {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
             Game.changeScene(SceneType.PAUSE_MENU);
-        }
-        if(e.getKeyCode() == KeyEvent.VK_R)
-        {
-            Game.getLevelScene().getPlayer().setLife(0);
-        }
+
+        if (e.getKeyCode() == KeyEvent.VK_R)
+            if (Game.getLevelScene().isPresent())
+                Game.getLevelScene().get().getPlayer().setLife(0);
+
     }
 
     /**
@@ -226,6 +224,7 @@ public class KeyboardControllerComponent extends Component implements ObserverKe
 
     /**
      * Notify the mediator for the pressed keys
+     *
      * @param event the event to be processed
      */
     @Override

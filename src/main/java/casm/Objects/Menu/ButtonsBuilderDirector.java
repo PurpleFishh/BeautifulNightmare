@@ -14,7 +14,7 @@ public class ButtonsBuilderDirector implements BuilderDirector {
     /**
      * The builder for the buttons.
      */
-    private ButtonBuilder builder;
+    private final ButtonBuilder builder;
 
     public ButtonsBuilderDirector() {
         this.builder = new ButtonBuilder();

@@ -3,16 +3,16 @@ package casm;
 import casm.ECS.Components.MouseListener;
 import casm.Exception.SceneCanNotBeSaved;
 import casm.Factory.SceneFactory.SceneFactory;
+import casm.GameWindow.GameWindow;
 import casm.Scenes.Level.LevelSaverLoader;
 import casm.Scenes.Level.LeveleScene;
 import casm.Scenes.Scene;
-import casm.GameWindow.GameWindow;
 import casm.Scenes.SceneType;
 import casm.Utils.Settings.Setting;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.sql.SQLException;
+import java.util.Optional;
 import java.util.Stack;
 
 
@@ -45,7 +45,7 @@ public class Game implements Runnable {
     /**
      * The scenes of the game. The top scene in the stack is the current scene
      */
-    private static Stack<Scene> sceneStack = new Stack<>();
+    private static final Stack<Scene> sceneStack = new Stack<>();
     /**
      * The scene factory used to create scenes
      */
@@ -106,10 +106,12 @@ public class Game implements Runnable {
 
             if ((curentTime - oldTime) > Setting.FRAME_TIME) {
                 //currentScene.eventHandler();
-                if (getCurrentScene().isRunning()) {
-                    getCurrentScene().update();
-                    getCurrentScene().draw();
-                    getCurrentScene().checkForDeaths();
+                if(getCurrentScene().isEmpty())
+                    continue;
+                if (getCurrentScene().get().isRunning()) {
+                    getCurrentScene().get().update();
+                    getCurrentScene().get().draw();
+                    getCurrentScene().get().checkForDeaths();
                 }
                 oldTime = curentTime;
             }
@@ -228,8 +230,8 @@ public class Game implements Runnable {
      *
      * @return the current scene
      */
-    public static Scene getCurrentScene() {
-        return !sceneStack.isEmpty() ? sceneStack.peek() : null;
+    public static Optional<Scene> getCurrentScene() {
+        return !sceneStack.isEmpty() ? Optional.ofNullable(sceneStack.peek()) : Optional.empty();
     }
 
     /**
@@ -237,11 +239,14 @@ public class Game implements Runnable {
      *
      * @return the current level scene
      */
-    public static LeveleScene getLevelScene() {
+    public static Optional<LeveleScene> getLevelScene() {
+        LeveleScene returnLevel = null;
         for (int i = sceneStack.size() - 1; i >= 0; --i)
-            if (sceneStack.get(i) instanceof LeveleScene)
-                return (LeveleScene) sceneStack.get(i);
-        return null;
+            if (sceneStack.get(i) instanceof LeveleScene) {
+                returnLevel = (LeveleScene) sceneStack.get(i);
+                break;
+            }
+        return Optional.ofNullable(returnLevel);
     }
 
     /**

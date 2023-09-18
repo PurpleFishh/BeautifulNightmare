@@ -12,15 +12,15 @@ public class SpriteSheet {
     /**
      * Reference to the BufferedImage object that contains the sprite sheet.
      */
-    private BufferedImage spriteSheet;
+    private final BufferedImage spriteSheet;
     /**
      * Width of a tile in the sprite sheet.
      */
-    private int tileWidth;
+    private final int tileWidth;
     /**
      * Height of a tile in the sprite sheet.
      */
-    private int tileHeight;
+    private final int tileHeight;
 
     /**
      * @param buffImg   BufferedImage object that contains the sprite sheet.

@@ -10,7 +10,7 @@ import casm.StateMachine.UpdatableState;
  */
 public class AiIdleState implements UpdatableState {
     private String name;
-    private GameObject gameObject;
+    private final GameObject gameObject;
 
     public AiIdleState(GameObject gameObject, String name) {
         this.name = name;

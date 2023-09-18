@@ -5,10 +5,7 @@ import casm.Scenes.SceneType;
 import casm.Utils.Settings.Setting;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 
 /**
  * Used to display graphics on the screen
@@ -106,15 +103,16 @@ public class Renderer {
      */
     private Vector2D calculateCameraPosition(Vector2D position) {
         Vector2D positionOnCamera = (Vector2D) position.clone();
-        if (Game.getCurrentScene().getType() == SceneType.LEVEL)
-            if (Camera.hasTargget()) {
-                if (Camera.getInstance().equalsToTarget(position)) {
-                    positionOnCamera.sub(Camera.getInstance().getCamera());
-                } else {
-                    positionOnCamera.x -= Camera.getInstance().getCamera().x - Camera.getInstance().getCameraOffset().x;
-                    positionOnCamera.y -= Camera.getInstance().getCamera().y - Camera.getInstance().getCameraOffset().y;
+        if (Game.getCurrentScene().isPresent())
+            if (Game.getCurrentScene().get().getType() == SceneType.LEVEL)
+                if (Camera.hasTargget()) {
+                    if (Camera.getInstance().equalsToTarget(position))
+                        positionOnCamera.sub(Camera.getInstance().getCamera());
+                    else {
+                        positionOnCamera.x -= Camera.getInstance().getCamera().x - Camera.getInstance().getCameraOffset().x;
+                        positionOnCamera.y -= Camera.getInstance().getCamera().y - Camera.getInstance().getCameraOffset().y;
+                    }
                 }
-            }
 
         return positionOnCamera;
     }

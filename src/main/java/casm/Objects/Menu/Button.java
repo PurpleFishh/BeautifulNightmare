@@ -9,10 +9,9 @@ import casm.Game;
 import casm.Objects.Object;
 import casm.Observer.ObserverMouse;
 import casm.Scenes.Level.LevelSaverLoader;
-import casm.SpriteUtils.Assets;
-import casm.SpriteUtils.AssetsCollection;
-import casm.SpriteUtils.Sprite;
 import casm.Scenes.SceneType;
+import casm.SpriteUtils.Assets;
+import casm.SpriteUtils.Sprite;
 import casm.Utils.Vector2D;
 
 import java.awt.event.MouseEvent;
@@ -81,7 +80,7 @@ public class Button extends Object implements ObserverMouse {
             Rectangle collider = this.getComponent(ColliderComponent.class).getCollider(ColliderType.BUTTON);
             if (collider.contains(event.getX(), event.getY())) {
                 if (type == MenuEntityType.BUTTON.PLAY) {
-                    if (Game.getLevelScene() == null) {
+                    if (Game.getLevelScene().isEmpty()) {
                         //Game.changeScene(SceneType.LEVEL);
                         try {
                             Game.changeLevel(LevelSaverLoader.getInstance().getSavedLevelIndex(), true);
@@ -93,9 +92,11 @@ public class Button extends Object implements ObserverMouse {
                         Game.destroyViewingScene();
                     }
                 } else if (type == MenuEntityType.BUTTON.RETRY) {
-                    Game.changeLevel(Game.getLevelScene().getLevel(), false);
+                    if (Game.getLevelScene().isPresent())
+                        Game.changeLevel(Game.getLevelScene().get().getLevel(), false);
                 } else if (type == MenuEntityType.BUTTON.EXIT) {
-                    if (Game.getCurrentScene().getType() == SceneType.MAIN_MENU)
+                    if (Game.getCurrentScene().isPresent() &&
+                            Game.getCurrentScene().get().getType() == SceneType.MAIN_MENU)
                         Game.exitGame();
                     else {
                         //Game.destroyViewingScene();

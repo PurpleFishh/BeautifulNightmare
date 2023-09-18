@@ -5,10 +5,9 @@ import casm.ECS.Components.Collision.ColliderComponent;
 import casm.ECS.Components.Collision.ColliderType;
 import casm.ECS.Components.Collision.Rectangle;
 import casm.Factory.EntityFactory.EntityType;
+import casm.Game;
 import casm.Objects.Entities.Enemies.Enemy;
 import casm.Objects.Entities.Player;
-import casm.Game;
-import casm.Scenes.Level.LeveleScene;
 import casm.StateMachine.AfterStateEndsNotify;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Settings.Setting;
@@ -89,10 +88,12 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
     public void attack() {
         if (attackDelay <= 0) {
             isAttacking = true;
-            if (this.gameObject == ((LeveleScene) Game.getCurrentScene()).getPlayer()) {
+            if(Game.getLevelScene().isEmpty())
+                return;
+            if (this.gameObject == (Game.getLevelScene().get()).getPlayer()) {
                 gameObject.getComponent(AnimationStateMachine.class).trigger("startAttack", this);
                 Player player = (Player) gameObject;
-                for (Enemy enemy : ((LeveleScene) Game.getCurrentScene()).getEnemies()) {
+                for (Enemy enemy : (Game.getLevelScene().get()).getEnemies()) {
                     if (attackCollider.intersects(enemy.getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY))) {
                         if (enemy.getLife() > 0) {
                             enemy.damage(player.getDamage());
@@ -105,7 +106,7 @@ public class AttackComponent extends Component implements AfterStateEndsNotify {
                     }
                 }
             } else {
-                Player player = ((LeveleScene) Game.getCurrentScene()).getPlayer();
+                Player player = (Game.getLevelScene().get()).getPlayer();
                 if (attackCollider.intersects(player.getComponent(ColliderComponent.class).getCollider(ColliderType.ENTITY))) {
                     if (player.getLife() > 0) {
                         gameObject.getComponent(AnimationStateMachine.class).trigger("startAttack", this);

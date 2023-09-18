@@ -25,7 +25,7 @@ public enum MenuEntityType implements FactoryTypes {
         SETTINGS,
         EXIT,
         RETRY,
-        BACK;
+        BACK
 
     }
 }

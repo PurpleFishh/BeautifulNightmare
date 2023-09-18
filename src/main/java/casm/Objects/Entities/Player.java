@@ -1,19 +1,19 @@
 package casm.Objects.Entities;
 
-import casm.ECS.Components.*;
+import casm.ECS.Components.AttackComponent;
 import casm.ECS.Components.Collision.ColliderType;
+import casm.ECS.Components.KeyboardControllerComponent;
+import casm.ECS.Components.PositionComponent;
 import casm.Factory.EntityFactory.EntityType;
 import casm.Game;
-import casm.Objects.InfoBar;
-import casm.StateMachine.AnimationStateMachine.AnimationState;
 import casm.SpriteUtils.Animation.AnimationsExtract;
+import casm.StateMachine.AnimationStateMachine.AnimationState;
 import casm.StateMachine.AnimationStateMachine.AnimationStateMachine;
 import casm.Utils.Camera;
 import casm.Utils.Settings.EntitiesSettings;
 import casm.Utils.Vector2D;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * The player of the game
@@ -113,31 +113,37 @@ public class Player extends Entity {
 
     /**
      * Update player health
+     *
      * @param life Life of the player
      */
     @Override
     public void setLife(double life) {
         super.setLife(life);
-        Objects.requireNonNull(Game.getLevelScene()).infoBar.updateHealth(this.getLife());
+        if (Game.getLevelScene().isPresent())
+            Game.getLevelScene().get().infoBar.updateHealth(this.getLife());
     }
 
     /**
      * Applies damage to the player
+     *
      * @param damage Damage to be applied to the player
      */
     @Override
     public void damage(double damage) {
         super.damage(damage);
-        Objects.requireNonNull(Game.getLevelScene()).infoBar.updateHealth(this.getLife());
+        if (Game.getLevelScene().isPresent())
+            Game.getLevelScene().get().infoBar.updateHealth(this.getLife());
     }
 
     /**
      * Revives the player
+     *
      * @param health Health to be added to the player
      */
     @Override
     public void revive(double health) {
         super.revive(health);
-        Objects.requireNonNull(Game.getLevelScene()).infoBar.updateHealth(this.getLife());
+        if (Game.getLevelScene().isPresent())
+            Game.getLevelScene().get().infoBar.updateHealth(this.getLife());
     }
 }

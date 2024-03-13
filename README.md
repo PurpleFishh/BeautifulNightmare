@@ -8,27 +8,27 @@ and is using a SQLite database for saving the scores and game level state.
 The main character, Ignacio, couldn't bear the city's crowdedness anymore and decided to move to the countryside.
 He had a piece of land inherited from his grandfather in a village called Ciudățeni, where he began to cultivate plants. 
 The locals say that the name of the village comes from the fact that in the past, there was a satanic altar there, which
-caused strange things to happen ever since.
+caused strange things to happen ever since.<br><br>
 
 After a hard day, Nacio goes to greet his animals, intending to go to bed, but when he arrives, they have disappeared.
 After long searches, he gives up and goes to bed. When he gets home, he falls into a deep sleep, but the peace doesn't 
-last long, the farmer entering a deep dream.
+last long, the farmer entering a deep dream.<br><br>
 
 Ignacio suddenly lands in a fabulous world, but is surprised to find that he is no longer dressed in his farmer's clothes,
 but in the attire of Indiana Jones. He had to climb and make leaps at the edge, finally reaching an endless abyss. With
-no way back, he jumps into it.
+no way back, he jumps into it.<br><br>
 
 He wakes up in a cave full of platforms, rickety stairs, spikes, and lava. When he looks around, he finds a lasso beside
 him. After traversing this, he reaches a door, believing it to be his escape, but this door leads to another cave. The 
 cave is full of enemies, and he uses the lasso to defeat them. After killing the creatures, the door unlocks. On the other
 side of the door, he finds an old man who tells him that he is trapped in his own dream and that he must pass through all
-the creatures and all the levels to find his animals.
+the creatures and all the levels to find his animals.<br><br>
 
 The last open door leads the farmer into a familiar world where there is a pen, and he finds his animals. After he feeds
-them, he wakes up from the dream. Upon waking, he rushes to the farm but notices that everything is normal, untouched.
+them, he wakes up from the dream. Upon waking, he rushes to the farm but notices that everything is normal, untouched.<br><br>
 
 Now, Ignacio, filled with confusion, wonders: "Was the whole day yesterday a dream, was the dream real, or am I really 
-trapped in a continuous dream?"
+trapped in a continuous dream?"<br><br>
 
 # How to play
 Clone the repository and run the project.
